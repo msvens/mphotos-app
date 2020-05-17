@@ -1,27 +1,24 @@
-import React from 'react';
-import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import GridList from '@material-ui/core/GridList';
-import GridListTile from '@material-ui/core/GridListTile';
-import GridListTileBar from '@material-ui/core/GridListTileBar';
-import usePhotosService, {getImageUrl, getThumbUrl} from "../services/usePhotosService";
+import React, {useEffect, useState} from 'react';
+import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
+import GridListTile from "@material-ui/core/GridListTile";
 import {Link} from "react-router-dom";
+import PhotosApi from "../services/api";
+import GridList from "@material-ui/core/GridList";
+import {Photo} from "../types/photo";
+
+interface PhotoGridProps {
+    maxItems: number,
+    order: "original" | "drive"
+}
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
+
         root: {
-            display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'space-around',
-            overflow: 'hidden',
-            backgroundColor: theme.palette.background.paper,
-        },
-        gridList: {
-            width: 1000,
-            maxWidth: 1000,
+            width: 1020,
+            maxWidth: 1020,
             margin: 'auto',
-        },
-        icon: {
-            color: 'rgba(255, 255, 255, 0.54)',
+
         },
         thumb: {
             width: '100%',
@@ -30,28 +27,29 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-export default function PhotoGrid() {
+const PhotoGrid: React.FC<PhotoGridProps> = (props: PhotoGridProps) => {
     const classes = useStyles();
-    const service = usePhotosService();
+
+    const [photos, setPhotos] = useState<Photo[]>([]);
+
+    useEffect(() => {
+        PhotosApi.getPhotos(props.maxItems).then(res => {
+            if (res.photos)
+                setPhotos(res.photos)
+        });
+    }, [props.maxItems]);
 
     return (
-        <div className={classes.root}>
-            {service.status === 'loaded' &&
-            <GridList cols={3} cellHeight={'auto'} spacing={20} className={classes.gridList}>
-                {service.payload.data.map(photo => (
-                    <GridListTile className={classes.thumb} cols={1} key={photo.driveId}>
-                        <Link to={`/photo/${photo.driveId}`}>
-                            <img className={classes.thumb} src={getThumbUrl(photo)}/>
-                        </Link>
-                        <GridListTileBar
-                            title={photo.title}
-                        />
-                    </GridListTile>
-                ))}
-            </GridList>
-            }
-        </div>
+        <GridList cols={3} cellHeight={'auto'} spacing={15} className={classes.root}>
+            {photos.map(photo => (
+                <GridListTile className={classes.thumb} cols={1} key={photo.driveId}>
+                    <Link to={`/photo/${photo.driveId}`}>
+                        <img alt={photo.fileName} className={classes.thumb} src={PhotosApi.getThumbUrl(photo)}/>
+                    </Link>
+                </GridListTile>
+            ))}
+        </GridList>
     );
+};
 
-}
-
+export default PhotoGrid;

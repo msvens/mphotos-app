@@ -50,5 +50,7 @@ export interface Photo {
     iso: number;
     exposure: string;
     fNumber: number;
+    width: number;
+    height: number;
 }
 
