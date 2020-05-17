@@ -12,6 +12,7 @@ const useStyles = makeStyles((theme: Theme) =>
         root: {
             flexGrow: 1,
             margin: 'auto',
+            paddingBottom: theme.spacing(2)
         },
         divider: {
             marginTop: theme.spacing(2),
@@ -71,7 +72,7 @@ const PhotoNav: React.FC<PhotoNavProps> = (props: PhotoNavProps) => {
                         <Typography variant="body2" gutterBottom align="center">
                             {getText()}
                         </Typography>
-                        <Divider className={classes.divider}/>
+                        {/*<Divider className={classes.divider}/>*/}
                     </Grid>
                 </Grid>
         </div>

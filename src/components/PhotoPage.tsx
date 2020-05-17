@@ -19,7 +19,6 @@ const useStyles = makeStyles((theme: Theme) =>
             flexWrap: 'wrap',
             justifyContent: 'space-around',
             overflow: 'hidden',
-            maxWidth: 1200,
             margin: 'auto'
 
         },
@@ -30,19 +29,11 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         imgItem: {
             display: 'flex',
-            maxHeigh: 800,
-            height: 800,
+            // maxHeigh: 800,
+            // height: 800,
+            maxWidth: 1080,
 
         },
-        title: {
-          textDecoration: "underline"
-        },
-        arrow: {
-            display: 'flex',
-            marginTop: theme.spacing(10),
-        },
-        info: {
-        }
     }),
 );
 
@@ -107,21 +98,21 @@ const PhotoPage: React.FC<PhotoProps> = ({ id }) => {
         <div className={classes.root}>
             {photos.length > 0 &&
             <Grid container alignItems="center" justify="space-around">
-                <Grid item xs={9} className={classes.info}>
+                <Grid item xs={12}>
                     <PhotoNav photo={photos[idx]}
                               onClickForward={handleForward}
                               onClickPrev={handleBackward}
                               isLoggedIn={loggedIn}
                               onClickProfile={setProfilePic}/>
                 </Grid>
-                <Grid item xs={9} className={classes.imgItem} justify="center">
+                <Grid item xs={12} className={classes.imgItem} justify="center">
                     <img className={classes.img} alt={photos[idx].title} src={PhotosApi.getImageUrl(photos[idx])} onClick={handleOpen}/>
                 </Grid>
             </Grid>
             }
-            {photos.length > 0 &&
-                <PhotoDialog url={PhotosApi.getImageUrl(photos[idx])} openDialog={open} onClose={handleClose}/>
-            }
+            {/*{photos.length > 0 &&*/}
+            {/*    <PhotoDialog url={PhotosApi.getImageUrl(photos[idx])} openDialog={open} onClose={handleClose}/>*/}
+            {/*}*/}
         </div>
     );
 };

@@ -12,8 +12,9 @@ const useStyles = makeStyles((theme: Theme) =>
             overflow: 'hidden',
         },
         paper: {
-            width: 800,
-            padding: "1em"
+            maxWidth: 700,
+            width: 700,
+            padding: theme.spacing(2)
         }
     }),
 );
@@ -23,7 +24,7 @@ export default function AboutPage() {
 
     return (
         <div className={classes.root}>
-            <Paper className={classes.paper} elevation={1}>
+            <Paper className={classes.paper} elevation={2} >
                 <Typography variant="h4">About</Typography>
                 <Typography variant="body1" paragraph>
                     Mellowtech Photos is my personal photoblog. It also serves as the homepage for mellowtech (see below)

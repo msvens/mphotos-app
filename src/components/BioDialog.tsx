@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme: Theme) =>
             width: 1020,
             maxWidth: 1020,
             paddingBottom: theme.spacing(4),
-            paddingLeft: theme.spacing(10)
+            paddingLeft: theme.spacing(4)
         },
         paper: {
             padding: theme.spacing(2),

@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme: Theme) =>
             margin: 'auto',
             minHeight: '100vh',
             backgroundColor: theme.palette.grey["50"],
-            paddingBottom: theme.spacing(10)
+            paddingBottom: theme.spacing(5)
         },
         appBar: {
             paddingLeft:theme.spacing(2),
@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme: Theme) =>
         appBarDivider: {
         },
         content: {
-            paddingTop: theme.spacing(10),
+            paddingTop: theme.spacing(5),
         },
     }),
 );
