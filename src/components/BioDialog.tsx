@@ -7,6 +7,7 @@ const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
             flexGrow: 1,
+            flexWrap: 'nowrap',
             margin: 'auto',
             width: 1020,
             maxWidth: 1020,
@@ -20,6 +21,8 @@ const useStyles = makeStyles((theme: Theme) =>
         image: {
             width: 128,
             height: 128,
+            maxWidth: 128,
+            maxHeight: 128,
         },
         img: {
             margin: 'auto',

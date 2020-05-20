@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {createStyles, Paper, Theme, Typography} from "@material-ui/core";
+import {createStyles, Link, Paper, Theme, Typography} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -32,27 +32,32 @@ export default function AboutPage() {
                     did what I exactly wanted. Namely to
                     <ul>
                         <li>Take full advantage of exif information stored typically in your jpegs</li>
-                        <li>Offer a tight integration with Lightroom</li>
+                        <li>All editing (including meta information) done in lightroom</li>
                         <li>Offer a tight integration with Google Drive</li>
-                        <li>Fully automated process from Lightroom to Website</li>
                     </ul>
-                    Full automation is difficult to achieve so I settled with the following goals:
-                    <ol>
-                        <li>I should be able to edit my photos in lightroom such that all meta information (exif, etc)
-                            will be automatically rendered on my photoblog, e.g. title, keywords, camera make, etc
-                        </li>
-                        <li>I should be able to connect to a specifc Google drive folder where I upload images my images
-                        that will be automatically pulled to my photoblog</li>
-                    </ol>
-                    <i>As it turns out one can also automate the lightroom to google drive process</i>
-                    <p>
-                        So my workflow (if successfull) would be something like this. Import to lightroom. Edit photo.
-                        Publish photo to a specific google drive folder. Regularly pull photos from the google drive
-                        folder to the website. <i>The only manual steps are the photo editing and publish step</i>
-                    </p>
                 </Typography>
-                <Typography variant="h5">Technical Details</Typography>
+                <Typography variant="h5">Technical Detail</Typography>
                 <Typography variant="body1" paragraph gutterBottom>
+                This website uses Go for the backend and React as its frontend. You can find the code in the following
+                projects
+                <ul>
+                    <li><Link href="https://www.github.com/msvens/mphotos">mphotos</Link> - backend service</li>
+                    <li><Link href="https://www.github.com/msvens/mphotos-app">mphotos-app</Link> - react frontend</li>
+                    <li><Link href="https://www.github.com/msvens/mdrive">mdrive</Link> - simplified google drive access</li>
+                    <li><Link href="https://www.github.com/msvens/mexif">mexif</Link> - extract exif information from images</li>
+                </ul>
+                </Typography>
+                <Typography variant="body1" paragraph={true} gutterBottom={true}>
+                    A big thanks to the following libraries and tools that made this project possible:
+                    <ul>
+                        <li><Link href="https://reactjs.org/docs/create-a-new-react-app.html">react-app</Link></li>
+                        <li><Link href="https://material-ui.com">material-ui</Link></li>
+                        <li><Link href="https://exiftool.org">exiftool</Link></li>
+                        <li><Link href="https://libvips.github.io/libvips/API/current/Using-vipsthumbnail.md.html">libvips</Link></li>
+                        <li><Link href="https://github.com/gorilla/mux">gorilla mux</Link></li>
+                        <li><Link href="https://github.com/gorilla/sessions">gorialla sessions</Link></li>
+                    </ul>
+
                 </Typography>
                 <Typography variant="h4">Mellowtech</Typography>
                 <Typography variant="body1" paragraph>

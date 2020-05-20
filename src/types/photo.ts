@@ -47,6 +47,8 @@ export interface Photo {
     cameraModel: string;
     lensMake?: string;
     lensModel?: string;
+    focalLength: string;
+    focalLength35: string;
     iso: number;
     exposure: string;
     fNumber: number;

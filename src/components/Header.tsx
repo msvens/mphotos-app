@@ -23,6 +23,7 @@ import {
     Link, RouteComponentProps
 } from "react-router-dom";
 import {Divider} from "@material-ui/core";
+import ScrollIntoView from "./ScrollIntoView";
 
 
 interface MatchParams {
@@ -66,6 +67,7 @@ export default function PrimaryAppBar() {
 
     return (
         <Router>
+            <ScrollIntoView/>
         <div className={classes.root}>
             <AppBar className={classes.appBar} position="sticky" color={'transparent'} elevation={0}>
                 <Toolbar style={{paddingLeft:0, paddingRight:0}}>

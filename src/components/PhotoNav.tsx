@@ -35,6 +35,31 @@ const PhotoNav: React.FC<PhotoNavProps> = (props: PhotoNavProps) => {
 
     const classes = useStyles();
 
+    const getDate = () => {
+        const date = new Date(props.photo.originalDate);
+        return months[date.getMonth()] + " " + date.getDate() + " " + date.getFullYear()+". ";
+    };
+
+    const getCamera = () => {return props.photo.cameraModel+ ". "};
+    const getFocal = () => {
+        if(props.photo.focalLength35 != "")
+            return props.photo.focalLength + " (" + props.photo.focalLength35+"). ";
+        else
+            return props.photo.focalLength + ". ";
+    };
+    const getCameraSetting = () => {
+        return "f" + props.photo.fNumber + ". iso" + props.photo.iso + ". " + props.photo.exposure +" secs."
+    };
+    const getDimension = () => {return props.photo.width + "x" + props.photo.height + ". ";};
+    /*const getFNumber = () => {return "f"+props.photo.fNumber+". ";};
+    const getISO = () => {return "iso"+props.photo.iso+". "};
+    const getExp = () => {return props.photo.exposure+"secs. "};*/
+    const getTitle = () => {
+        return props.photo.title === "" ? "" : props.photo.title + ". ";
+    };
+
+
+
     const getText = ():string => {
         const date = new Date(props.photo.originalDate);
         const dateStr = months[date.getMonth()] + " " + date.getDate() + " " + date.getFullYear();
@@ -70,7 +95,7 @@ const PhotoNav: React.FC<PhotoNavProps> = (props: PhotoNavProps) => {
                     </Grid>
                     <Grid item xs={12}>
                         <Typography variant="body2" gutterBottom align="center">
-                            {getText()}
+                            {getTitle()}{getDimension()}{getCamera()}{getFocal()}{getCameraSetting()}
                         </Typography>
                         {/*<Divider className={classes.divider}/>*/}
                     </Grid>
