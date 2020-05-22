@@ -25,6 +25,7 @@ const Drive: React.FC = () => {
                 if(u.driveFolderName)
                     setFolder(u.driveFolderName);
             })
+            .catch(e => alert(e.toString()));
     },[]);
 
     const handleFolderChange = (event: React.ChangeEvent<HTMLInputElement>) => {

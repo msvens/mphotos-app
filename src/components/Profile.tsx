@@ -24,6 +24,7 @@ const Profile: React.FC = () => {
                 setBio(u.bio);
                 setPic(u.pic);
             })
+            .catch(e => alert(e.toString()))
     },[]);
 
     const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
