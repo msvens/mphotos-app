@@ -76,15 +76,16 @@ export default function AccountPage() {
     },[]);
 
     const handleLogin = (password: string) => {
-        PhotosApi.login(password).then(b => {
-            PhotosApi.isLoggedIn().then(b => setLoggedIn(b))
-        })
+        PhotosApi.login(password).then(res => setLoggedIn(res.authenticated));
     };
 
     const handleLogout = async (e: React.MouseEvent) =>  {
         e.preventDefault();
-        alert("clicked logout");
-
+        alert("before logout");
+        PhotosApi.logout().then(res => {
+            alert(res.authenticated);
+            setLoggedIn(res.authenticated)
+        }).catch(e => alert(e));
     };
 
     return (
@@ -108,7 +109,7 @@ export default function AccountPage() {
                    <Typography paragraph>
                        By Logging out you will no longer be able to upload pictures, etc.
                    </Typography>
-                   <Button variant="contained" color="primary" onClick={handleLogout}>Logout Now</Button>
+                   <Button variant="outlined" onClick={handleLogout}>Logout Now</Button>
                </Container>
                }
             </main>

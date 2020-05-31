@@ -39,8 +39,8 @@ export interface Photo {
     md5: string;
     fileName: string;
     title: string;
-    keywords?: string;
-    description?: string;
+    keywords: string;
+    description: string;
     driveDate: string;
     originalDate: string;
     cameraMake: string;

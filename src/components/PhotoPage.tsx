@@ -3,7 +3,6 @@ import {makeStyles, createStyles, Theme, Grid} from "@material-ui/core";
 import {Photo} from "../types/photo";
 
 import PhotosApi from "../services/api";
-import PhotoDialog from "./PhotoDialog";
 import PhotoNav from "./PhotoNav";
 
 
@@ -40,8 +39,8 @@ const useStyles = makeStyles((theme: Theme) =>
 const PhotoPage: React.FC<PhotoProps> = ({ id }) => {
 
     const [photos, setPhotos] = useState<Photo[]> ([]);
+    const [, updateState] = React.useState();
     const [idx, setIdx] = useState<number> (0);
-    const [open, setOpen] = useState<boolean>(false);
     const [loggedIn, setLoggedIn] = useState<boolean>(false);
     const classes = useStyles();
 
@@ -51,7 +50,7 @@ const PhotoPage: React.FC<PhotoProps> = ({ id }) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            await PhotosApi.getPhotos(0).then(res => {
+            await PhotosApi.getPhotos(1000).then(res => {
                 if(res.photos) {
                     console.log(res.length);
                     for (let i = 0; i < res.photos.length; i++) {
@@ -81,18 +80,34 @@ const PhotoPage: React.FC<PhotoProps> = ({ id }) => {
     };
 
     const setProfilePic = () => {
-        PhotosApi.updateUser(undefined, undefined, photos[idx].fileName)
+        PhotosApi.updateUserPic(photos[idx].fileName)
             .then(u => alert(u.pic))
             .catch(e => alert(e.toString()));
     };
 
-    const handleClose = () => {
-        setOpen(false);
-    };
+    const updatePhoto = (title: string, description: string, keywords: string) => {
+        const driveId = photos[idx].driveId
+        PhotosApi.updatePhoto(driveId, title, description, keywords)
+            .then(p => {
+                photos[idx] = p;
+                updateState({})
+            })
+            .catch(e => alert(e.toString()))
+    }
 
-    const handleOpen = () => {
-        setOpen(true);
-    };
+    const deletePhoto = (removeFiles: boolean) => {
+        const driveId = photos[idx].driveId
+        PhotosApi.deletePhoto(driveId, removeFiles)
+            .then(p => {
+                var newPhotos = photos.filter(obj => obj.driveId !== driveId)
+                setPhotos(newPhotos)
+                if(idx >= newPhotos.length) {
+                    setIdx(0)
+                }
+                alert(p.driveId+" was deleted")
+            })
+            .catch(e => alert(e.toString()))
+    }
 
     return (
         <div className={classes.root}>
@@ -103,16 +118,15 @@ const PhotoPage: React.FC<PhotoProps> = ({ id }) => {
                               onClickForward={handleForward}
                               onClickPrev={handleBackward}
                               isLoggedIn={loggedIn}
-                              onClickProfile={setProfilePic}/>
+                              onClickProfile={setProfilePic}
+                              onDelete={deletePhoto}
+                              onUpdatePhoto={updatePhoto}/>
                 </Grid>
                 <Grid item xs={12} className={classes.imgItem} justify="center">
-                    <img className={classes.img} alt={photos[idx].title} src={PhotosApi.getImageUrl(photos[idx])} onClick={handleOpen}/>
+                    <img className={classes.img} alt={photos[idx].title} src={PhotosApi.getImageUrl(photos[idx])}/>
                 </Grid>
             </Grid>
             }
-            {/*{photos.length > 0 &&*/}
-            {/*    <PhotoDialog url={PhotosApi.getImageUrl(photos[idx])} openDialog={open} onClose={handleClose}/>*/}
-            {/*}*/}
         </div>
     );
 };

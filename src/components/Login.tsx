@@ -16,7 +16,7 @@ export interface LoginProps {
 
 const Login: React.FC<LoginProps> = (props: LoginProps) => {
     const classes = useStyles();
-    const [password, setPassword] = React.useState('password');
+    const [password, setPassword] = React.useState();
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(event.target.value);

@@ -4,11 +4,6 @@ interface AuthUser {
     authenticated: boolean
 }
 
-interface PhotosResponse {
-    error?: ApiError;
-    data?: Photo[];
-}
-
 interface MPhotosResponse<T> {
     error?: ApiError
     data?: T
@@ -45,97 +40,36 @@ export interface PhotoList {
     photos: Photo[];
 }
 
+export interface Job {
+    id: string;
+    state: string;
+    percent: number;
+    numFiles: number;
+    numProcessed: number;
+    error?: ApiError;
+}
+
 class PhotoApi {
 
-    checkDrive(): Promise<DriveFiles> {
-        return fetch('/api/drive/check')
-            .then(res => res.json())
-            .then(res => res as MPhotosResponse<DriveFiles>)
-            .then(res => {
-                if(res.data)
-                    return res.data;
-                else if(res.error)
-                    throw new Error(res.error.message);
-                else
-                    throw new Error("unknown error");
-            })
+    private static convert<T>(resp: MPhotosResponse<T>): T {
+        if(resp.data)
+            return resp.data
+        else if(resp.error)
+            throw new Error(resp.error.code+": "+resp.error.message)
+        else
+            throw new Error("no payload");
     }
 
-    deletePhotos(removeFiles: boolean): Promise<PhotoList> {
-        const url = removeFiles ? '/api/photos?removeFiles=true' : 'api/photos';
-        return fetch(url, {method: 'DELETE'})
+    private static req(url: string, method: string = 'GET'): Promise<any> {
+        return fetch(url, {method: method} )
             .then(res => res.json())
-            .then(res => res as MPhotosResponse<PhotoList>)
-            .then(res => {
-                if(res.data)
-                    return res.data;
-                else if(res.error)
-                    throw new Error(res.error.message);
-                else
-                    throw new Error("unknown result");
-            })
     }
 
-    login(password: string): Promise<boolean> {
-        const formData = new FormData();
-        formData.append("password", password);
-        return fetch('/api/login', {
-            method: 'POST',
-            body: formData})
+    private static reqBody(url: string, data: any, method: string = 'PUT'): Promise<any> {
+        return fetch(url,
+            {method: method, headers: {'Content-Type': 'application/json'},body: JSON.stringify(data)})
             .then(res => res.json())
-            .then(res => res as MPhotosResponse<AuthUser>)
-            .then(res => {
-                if(res.data)
-                    return res.data.authenticated;
-                else if(res.error)
-                    throw new Error(res.error.message);
-                else
-                    throw new Error("unknown error")
-            });
     }
-
-    logout(): Promise<boolean> {
-        return fetch('/api/logout')
-            .then(res => res.json())
-            .then(res => res as MPhotosResponse<AuthUser>)
-            .then(res => {
-                if(res.data)
-                    return res.data.authenticated;
-                else
-                    return false;
-            })
-    }
-
-    isLoggedIn(): Promise<boolean> {
-
-        return fetch('/api/loggedin')
-            .then(res => res.json())
-            .then(res => res as MPhotosResponse<AuthUser>)
-            .then(res => {
-                if(res.data)
-                    return res.data.authenticated;
-                else if(res.error)
-                    throw new Error(res.error.message);
-                else
-                    throw new Error("unknown error")
-            })
-    }
-
-    listDrive(): Promise<DriveFiles> {
-        return fetch('/api/drive')
-            .then(res => res.json())
-            .then(res => res as MPhotosResponse<DriveFiles>)
-            .then(res => {
-                if(res.data)
-                    return res.data;
-                else if(res.error)
-                    throw new Error(res.error.message);
-                else
-                    throw new Error("unknown error");
-            })
-    }
-
-
 
     getImageUrl(p: Photo):string {
         return "/api/images/".concat(p.fileName)
@@ -146,117 +80,104 @@ class PhotoApi {
     };
 
     getProfilePicUrl(u: User): string {
-        return u.pic ? "/api/thumbs/".concat(u.pic) : "";
+        return u.pic !== "" ? "/api/thumbs/".concat(u.pic) : u.pic;
+    }
+
+
+    checkDrive(): Promise<DriveFiles> {
+        return PhotoApi.req('api/drive/check')
+            .then(res => res as MPhotosResponse<DriveFiles>).then(res => PhotoApi.convert(res));
+    }
+
+    deletePhoto(photoId: string, removeFiles: boolean): Promise<Photo> {
+        return PhotoApi.reqBody(`/api/photos/${photoId}`, {removeFiles: removeFiles}, 'DELETE')
+            .then(res => res as MPhotosResponse<Photo>).then(res => PhotoApi.convert(res));
+    }
+
+    deletePhotos(removeFiles: boolean): Promise<PhotoList> {
+        return PhotoApi.reqBody('/api/photos', {removeFiles: removeFiles}, 'DELETE')
+            .then(res => res as MPhotosResponse<PhotoList>).then(res => PhotoApi.convert(res));
+    }
+
+    login(password: string): Promise<AuthUser> {
+        return PhotoApi.reqBody('/api/login', {password: password}, 'POST')
+            .then(res => res as MPhotosResponse<AuthUser>).then(res => PhotoApi.convert(res));
+    }
+
+    logout(): Promise<AuthUser> {
+        return PhotoApi.req('/api/logout')
+            .then(res => res as MPhotosResponse<AuthUser>).then(res => PhotoApi.convert(res));
+    }
+
+    isLoggedIn(): Promise<boolean> {
+        return PhotoApi.req('/api/loggedin')
+            .then(res => res as MPhotosResponse<AuthUser>)
+            .then(res => PhotoApi.convert(res).authenticated);
+    }
+
+    listDrive(): Promise<DriveFiles> {
+        return PhotoApi.req('/api/drive')
+            .then(res => res as MPhotosResponse<DriveFiles>).then(res => PhotoApi.convert(res));
     }
 
     getPhotos(limit: number): Promise<PhotoList> {
-        var url = limit > 0 ? '/api/photos?limit='+limit : '/api/photos';
-        return fetch(url)
-            .then(res => res.json())
-            .then(res => res as MPhotosResponse<PhotoList>)
-            .then(res => {
-                if(res.data)
-                    return res.data;
-                else if(res.error)
-                    throw new Error(res.error.message);
-                else
-                    throw new Error("unknown data");
-            });
+        return PhotoApi.req(`/api/photos?limit=${limit}`)
+            .then(res => res as MPhotosResponse<PhotoList>).then(res => PhotoApi.convert(res))
     }
 
     getPhoto(photoId: string): Promise<Photo> {
-        return fetch(`/api/photos/${photoId}`)
-            .then(res => res.json())
-            .then(res => res as MPhotosResponse<Photo>)
-            .then(res => {
-              if(res.data)
-                  return res.data;
-              else if(res.error)
-                  throw new Error(res.error.message);
-              else
-                  throw new Error("unknown error")
-            });
-    };
-
-    getUser(): Promise<User> {
-        return fetch('/api/user')
-            .then(res => res.json())
-            .then(res => res as MPhotosResponse<User>)
-            .then(res => {
-                if(res.data)
-                    return res.data;
-                else if(res.error)
-                    throw new Error(res.error.message);
-                else
-                    throw new Error("unknown error")
-            })
+        return PhotoApi.req(`/api/photos/${photoId}`)
+            .then(res => res as MPhotosResponse<Photo>).then(res => PhotoApi.convert(res));
     }
 
-    updateDriveFolder(name: string): Promise <User> {
-        const formData = new FormData();
-        formData.append("name", name);
-        return fetch('/api/drive', {method: 'POST', body: formData})
-            .then(res => res.json())
-            .then(res => res as MPhotosResponse<User>)
-            .then(res => {
-                if(res.data)
-                    return res.data;
-                else if(res.error)
-                    throw new Error(res.error.message);
-                else
-                    throw new Error("unknown error");
-            });
+    getUser(): Promise<User> {
+        return PhotoApi.req('/api/user')
+            .then(res => res as MPhotosResponse<User>).then(res => PhotoApi.convert(res));
+    }
+
+    statusJob(id: string): Promise<Job> {
+        return PhotoApi.req(`/api/photos/job/${id}`)
+            .then(res => res as MPhotosResponse<Job>)
+            .then(res => PhotoApi.convert(res))
+    }
+
+    scheduleUpdatePhotos(): Promise<Job> {
+        return PhotoApi.req('/api/photos/job/schedule', 'POST')
+            .then(res => res as MPhotosResponse<Job>)
+            .then(res => PhotoApi.convert(res));
     }
 
     updatePhotos(): Promise<DriveFiles> {
-        return fetch('/api/photos', {method: 'PUT'})
-            .then(res => res.json())
+        return PhotoApi.req('/api/photos', 'PUT')
             .then(res => res as MPhotosResponse<DriveFiles>)
-            .then(res => {
-                if(res.data)
-                    return res.data;
-                else if(res.error)
-                    throw new Error(res.error.message);
-                else
-                    throw new Error("unknown error");
-            });
+            .then(res => PhotoApi.convert(res));
     };
 
-    updateUser(name?: string, bio?: string, pic?: string): Promise<User> {
-        const arr = new Array<string>();
-        const formData = new FormData();
-        if(name) {
-            arr.push("name");
-            formData.append("name", name);
-        }
-        if(bio) {
-            arr.push("bio");
-            formData.append("bio", bio);
-        }
-        if(pic) {
-            arr.push("pic");
-            formData.append("pic", pic)
-        }
-        if (arr.length < 3) {
-            formData.append("columns", arr.join(","));
-        }
-        return fetch('/api/user', {method: 'POST', body: formData})
-            .then(res => res.json())
+    updatePhoto(photoId: string, title: string, description: string, keywords: string): Promise<Photo> {
+        const data = {id: photoId, title: title, description: description, keywords: keywords.split(",")}
+        return PhotoApi.reqBody(`/api/photos/${photoId}`, data)
+            .then(res => res as MPhotosResponse<Photo>)
+            .then(res => PhotoApi.convert(res));
+    }
+
+    updateUserDrive(name: string): Promise <User> {
+        return PhotoApi.reqBody('/api/user/drive', {driveFolderName: name})
             .then(res => res as MPhotosResponse<User>)
-            .then(res => {
-                if(res.data)
-                    return res.data;
-                else if(res.error)
-                    throw new Error(res.error.message);
-                else
-                    throw new Error("unknown error");
-
-            });
+            .then(res => PhotoApi.convert(res));
     }
 
-    private static isEmpty(str: string): boolean {
-       return (!str || 0 === str.length);
+    updateUserPic(pic: string): Promise<User> {
+        return PhotoApi.reqBody('/api/user/pic', {pic: pic})
+            .then(res => res as MPhotosResponse<User>)
+            .then(res => PhotoApi.convert(res))
     }
+
+    updateUser(name: string, bio: string, pic: string): Promise<User> {
+        return PhotoApi.reqBody('/api/user', {name: name, bio: bio, pic: pic})
+            .then(res => res as MPhotosResponse<User>)
+            .then(res => PhotoApi.convert(res));
+    }
+
 }
 
 const PhotosApi = new PhotoApi();

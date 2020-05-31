@@ -44,32 +44,19 @@ const BioDialog: React.FC = () => {
             .catch(e => alert(e.toString()));
     }, []);
 
-    const getName = ():string => {
-        return user && user.name ? user.name : "";
-    };
-
-    const getBio = ():string => {
-        return user && user.bio ? user.bio : "";
-    };
-
-
   return (
     <div className={classes.root}>
         <Grid container spacing={3} justify="flex-start" alignItems="center">
-            <Grid item>
+            <Grid item xs={2}>
                 {user && user.pic &&
-                <Avatar alt={getName()} src={PhotosApi.getProfilePicUrl(user)} className={classes.image}/>
+                <Avatar alt={user.name} src={PhotosApi.getProfilePicUrl(user)} className={classes.image}/>
                 }
             </Grid>
             <Grid item>
                 <Typography variant="subtitle1" gutterBottom>
-                    <strong>
-                    {getName()}
-                    </strong>
+                    <strong>{user ? user.name : ''}</strong>
                 </Typography>
-                <Typography variant="body2" gutterBottom>
-                    {getBio()}
-                </Typography>
+                <Typography variant="body2" gutterBottom>{user ? user.bio : ''}</Typography>
             </Grid>
         </Grid>
     </div>

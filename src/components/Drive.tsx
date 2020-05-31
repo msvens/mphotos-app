@@ -1,7 +1,13 @@
 import React, {useEffect} from "react";
 import PhotosApi from "../services/api";
-import {Button, Divider, TextField, Typography} from "@material-ui/core";
+import {
+    Button,
+    Divider,
+    TextField,
+    Typography
+} from "@material-ui/core";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
+import DeletePhotosDialog from "./DeletePhotosDialog";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -15,6 +21,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const Drive: React.FC = () => {
     const [folder, setFolder] = React.useState('');
     const [id, setId] = React.useState('');
+    const [openDelete, setOpenDelete] = React.useState(false);
     const classes = useStyles();
 
     useEffect(() => {
@@ -34,20 +41,13 @@ const Drive: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) =>  {
         e.preventDefault();
-        PhotosApi.updateDriveFolder(folder)
+        PhotosApi.updateUserDrive(folder)
             .then(u => {
                 if(u.driveFolderName)
                     setFolder(u.driveFolderName);
                 if(u.driveFolderId)
                     setId(id)
             })
-            .catch(err => alert(err.toString()))
-    };
-
-    const handleDelete = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        PhotosApi.deletePhotos(true)
-            .then(photos => alert("deleted "+photos.length+" photos"))
             .catch(err => alert(err.toString()))
     };
 
@@ -65,8 +65,16 @@ const Drive: React.FC = () => {
             .catch(err => alert(err.toString()));
     };
 
+    const handleCancelDelete = () => {setOpenDelete(false)}
+
+    const handleDelete = (forever:  boolean) => {
+        PhotosApi.deletePhotos(forever)
+            .then(photos => alert("deleted "+photos.length+" photos"))
+            .catch(err => alert(err.toString()))
+    };
+
     return (
-        <React.Fragment>
+        <div>
             <form onSubmit={handleSubmit}>
                 <TextField id="folderField" label="Folder Name" margin="normal" variant="outlined"
                            value={folder} onChange={handleFolderChange} fullWidth
@@ -96,11 +104,10 @@ const Drive: React.FC = () => {
             <Typography variant="body1" paragraph={true}>
                 <strong>Warning!</strong> this action removes all physical copies of your photos!
             </Typography>
-            <form onSubmit={handleDelete}>
-                <Button variant="outlined" type="submit">Delete All Photos</Button>
-            </form>
+            <Button variant="outlined" onClick={() => setOpenDelete(true)}>Delete All Photos</Button>
             <Divider className={classes.divider}/>
-        </React.Fragment>
+            <DeletePhotosDialog altTitle="Remove all photos from service?" open={openDelete} onDelete={handleDelete} onClose={handleCancelDelete}/>
+        </div>
     )
 };
 
