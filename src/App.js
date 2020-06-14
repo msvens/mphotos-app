@@ -1,5 +1,5 @@
 import React from 'react';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { createMuiTheme, responsiveFontSizes, ThemeProvider } from '@material-ui/core/styles';
 import 'typeface-roboto';
 
 import './App.css';
@@ -7,10 +7,18 @@ import PrimaryAppBar from "./components/Header";
 
 function App() {
 
-  const theme = createMuiTheme({
+  let theme = createMuiTheme({
     typography: {
       fontFamily: 'Roboto',
+      body1: {
+        lineHeight: '1.5em',
+      },
       h4: {
+        marginTop: '2em',
+        textTransform: 'uppercase',
+      },
+      h5: {
+        marginTop: '2em',
         textTransform: 'uppercase',
       },
       h6: {
@@ -18,6 +26,8 @@ function App() {
       }
     },
   });
+
+  theme = responsiveFontSizes(theme)
 
   return (
       <ThemeProvider theme={theme}>

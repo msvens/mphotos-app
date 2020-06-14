@@ -1,13 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import {makeStyles, createStyles, Theme, Grid} from "@material-ui/core";
+import {makeStyles, createStyles, Theme, Grid, Typography} from "@material-ui/core";
 import {Photo} from "../types/photo";
 
-import PhotosApi from "../services/api";
+import PhotosApi, {SearchPhotoParams} from "../services/api";
 import PhotoNav from "./PhotoNav";
+import * as queryString from "querystring";
 
 
 interface PhotoProps {
     id: string,
+    query?: string
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -36,7 +38,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-const PhotoPage: React.FC<PhotoProps> = ({ id }) => {
+const PhotoPage: React.FC<PhotoProps> = (props: PhotoProps) => {
 
     const [photos, setPhotos] = useState<Photo[]> ([]);
     const [, updateState] = React.useState();
@@ -50,21 +52,30 @@ const PhotoPage: React.FC<PhotoProps> = ({ id }) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            await PhotosApi.getPhotos(1000).then(res => {
-                if(res.photos) {
-                    console.log(res.length);
-                    for (let i = 0; i < res.photos.length; i++) {
-                        console.log(i);
-                        if (res.photos[i].driveId === id) {
-                            setIdx(i)
-                        }
+            if(props.query) {
+                await PhotosApi.searchPhotos(props.query).then(res => {
+                    if(res.photos) {
+                        setIdx(0);
+                        setPhotos(res.photos);
                     }
-                    setPhotos(res.photos);
-                }
-            });
+                });
+            } else {
+                await PhotosApi.getPhotos(1000).then(res => {
+                    if(res.photos) {
+                        for (let i = 0; i < res.photos.length; i++) {
+                            console.log(i);
+                            if (res.photos[i].driveId === props.id) {
+                                setIdx(i)
+                            }
+                        }
+                        setPhotos(res.photos);
+                    }
+                });
+            }
+
         };
         fetchData();
-    }, [id]);
+    }, [props.id, props.query]);
 
     const handleForward = () => {
         let newIdx = idx+1;
@@ -72,12 +83,27 @@ const PhotoPage: React.FC<PhotoProps> = ({ id }) => {
             newIdx = 0;
         setIdx(newIdx);
     };
+
     const handleBackward = () => {
         let newIdx = idx-1;
         if(newIdx < 0)
             newIdx = photos.length - 1;
         setIdx(newIdx);
     };
+
+    const parseFilter = () => {
+        var ret = ""
+        if(props.query) {
+            const parsed = new URLSearchParams(props.query);
+            for (let entry of Array.from(parsed.entries())) {
+                let key = entry[0];
+                let value = entry[1];
+                ret = ret + key + " = " + value
+            }
+            //return "Camera Model = "+parsed.get("cameraModel")
+        }
+        return ret
+    }
 
     const setProfilePic = () => {
         PhotosApi.updateUserPic(photos[idx].fileName)
@@ -113,6 +139,13 @@ const PhotoPage: React.FC<PhotoProps> = ({ id }) => {
         <div className={classes.root}>
             {photos.length > 0 &&
             <Grid container alignItems="center" justify="space-around">
+                {props.query &&
+                    <Grid item xs={12} justify="center">
+                        <Typography variant="body2" align="center" color={'textSecondary'}>
+                        Filter: {parseFilter()}
+                        </Typography>
+                    </Grid>
+                }
                 <Grid item xs={12}>
                     <PhotoNav photo={photos[idx]}
                               onClickForward={handleForward}

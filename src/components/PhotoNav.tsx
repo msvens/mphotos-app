@@ -15,6 +15,8 @@ import ArrowForwardIosSharpIcon from "@material-ui/icons/ArrowForwardIosSharp";
 import FaceIcon from '@material-ui/icons/Face';
 import DeletePhotosDialog from "./DeletePhotosDialog";
 import EditPhotoDialog from "./EditPhotoDialog";
+import {Link as RouterLink} from "react-router-dom";
+import Link from "@material-ui/core/Link";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -54,7 +56,7 @@ const PhotoNav: React.FC<PhotoNavProps> = (props: PhotoNavProps) => {
     };
 
     const getCamera = () => {
-        return props.photo.cameraModel + ". "
+        return props.photo.cameraModel
     };
     const getFocal = () => {
         if (props.photo.focalLength35 !== "")
@@ -112,7 +114,10 @@ const PhotoNav: React.FC<PhotoNavProps> = (props: PhotoNavProps) => {
                 </Grid>
                 <Grid item xs={12}>
                     <Typography variant="body2" gutterBottom align="center">
-                        {getTitle()}{getDimension()}{getCamera()}{getFocal()}{getCameraSetting()}
+                        {getTitle()}{getDimension()}
+                        <Link component={RouterLink} to={`/search?cameraModel=${props.photo.cameraModel}`}>
+                            {getCamera()}
+                        </Link>. {getFocal()}{getCameraSetting()}
                     </Typography>
                 </Grid>
             </Grid>

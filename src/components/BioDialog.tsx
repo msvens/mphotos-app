@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
             flexGrow: 1,
-            flexWrap: 'nowrap',
+            flexWrap: 'wrap',
             margin: 'auto',
             width: 1020,
             maxWidth: 1020,
@@ -47,7 +47,7 @@ const BioDialog: React.FC = () => {
   return (
     <div className={classes.root}>
         <Grid container spacing={3} justify="flex-start" alignItems="center">
-            <Grid item xs={2}>
+            <Grid item>
                 {user && user.pic &&
                 <Avatar alt={user.name} src={PhotosApi.getProfilePicUrl(user)} className={classes.image}/>
                 }

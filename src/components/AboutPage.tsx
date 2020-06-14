@@ -1,7 +1,8 @@
 import React from 'react';
 
-import {createStyles, Link, Paper, Theme, Typography} from "@material-ui/core";
+import {Box, createStyles, Link, Theme, Typography} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
+import {ReactComponent as LogoWhite} from './mp_logo_white.svg';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -24,10 +25,13 @@ export default function AboutPage() {
 
     return (
         <div className={classes.root}>
-            <Paper className={classes.paper} elevation={2} >
-                <Typography variant="h4">About</Typography>
+            <div className={classes.paper}>
+                <Box width={200} marginLeft={"auto"} marginRight={"auto"} marginBottom={5}>
+                    <LogoWhite/>
+                </Box>
                 <Typography variant="body1" paragraph>
-                    Mellowtech Photos is my personal photoblog. It also serves as the homepage for mellowtech (see below)
+                    Mellowtech Photos is my personal photoblog. It also serves as the homepage for mellowtech
+                    (<Link href={"#mellowtech"}>see below</Link>)
                     There are a lot of photo blogs out there - instagram, flickr, photobucket, etc. None, however
                     did what I exactly wanted. Namely to
                     <ul>
@@ -47,7 +51,7 @@ export default function AboutPage() {
                     <li><Link href="https://www.github.com/msvens/mexif">mexif</Link> - extract exif information from images</li>
                 </ul>
                 </Typography>
-                <Typography variant="body1" paragraph={true} gutterBottom={true}>
+                <Typography variant="body1" paragraph={true} gutterBottom={true} >
                     A big thanks to the following libraries and tools that made this project possible:
                     <ul>
                         <li><Link href="https://reactjs.org/docs/create-a-new-react-app.html">react-app</Link></li>
@@ -59,7 +63,7 @@ export default function AboutPage() {
                     </ul>
 
                 </Typography>
-                <Typography variant="h4">Mellowtech</Typography>
+                <Typography variant="h4" id={"mellowtech"}>Mellowtech</Typography>
                 <Typography variant="body1" paragraph>
                     mellowtech came into existence back in 2002 when Martin Svensson and Rickard Cöster
                     (then 2 phd studends) decided to start a software company. A great deal of time was spent on finding
@@ -74,7 +78,7 @@ export default function AboutPage() {
                         have been developed recently.
                     </p>
                 </Typography>
-            </Paper>
+            </div>
         </div>
     );
 }

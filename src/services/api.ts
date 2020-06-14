@@ -49,6 +49,10 @@ export interface Job {
     error?: ApiError;
 }
 
+export interface SearchPhotoParams {
+    cameraModel?: string
+}
+
 class PhotoApi {
 
     private static convert<T>(resp: MPhotosResponse<T>): T {
@@ -122,6 +126,15 @@ class PhotoApi {
 
     getPhotos(limit: number): Promise<PhotoList> {
         return PhotoApi.req(`/api/photos?limit=${limit}`)
+            .then(res => res as MPhotosResponse<PhotoList>).then(res => PhotoApi.convert(res))
+    }
+
+    searchPhotos(query: string): Promise<PhotoList> {
+        /*const query = Object.entries(criteria).map((kv) => {
+            return kv[0] + '=' + encodeURIComponent(kv[1])
+        }).join('&');
+        alert(query)*/
+        return PhotoApi.req(`/api/photos/search${query}`)
             .then(res => res as MPhotosResponse<PhotoList>).then(res => PhotoApi.convert(res))
     }
 
