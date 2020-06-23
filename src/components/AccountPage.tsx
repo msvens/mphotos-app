@@ -10,7 +10,7 @@ import Drive from "./Drive";
 import Login from "./Login";
 
 
-const drawerWidth = 240;
+const drawerWidth = 140;
 
 const PROFILE = 'Profile';
 const DRIVE = 'Drive';
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme: Theme) =>
             margin: 'auto',
         },
         drawer: {
-            width: drawerWidth,
+            minWidth: drawerWidth,
             flexShrink: 0,
         },
         drawerPaper: {
@@ -91,7 +91,7 @@ export default function AccountPage() {
     return (
         <div className={classes.root}>
             <Box className={classes.drawer} component={"span"} borderRight={1}>
-                <Typography variant={"h5"}>Settings</Typography>
+                {/*<Typography variant={"h5"}>Settings</Typography>*/}
                 <List>
                     {Items.map((item, idx) => (
                         <ListItem button key={item} onClick={_ => setItem(item)}>

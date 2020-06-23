@@ -119,6 +119,16 @@ class PhotoApi {
             .then(res => PhotoApi.convert(res).authenticated);
     }
 
+    authGoogle(callback: string = '/login') {
+
+    }
+
+    isGoogleAuth(): Promise<boolean> {
+        return PhotoApi.req('/api/drive/authenticated')
+            .then(res => res as MPhotosResponse<AuthUser>)
+            .then(res => PhotoApi.convert(res).authenticated)
+    }
+
     listDrive(): Promise<DriveFiles> {
         return PhotoApi.req('/api/drive')
             .then(res => res as MPhotosResponse<DriveFiles>).then(res => PhotoApi.convert(res));
@@ -130,10 +140,6 @@ class PhotoApi {
     }
 
     searchPhotos(query: string): Promise<PhotoList> {
-        /*const query = Object.entries(criteria).map((kv) => {
-            return kv[0] + '=' + encodeURIComponent(kv[1])
-        }).join('&');
-        alert(query)*/
         return PhotoApi.req(`/api/photos/search${query}`)
             .then(res => res as MPhotosResponse<PhotoList>).then(res => PhotoApi.convert(res))
     }

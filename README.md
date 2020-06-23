@@ -16,6 +16,18 @@ photo blog.
 - Setting basic user profile information
 - Create, delete and edit image information
 
+# TODO
+- Infinite Scrolling of Image Grid
+- Customizable UI
+    - compact view (make more space for images)
+    - columns in image grid
+    - space between images in image grid
+    - what image information to display and how
+- Swipable image list
+- Smarter image sizing depending on landscape, portrait mode
+- Comments, Likes
+- Tablet/Mobile enhancements
+
 # Thanks
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
