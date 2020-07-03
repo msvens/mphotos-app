@@ -1,9 +1,7 @@
-
 import React from 'react';
 import {createStyles, fade, makeStyles, Theme} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MonochromePhotosIcon from '@material-ui/icons/MonochromePhotos';
 import AccountBoxOutlinedIcon from '@material-ui/icons/AccountBoxOutlined';
@@ -28,6 +26,8 @@ import ScrollIntoView from "./ScrollIntoView";
 import MPIcon from "./MPIcon";
 import MPWordIcon from "./MPWordIcon";
 import InputBase from "@material-ui/core/InputBase";
+import TopBar from "./TopBar";
+import PhotoPage2 from "./PhotoPage2";
 
 
 interface MatchParams {
@@ -47,23 +47,22 @@ const useStyles = makeStyles((theme: Theme) =>
             paddingBottom: theme.spacing(5)
         },
         appBar: {
-            paddingLeft:theme.spacing(2),
+            paddingLeft: theme.spacing(2),
             marginLeft: 0,
-            paddingRight:theme.spacing(2),
+            paddingRight: theme.spacing(2),
             marginRight: 0,
             backgroundColor: theme.palette.common.white
         },
         wordTitle: {
-            marginLeft:0,
+            marginLeft: 0,
             paddingLeft: theme.spacing(1),
             flexGrow: 1,
         },
         iconTitle: {
-            flexGrow:1,
-            marginLeft:0,
+            flexGrow: 1,
+            marginLeft: 0,
         },
-        appBarDivider: {
-        },
+        appBarDivider: {},
         content: {
             paddingTop: theme.spacing(5),
         },
@@ -111,73 +110,31 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-export default function PrimaryAppBar() {
+export default function MPhotosApp() {
     const classes = useStyles();
     const showSearch = false;
 
     return (
         <Router>
             <ScrollIntoView/>
-        <div className={classes.root}>
-            <AppBar className={classes.appBar} position="sticky" color={'transparent'} elevation={0}>
-                <Toolbar style={{paddingLeft:0, paddingRight:0}}>
-                    <Hidden smUp>
-                        <Box className={classes.iconTitle}>
-                            <IconButton aria-label="home" color="inherit" component={Link} to="/">
-                                <MPIcon key="topLogo" mpColor="white" fontSize="large"/>
-                            </IconButton>
-                        </Box>
-                    </Hidden>
-                    <Hidden xsDown>
-                        <Box className={classes.wordTitle}>
-                            <MPWordIcon height={32}/>
-                        </Box>
-                    </Hidden>
-                    {showSearch &&
-                    <div className={classes.search}>
-                        <div className={classes.searchIcon}>
-                            <SearchIcon/>
-                        </div>
-                        <InputBase
-                            placeholder="Search…"
-                            classes={{
-                                root: classes.inputRoot,
-                                input: classes.inputInput,
-                            }}
-                            inputProps={{'aria-label': 'search'}}
-                        />
-                    </div>
-                    }
-                    <div className={classes.grow} />
-                    <IconButton aria-label="home" color="inherit" component={Link} to="/">
-                        <HomeOutlinedIcon fontSize="large"/>
-                    </IconButton>
-                    <IconButton aria-label="photos" color="inherit" component={Link} to="/photos">
-                        <MonochromePhotosIcon fontSize={"large"}/>
-                    </IconButton>
-                    <IconButton aria-label="about" color="inherit" component={Link} to="/about">
-                       <InfoOutlinedIcon fontSize={"large"}/>
-                    </IconButton>
-                    <IconButton aria-label="login" color="inherit" component={Link} to="/login">
-                        <AccountBoxOutlinedIcon fontSize={"large"}/>
-                    </IconButton>
-                </Toolbar>
-            </AppBar>
-            <Divider className={classes.appBarDivider}/>
-            <div className={classes.content}>
-            <Switch>
-                <Route path="/photos" render={() => <PhotoPage id="" />} />
-                <Route path="/about" render={() => <AboutPage/>} />
-                <Route path="/login" render={() => <AccountPage/>} />
-                <Route path={"/photo/:id"} render={( {match}: MatchProps) => (
-                    <PhotoPage id={match.params.id} /> )} />
-                <Route path="/search" render={(props: RouteComponentProps) => {
-                    return <PhotoPage id="none" query={props.location.search}/>
-                }}/>
-                <Route path="/" render={() => <HomePage/>} />
-            </Switch>
+            <div className={classes.root}>
+                <TopBar showSearch={false}/>
+                <Divider className={classes.appBarDivider}/>
+                <div className={classes.content}>
+                    <Switch>
+                        <Route path="/photos" render={() => <PhotoPage2 id=""/>}/>
+                        <Route path="/about" render={() => <AboutPage/>}/>
+                        <Route path="/login" render={() => <AccountPage/>}/>
+                        <Route path={"/photo/:id"} render={({match}: MatchProps) => (
+                            <PhotoPage id={match.params.id}/>)}/>
+                        <Route path="/search" render={(props: RouteComponentProps) => {
+                            return <PhotoPage2 id="none" query={props.location.search}/>
+                        }}/>
+                        <Route path="/" render={() => <HomePage/>}/>
+                    </Switch>
+                </div>
+
             </div>
-        </div>
         </Router>
     );
 }

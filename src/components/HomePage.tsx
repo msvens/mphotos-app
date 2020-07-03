@@ -1,6 +1,7 @@
 import React from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import PhotoGrid from "./PhotoGrid";
+import PhotoGrid2 from "./PhotoGrid2";
 import BioDialog from "./BioDialog";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -38,7 +39,8 @@ export default function HomePage() {
     return (
         <div className={classes.root}>
             <BioDialog/>
-            <PhotoGrid maxItems={9} order="drive"/>
+            <PhotoGrid2 columns={3} maxItems={1000} order="drive" spacing="thin"/>
+            {/*<PhotoGrid maxItems={9} order="drive"/>*/}
         </div>
     );
 

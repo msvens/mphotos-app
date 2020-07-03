@@ -3,7 +3,7 @@ import { createMuiTheme, responsiveFontSizes, ThemeProvider } from '@material-ui
 import 'typeface-roboto';
 
 import './App.css';
-import PrimaryAppBar from "./components/Header";
+import MPhotosApp from "./components/MPhotosApp";
 
 function App() {
 
@@ -31,7 +31,7 @@ function App() {
 
   return (
       <ThemeProvider theme={theme}>
-        <PrimaryAppBar/>
+        <MPhotosApp/>
       </ThemeProvider>
   );
 }

@@ -2,9 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {makeStyles, createStyles, Theme, Grid, Typography} from "@material-ui/core";
 import {Photo} from "../types/photo";
 
-import PhotosApi, {SearchPhotoParams} from "../services/api";
+import PhotosApi from "../services/api";
 import PhotoNav from "./PhotoNav";
-import * as queryString from "querystring";
 
 
 interface PhotoProps {
