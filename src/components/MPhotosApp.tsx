@@ -1,33 +1,19 @@
 import React from 'react';
 import {createStyles, fade, makeStyles, Theme} from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import MonochromePhotosIcon from '@material-ui/icons/MonochromePhotos';
-import AccountBoxOutlinedIcon from '@material-ui/icons/AccountBoxOutlined';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
-import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
-import SearchIcon from '@material-ui/icons/Search';
 import AboutPage from "./AboutPage";
 import AccountPage from "./AccountPage";
-import PhotoPage from "./PhotoPage";
 import HomePage from "./HomePage";
 import 'typeface-roboto';
-
-
 import {
     BrowserRouter as Router,
     Switch,
     Route,
-    Link, RouteComponentProps
+    RouteComponentProps
 } from "react-router-dom";
-import {Box, Divider, Hidden} from "@material-ui/core";
 import ScrollIntoView from "./ScrollIntoView";
-import MPIcon from "./MPIcon";
-import MPWordIcon from "./MPWordIcon";
-import InputBase from "@material-ui/core/InputBase";
 import TopBar from "./TopBar";
 import PhotoPage2 from "./PhotoPage2";
+import {Divider} from "@material-ui/core";
 
 
 interface MatchParams {
@@ -126,7 +112,7 @@ export default function MPhotosApp() {
                         <Route path="/about" render={() => <AboutPage/>}/>
                         <Route path="/login" render={() => <AccountPage/>}/>
                         <Route path={"/photo/:id"} render={({match}: MatchProps) => (
-                            <PhotoPage id={match.params.id}/>)}/>
+                            <PhotoPage2 id={match.params.id}/>)}/>
                         <Route path="/search" render={(props: RouteComponentProps) => {
                             return <PhotoPage2 id="none" query={props.location.search}/>
                         }}/>
