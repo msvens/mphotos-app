@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Button,
     Dialog,
@@ -15,19 +15,29 @@ interface EditDialogProps {
     open: boolean,
     photo: Photo,
     onClose: () => void,
-    onSubmit: (title: string, description: string, keywords: string) => void,
+    onSubmit: (title: string, description: string, keywords: string, albums: string) => void,
 }
 
-const EditPhotoDialog: React.FC<EditDialogProps>  = (props: EditDialogProps) => {
+const EditPhotoDialog: React.FC<EditDialogProps>  = ({open, photo, onClose, onSubmit}) => {
 
-    const [title, setTitle] = useState<string>(props.photo.title);
-    const [description, setDescription] = useState<string>(props.photo.description)
-    const [keywords, setKeywords] = useState<string>(props.photo.keywords)
+    const [title, setTitle] = useState<string>(photo.title);
+    const [description, setDescription] = useState<string>(photo.description)
+    const [keywords, setKeywords] = useState<string>(photo.keywords)
+    const [albums, setAlbums] = useState<string>(photo.album)
+
+    useEffect(() => {
+        setTitle(photo.title);
+        setDescription(photo.description);
+        setKeywords(photo.keywords);
+        setAlbums(photo.album);
+    }, [photo]);
 
     const handleUpdate = () => {
-        props.onClose()
-        props.onSubmit(title, description, keywords)
+        onClose()
+        onSubmit(title, description, keywords, albums)
     }
+
+
 
     const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTitle(event.target.value);
@@ -41,10 +51,14 @@ const EditPhotoDialog: React.FC<EditDialogProps>  = (props: EditDialogProps) => 
         setKeywords(event.target.value);
     };
 
+    const handleAlbumsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setAlbums(event.target.value);
+    };
+
     return(
         <React.Fragment>
-            <Dialog open={props.open}
-                    onClose={props.onClose}
+            <Dialog open={open}
+                    onClose={onClose}
                     aria-labelledby="dialog-title">
             <DialogTitle id="dialog-title">Edit Photo</DialogTitle>
             <DialogContent>
@@ -53,12 +67,14 @@ const EditPhotoDialog: React.FC<EditDialogProps>  = (props: EditDialogProps) => 
                 </DialogContentText>
                 <TextField margin="dense" id="title" label="Title" value={title}
                            onChange={handleTitleChange} fullWidth/>
+                <TextField margin="dense" id="albums" label="Albums" value={albums}
+                           onChange={handleAlbumsChange} fullWidth/>
                 <TextField margin="dense" id="keywords" label="Keywords" value={keywords}
                            onChange={handleKeywordsChange} fullWidth/>
                 <TextField margin="dense" id="description" label="Description" value={description}
                            onChange={handleDescriptionChange} fullWidth multiline rows={4} />
                 <DialogActions>
-                    <Button onClick={props.onClose} color="primary">
+                    <Button onClick={onClose} color="primary">
                         Cancel
                     </Button>
                     <Button onClick={handleUpdate} color="primary" autoFocus>

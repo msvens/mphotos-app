@@ -37,7 +37,7 @@ interface PhotoNavProps {
     onClickForward: () => void,
     onClickProfile: () => void,
     onDelete: (removeFiles: boolean) => void
-    onUpdatePhoto: (title: string, description: string, keywords: string) => void,
+    onUpdatePhoto: (title: string, description: string, keywords: string, albums: string) => void,
     photo: Photo,
     isLoggedIn: boolean
 }

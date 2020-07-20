@@ -9,6 +9,17 @@ interface MPhotosResponse<T> {
     data?: T
 }
 
+export interface Album {
+    name: string;
+    description: string;
+    coverPic: string
+}
+
+export interface AlbumCollection {
+    info: Album;
+    photos: PhotoList;
+}
+
 export interface ApiError {
     code: number;
     message: string;
@@ -57,9 +68,9 @@ class PhotoApi {
 
     private static convert<T>(resp: MPhotosResponse<T>): T {
         if(resp.data)
-            return resp.data
+            return resp.data;
         else if(resp.error)
-            throw new Error(resp.error.code+": "+resp.error.message)
+            throw new Error(resp.error.code+": "+resp.error.message);
         else
             throw new Error("no payload");
     }
@@ -73,6 +84,16 @@ class PhotoApi {
         return fetch(url,
             {method: method, headers: {'Content-Type': 'application/json'},body: JSON.stringify(data)})
             .then(res => res.json())
+    }
+
+    getAlbums(): Promise<Album[]> {
+        return PhotoApi.req(`/api/albums`)
+            .then(res => res as MPhotosResponse<Album[]>).then(res => PhotoApi.convert(res));
+    }
+
+    getAlbum(name: string): Promise<AlbumCollection> {
+        return PhotoApi.req(`/api/albums/${name}`)
+            .then(res => res as MPhotosResponse<AlbumCollection>).then(res => PhotoApi.convert(res))
     }
 
     getImageUrl(p: Photo):string {
@@ -172,9 +193,16 @@ class PhotoApi {
             .then(res => PhotoApi.convert(res));
     };
 
-    updatePhoto(photoId: string, title: string, description: string, keywords: string): Promise<Photo> {
-        const data = {id: photoId, title: title, description: description, keywords: keywords.split(",")}
+    updatePhoto(photoId: string, title: string, description: string, keywords: string, albums: string): Promise<Photo> {
+        const data = {id: photoId, title: title, description: description,
+            keywords: keywords.split(","), albums: albums.split(",")};
         return PhotoApi.reqBody(`/api/photos/${photoId}`, data)
+            .then(res => res as MPhotosResponse<Photo>)
+            .then(res => PhotoApi.convert(res));
+    }
+
+    togglePrivate(photoId: string): Promise<Photo> {
+        return PhotoApi.req(`/api/photos/${photoId}/private`, "POST")
             .then(res => res as MPhotosResponse<Photo>)
             .then(res => PhotoApi.convert(res));
     }

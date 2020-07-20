@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Props} from 'react';
 import {
     createStyles,
     Grid,
@@ -26,6 +26,10 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface PhotoDetailProps {
     photo: Photo,
+    showDate?: boolean,
+    showKeywords?: boolean,
+    showDescription?: boolean,
+    showLens?: boolean,
 }
 
 const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
@@ -74,5 +78,12 @@ const PhotoDetail: React.FC<PhotoDetailProps> = (props: PhotoDetailProps) => {
         </div>
     )
 };
+
+PhotoDetail.defaultProps = {
+    showDate: false,
+    showKeywords: false,
+    showDescription: false,
+    showLens: false
+} as Partial<PhotoDetailProps>;
 
 export default PhotoDetail

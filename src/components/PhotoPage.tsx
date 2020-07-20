@@ -110,9 +110,9 @@ const PhotoPage: React.FC<PhotoProps> = (props: PhotoProps) => {
             .catch(e => alert(e.toString()));
     };
 
-    const updatePhoto = (title: string, description: string, keywords: string) => {
+    const updatePhoto = (title: string, description: string, keywords: string, albums: string) => {
         const driveId = photos[idx].driveId
-        PhotosApi.updatePhoto(driveId, title, description, keywords)
+        PhotosApi.updatePhoto(driveId, title, description, keywords, albums)
             .then(p => {
                 photos[idx] = p;
                 updateState({})

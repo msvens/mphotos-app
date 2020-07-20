@@ -14,6 +14,8 @@ import ScrollIntoView from "./ScrollIntoView";
 import TopBar from "./TopBar";
 import PhotoPage2 from "./PhotoPage2";
 import {Divider} from "@material-ui/core";
+import BottomBar from "./BottomBar";
+import ResumePage from "./ResumePage";
 
 
 interface MatchParams {
@@ -108,6 +110,7 @@ export default function MPhotosApp() {
                 <Divider className={classes.appBarDivider}/>
                 <div className={classes.content}>
                     <Switch>
+                        <Route path="/resume" render={() => <ResumePage/>}/>
                         <Route path="/photos" render={() => <PhotoPage2 id=""/>}/>
                         <Route path="/about" render={() => <AboutPage/>}/>
                         <Route path="/login" render={() => <AccountPage/>}/>
@@ -118,8 +121,8 @@ export default function MPhotosApp() {
                         }}/>
                         <Route path="/" render={() => <HomePage/>}/>
                     </Switch>
+                    <BottomBar showSearch={false}/>
                 </div>
-
             </div>
         </Router>
     );

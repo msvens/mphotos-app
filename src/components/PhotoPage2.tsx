@@ -1,13 +1,13 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, Fragment} from 'react';
 import {makeStyles, createStyles, Theme, Grid, Typography, fade, Tooltip} from "@material-ui/core";
 import {Photo} from "../types/photo";
-import ImageGallery, {ReactImageGalleryItem} from 'react-image-gallery';
 
 import PhotosApi from "../services/api";
-import PhotoNav from "./PhotoNav";
 import ArrowBackIosSharpIcon from "@material-ui/icons/ArrowBackIosSharp";
 import ArrowForwardIosSharpIcon from "@material-ui/icons/ArrowForwardIosSharp";
 import FaceIcon from '@material-ui/icons/Face';
+import LockIcon from '@material-ui/icons/Lock';
+import LockOpenIcon from '@material-ui/icons/LockOpen';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import IconButton from "@material-ui/core/IconButton";
@@ -63,36 +63,30 @@ const useStyles = makeStyles((theme: Theme) =>
                 backgroundColor: fade(theme.palette.grey.A700, 0.6).toString(),
             },
         },
-        backButton: {
-            position: 'absolute',
-            top: '50%',
-            left: theme.spacing(2),
-            transform: 'translateY(-50%)',
-            color: '#FFFFFF',
-            backgroundColor: fade(theme.palette.grey.A700, 0.3).toString(),
-            '&:hover': {
-                backgroundColor: fade(theme.palette.grey.A700, 0.6).toString(),
-            },
-        },
-        forwardButton: {
-            position: 'absolute',
-            top: '50%',
-            right: theme.spacing(2),
-            transform: 'translateY(-50%)',
-            color: '#FFFFFF',
-            backgroundColor: fade(theme.palette.grey.A700, 0.3).toString(),
-            '&:hover': {
-                backgroundColor: fade(theme.palette.grey.A700, 0.6).toString(),
-            },
-        },
+        // Keeping this layout for future reference:
+        // backButton: {
+        //     position: 'absolute',
+        //     top: '50%',
+        //     left: theme.spacing(2),
+        //     transform: 'translateY(-50%)',
+        //     color: '#FFFFFF',
+        //     backgroundColor: fade(theme.palette.grey.A700, 0.3).toString(),
+        //     '&:hover': {
+        //         backgroundColor: fade(theme.palette.grey.A700, 0.6).toString(),
+        //     },
+        // },
     }),
 );
 
+type EditButtonProps = {
+    tooltip: string,
+    onClick: () => void,
+
+}
 
 const PhotoPage2: React.FC<PhotoProps2> = (props: PhotoProps2) => {
 
     const [photos, setPhotos] = useState<Photo[]>([]);
-    const [imgItems, setImgItems] = useState<ReactImageGalleryItem[]>([]);
     const [, updateState] = React.useState();
     const [idx, setIdx] = useState<number>(0);
     const [loggedIn, setLoggedIn] = useState<boolean>(false);
@@ -110,7 +104,6 @@ const PhotoPage2: React.FC<PhotoProps2> = (props: PhotoProps2) => {
                 await PhotosApi.searchPhotos(props.query).then(res => {
                     if (res.photos) {
                         setIdx(0);
-                        setImgItems(getImageCallery(res.photos));
                         setPhotos(res.photos);
                     }
                 });
@@ -123,7 +116,6 @@ const PhotoPage2: React.FC<PhotoProps2> = (props: PhotoProps2) => {
                                 setIdx(i)
                             }
                         }
-                        setImgItems(getImageCallery(res.photos));
                         setPhotos(res.photos);
                     }
 
@@ -133,13 +125,6 @@ const PhotoPage2: React.FC<PhotoProps2> = (props: PhotoProps2) => {
         };
         fetchData();
     }, [props.id, props.query]);
-
-    const getImageCallery = (ps: Photo[]): ReactImageGalleryItem[] => {
-        return ps.map<ReactImageGalleryItem>(photo => {
-            console.log({original: PhotosApi.getImageUrl(photo)});
-            return {original: PhotosApi.getImageUrl(photo)};
-        });
-    }
 
     const handleForward = () => {
         let newIdx = idx + 1;
@@ -164,7 +149,6 @@ const PhotoPage2: React.FC<PhotoProps2> = (props: PhotoProps2) => {
                 let value = entry[1];
                 ret = ret + key + " = " + value
             }
-            //return "Camera Model = "+parsed.get("cameraModel")
         }
         return ret
     }
@@ -175,16 +159,25 @@ const PhotoPage2: React.FC<PhotoProps2> = (props: PhotoProps2) => {
             .catch(e => alert(e.toString()));
     };
 
+    const togglePrivate = () => {
+        const driveId = photos[idx].driveId
+        PhotosApi.togglePrivate(driveId)
+            .then(p => {
+                photos[idx] = p;
+                updateState({});
+            })
+            .catch(e => alert(e.toString()));
+    }
+
     const handleCloseUpdate = () => {
         setShowUpdate(false)
     }
 
-    const updatePhoto = (title: string, description: string, keywords: string) => {
+    const updatePhoto = (title: string, description: string, keywords: string, albums: string) => {
         const driveId = photos[idx].driveId
-        PhotosApi.updatePhoto(driveId, title, description, keywords)
+        PhotosApi.updatePhoto(driveId, title, description, keywords, albums)
             .then(p => {
                 photos[idx] = p;
-
                 updateState({})
             })
             .catch(e => alert(e.toString()))
@@ -208,6 +201,19 @@ const PhotoPage2: React.FC<PhotoProps2> = (props: PhotoProps2) => {
             .catch(e => alert(e.toString()))
     }
 
+    const EditButton: React.FC<EditButtonProps> = ({tooltip, onClick, children}) => {
+        return (
+            <Fragment>
+                <Tooltip title={tooltip}>
+                    <IconButton aria-label={tooltip} onClick={onClick}
+                                className={classes.editButton}>
+                        {children}
+                    </IconButton>
+                </Tooltip>
+            </Fragment>
+        );
+    }
+
     return (
         <div className={classes.root}>
 
@@ -225,26 +231,29 @@ const PhotoPage2: React.FC<PhotoProps2> = (props: PhotoProps2) => {
                 </Grid>
                 <Grid item xs={12} className={classes.imgItem} justify="center">
                     <div className={classes.imgItem}>
+                        <DeletePhotosDialog open={showDelete} onDelete={deletePhoto} onClose={handleCancelDelete}/>
+                        <EditPhotoDialog open={showUpdate} photo={photos[idx]}
+                                         onClose={handleCloseUpdate} onSubmit={updatePhoto}/>
                         <img className={classes.img} alt={photos[idx].title} src={PhotosApi.getImageUrl(photos[idx])}/>
                         {loggedIn &&
                         <div className={classes.editButtons}>
-                            <Tooltip title="Set Profile Picture">
-                                <IconButton aria-label="Profile Picture" onClick={setProfilePic}
-                                            className={classes.editButton}>
-                                    <FaceIcon fontSize="small"/>
-                                </IconButton>
-                            </Tooltip>
-                            <IconButton aria-label="Edit Photo" className={classes.editButton}
-                                        onClick={() => setShowUpdate(true)}>
+                            <EditButton tooltip="Set Profile Picture" onClick={setProfilePic}>
+                                <FaceIcon fontSize="small"/>
+                            </EditButton>
+                            {photos[idx].private
+                                ? <EditButton tooltip="Set Public Photo" onClick={togglePrivate}>
+                                    <LockIcon fontSize="small"/>
+                                </EditButton>
+                                : <EditButton tooltip="Set Private Photo" onClick={togglePrivate}>
+                                    <LockOpenIcon fontSize="small"/>
+                                </EditButton>
+                            }
+                            <EditButton tooltip="Edit Photo Description" onClick={() => setShowUpdate(true)}>
                                 <EditIcon fontSize="small"/>
-                            </IconButton>
-                            <IconButton aria-label="Delete Photo" className={classes.editButton}
-                                        onClick={() => setShowDelete(true)}>
+                            </EditButton>
+                            <EditButton tooltip="Delete Photo" onClick={() => setShowDelete(true)}>
                                 <DeleteForeverIcon fontSize="small"/>
-                            </IconButton>
-                            <DeletePhotosDialog open={showDelete} onDelete={deletePhoto} onClose={handleCancelDelete}/>
-                            <EditPhotoDialog open={showUpdate} photo={photos[idx]}
-                                             onClose={handleCloseUpdate} onSubmit={updatePhoto}/>
+                            </EditButton>
                         </div>
                         }
                         <div className={classes.navButtons}>

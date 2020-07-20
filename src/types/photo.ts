@@ -54,5 +54,8 @@ export interface Photo {
     fNumber: number;
     width: number;
     height: number;
+    private: boolean;
+    album: string;
+    likes: number;
 }
 

@@ -27,6 +27,11 @@ const useStyles = makeStyles((theme: Theme) =>
             width: '100%',
             height: 'auto'
         },
+        thumbPrivate: {
+            width: '100%',
+            height: 'auto',
+            opacity: 0.5,
+        },
     }),
 );
 
@@ -39,7 +44,7 @@ const PhotoGrid2: React.FC<PhotoGrid2Props> = (props: PhotoGrid2Props) => {
         PhotosApi.getPhotos(props.maxItems).then(res => {
             if (res.photos)
                 setPhotos(res.photos)
-        });
+        }).catch(e => alert(e.toString()));
     }, [props.maxItems]);
 
     const getSpacing = (): number => {
@@ -57,7 +62,11 @@ const PhotoGrid2: React.FC<PhotoGrid2Props> = (props: PhotoGrid2Props) => {
             {photos.map(photo => (
                 <GridListTile className={classes.thumb} cols={1} key={photo.driveId}>
                     <Link to={`/photo/${photo.driveId}`}>
-                        <LazyLoadImage alt={photo.fileName} className={classes.thumb} src={PhotosApi.getThumbUrl(photo)}/>
+                        {photo.private
+                            ? <LazyLoadImage alt={photo.fileName} className={classes.thumbPrivate} src={PhotosApi.getThumbUrl(photo)}/>
+                            : <LazyLoadImage alt={photo.fileName} className={classes.thumb} src={PhotosApi.getThumbUrl(photo)}/>
+                        }
+
                     </Link>
                 </GridListTile>
             ))}

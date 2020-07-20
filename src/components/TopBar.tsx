@@ -9,7 +9,8 @@ import SearchIcon from "@material-ui/icons/Search";
 import InputBase from "@material-ui/core/InputBase";
 import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
 import MonochromePhotosIcon from "@material-ui/icons/MonochromePhotos";
-import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
+//import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
+import PhotoAlbumOutlinedIcon from '@material-ui/icons/PhotoAlbumOutlined';
 import AccountBoxOutlinedIcon from "@material-ui/icons/AccountBoxOutlined";
 import AppBar from "@material-ui/core/AppBar";
 import React from "react";
@@ -122,7 +123,7 @@ export default function TopBar(props: TobBarProps) {
                     <MonochromePhotosIcon fontSize={"large"}/>
                 </IconButton>
                 <IconButton aria-label="about" color="inherit" component={Link} to="/about">
-                    <InfoOutlinedIcon fontSize={"large"}/>
+                    <PhotoAlbumOutlinedIcon fontSize={"large"}/>
                 </IconButton>
                 <IconButton aria-label="login" color="inherit" component={Link} to="/login">
                     <AccountBoxOutlinedIcon fontSize={"large"}/>
