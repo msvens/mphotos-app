@@ -122,7 +122,7 @@ export default function TopBar(props: TobBarProps) {
                 <IconButton aria-label="photos" color="inherit" component={Link} to="/photos">
                     <MonochromePhotosIcon fontSize={"large"}/>
                 </IconButton>
-                <IconButton aria-label="about" color="inherit" component={Link} to="/about">
+                <IconButton aria-label="albums" color="inherit" component={Link} to="/albums">
                     <PhotoAlbumOutlinedIcon fontSize={"large"}/>
                 </IconButton>
                 <IconButton aria-label="login" color="inherit" component={Link} to="/login">

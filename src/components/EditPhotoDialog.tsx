@@ -9,6 +9,7 @@ import {
     TextField
 } from "@material-ui/core";
 import {Photo} from "../types/photo";
+import PhotosApi from "../services/api";
 
 interface EditDialogProps {
 
@@ -23,13 +24,17 @@ const EditPhotoDialog: React.FC<EditDialogProps>  = ({open, photo, onClose, onSu
     const [title, setTitle] = useState<string>(photo.title);
     const [description, setDescription] = useState<string>(photo.description)
     const [keywords, setKeywords] = useState<string>(photo.keywords)
-    const [albums, setAlbums] = useState<string>(photo.album)
+    const [albums, setAlbums] = useState<string>('')
 
     useEffect(() => {
         setTitle(photo.title);
         setDescription(photo.description);
         setKeywords(photo.keywords);
-        setAlbums(photo.album);
+    }, [photo]);
+
+    useEffect(() => {
+        PhotosApi.getPhotoAlbums(photo.driveId)
+            .then(res => setAlbums(res.join(',')))
     }, [photo]);
 
     const handleUpdate = () => {

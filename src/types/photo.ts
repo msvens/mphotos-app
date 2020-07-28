@@ -55,7 +55,6 @@ export interface Photo {
     width: number;
     height: number;
     private: boolean;
-    album: string;
     likes: number;
 }
 

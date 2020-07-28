@@ -16,6 +16,7 @@ import PhotoPage2 from "./PhotoPage2";
 import {Divider} from "@material-ui/core";
 import BottomBar from "./BottomBar";
 import ResumePage from "./ResumePage";
+import AlbumPage from "./AlbumPage";
 
 
 interface MatchParams {
@@ -110,6 +111,9 @@ export default function MPhotosApp() {
                 <Divider className={classes.appBarDivider}/>
                 <div className={classes.content}>
                     <Switch>
+                        <Route path="/albums/:id" render={({match}: MatchProps) => (
+                            <PhotoPage2 albumName={match.params.id}/>)}/>
+                        <Route path="/albums" render={() => <AlbumPage/>}/>
                         <Route path="/resume" render={() => <ResumePage/>}/>
                         <Route path="/photos" render={() => <PhotoPage2 id=""/>}/>
                         <Route path="/about" render={() => <AboutPage/>}/>
@@ -117,7 +121,7 @@ export default function MPhotosApp() {
                         <Route path={"/photo/:id"} render={({match}: MatchProps) => (
                             <PhotoPage2 id={match.params.id}/>)}/>
                         <Route path="/search" render={(props: RouteComponentProps) => {
-                            return <PhotoPage2 id="none" query={props.location.search}/>
+                            return <PhotoPage2 query={props.location.search}/>
                         }}/>
                         <Route path="/" render={() => <HomePage/>}/>
                     </Switch>

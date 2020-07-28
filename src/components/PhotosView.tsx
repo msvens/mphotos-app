@@ -2,7 +2,7 @@ import React, {useEffect, useState, Fragment} from 'react';
 import {makeStyles, createStyles, Theme, Grid, Typography, fade, Tooltip} from "@material-ui/core";
 import {Photo} from "../types/photo";
 
-import PhotosApi, {Album, PhotoList} from "../services/api";
+import PhotosApi from "../services/api";
 import ArrowBackIosSharpIcon from "@material-ui/icons/ArrowBackIosSharp";
 import ArrowForwardIosSharpIcon from "@material-ui/icons/ArrowForwardIosSharp";
 import FaceIcon from '@material-ui/icons/Face';
@@ -11,16 +11,14 @@ import LockOpenIcon from '@material-ui/icons/LockOpen';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import IconButton from "@material-ui/core/IconButton";
-import PhotoAlbumIcon from '@material-ui/icons/PhotoAlbum';
 import DeletePhotosDialog from "./DeletePhotosDialog";
 import EditPhotoDialog from "./EditPhotoDialog";
 import PhotoDetail from "./PhotoDetail";
 
-
-interface PhotoProps2 {
-    id?: string,
-    query?: string
-    albumName?: string
+interface PhotosViewProps {
+    images: Photo[];
+    startId?: string;
+    query?: string;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -65,75 +63,49 @@ const useStyles = makeStyles((theme: Theme) =>
                 backgroundColor: fade(theme.palette.grey.A700, 0.6).toString(),
             },
         },
-        // Keeping this layout for future reference:
-        // backButton: {
-        //     position: 'absolute',
-        //     top: '50%',
-        //     left: theme.spacing(2),
-        //     transform: 'translateY(-50%)',
-        //     color: '#FFFFFF',
-        //     backgroundColor: fade(theme.palette.grey.A700, 0.3).toString(),
-        //     '&:hover': {
-        //         backgroundColor: fade(theme.palette.grey.A700, 0.6).toString(),
-        //     },
-        // },
     }),
 );
 
 type EditButtonProps = {
     tooltip: string,
     onClick: () => void,
-
 }
 
-const PhotoPage2: React.FC<PhotoProps2> = ({id, query, albumName}) => {
-
-    const [photos, setPhotos] = useState<Photo[]>([]);
-    const [album, setAlbum] = useState<Album>();
+const PhotosView: React.FC<PhotosViewProps> = ({images, startId, query}) => {
+    const [photos, setPhotos] = useState<Photo[]>(images);
     const [, updateState] = React.useState();
     const [idx, setIdx] = useState<number>(0);
     const [loggedIn, setLoggedIn] = useState<boolean>(false);
     const classes = useStyles();
-    const [showDelete, setShowDelete] = useState(false)
-    const [showUpdate, setShowUpdate] = useState(false)
+    const [showDelete, setShowDelete] = useState(false);
+    const [showUpdate, setShowUpdate] = useState(false);
+
+    useEffect(() => {
+        if(startId) {
+            for (let i = 0; i < photos.length; i++) {
+                console.log(i);
+                if (photos[i].driveId === startId) {
+                    setIdx(i)
+                }
+            }
+        }
+    }, []);
 
     useEffect(() => {
         PhotosApi.isLoggedIn().then(res => setLoggedIn(res))
     }, []);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            if (query) {
-                await PhotosApi.searchPhotos(query).then(res => {
-                    updatePhotos(res)
-                });
-            } else if (albumName) {
-                await PhotosApi.getAlbum(albumName).then(res => {
-                    setAlbum(res.info)
-                    updatePhotos(res.photos)
-                });
+    const parseFilter = () => {
+        var ret = ""
+        if (query) {
+            const parsed = new URLSearchParams(query);
+            for (let entry of Array.from(parsed.entries())) {
+                let key = entry[0];
+                let value = entry[1];
+                ret = ret + key + " = " + value
             }
-            else {
-                await PhotosApi.getPhotos(1000).then(res => {
-                    updatePhotos(res)
-                });
-            }
-
-        };
-        fetchData();
-    }, [id, query, albumName]);
-
-    const updatePhotos = (pl: PhotoList) => {
-        if(pl.photos) {
-            if(id) {
-                for (let i = 0; i < pl.length; i++) {
-                    if(pl.photos[i].driveId === id) {
-                        setIdx(i)
-                    }
-                }
-            }
-            setPhotos(pl.photos)
         }
+        return ret
     }
 
     const handleForward = () => {
@@ -150,29 +122,10 @@ const PhotoPage2: React.FC<PhotoProps2> = ({id, query, albumName}) => {
         setIdx(newIdx);
     };
 
-    const parseFilter = () => {
-        var ret = ""
-        if (query) {
-            const parsed = new URLSearchParams(query);
-            for (let entry of Array.from(parsed.entries())) {
-                let key = entry[0];
-                let value = entry[1];
-                ret = ret + key + " = " + value
-            }
-        }
-        return ret
-    }
-
     const setProfilePic = () => {
-        if(album) {
-            PhotosApi.updateAlbum(album.description, photos[idx].fileName, album.name)
-                .then(a => alert(a.coverPic))
-                .catch(e => alert(e.toString()));
-        } else {
-            PhotosApi.updateUserPic(photos[idx].fileName)
-                .then(u => alert(u.pic))
-                .catch(e => alert(e.toString()));
-        }
+        PhotosApi.updateUserPic(photos[idx].fileName)
+            .then(u => alert(u.pic))
+            .catch(e => alert(e.toString()));
     };
 
     const togglePrivate = () => {
@@ -230,20 +183,6 @@ const PhotoPage2: React.FC<PhotoProps2> = ({id, query, albumName}) => {
         );
     }
 
-    const ProfilePicture: React.FC = () => {
-        if(album) {
-            return (
-                <EditButton tooltip="Set Album Cover" onClick={setProfilePic}>
-                    <PhotoAlbumIcon fontSize="small"/>
-                </EditButton>
-            );
-        } else {
-            return (<EditButton tooltip="Set Profile Picture" onClick={setProfilePic}>
-                <FaceIcon fontSize="small"/>
-            </EditButton>);
-        }
-    }
-
     return (
         <div className={classes.root}>
 
@@ -267,7 +206,9 @@ const PhotoPage2: React.FC<PhotoProps2> = ({id, query, albumName}) => {
                         <img className={classes.img} alt={photos[idx].title} src={PhotosApi.getImageUrl(photos[idx])}/>
                         {loggedIn &&
                         <div className={classes.editButtons}>
-                            <ProfilePicture/>
+                            <EditButton tooltip="Set Profile Picture" onClick={setProfilePic}>
+                                <FaceIcon fontSize="small"/>
+                            </EditButton>
                             {photos[idx].private
                                 ? <EditButton tooltip="Set Public Photo" onClick={togglePrivate}>
                                     <LockIcon fontSize="small"/>
@@ -299,6 +240,7 @@ const PhotoPage2: React.FC<PhotoProps2> = ({id, query, albumName}) => {
             }
         </div>
     );
+
 };
 
-export default PhotoPage2
+export default PhotosView

@@ -104,6 +104,10 @@ class PhotoApi {
         return "/api/thumbs/".concat(p.fileName)
     };
 
+    getThumbUrlId(id: string):string {
+        return "/api/thumbs/".concat(id)
+    };
+
     getProfilePicUrl(u: User): string {
         return u.pic !== "" ? "/api/thumbs/".concat(u.pic) : u.pic;
     }
@@ -155,6 +159,11 @@ class PhotoApi {
             .then(res => res as MPhotosResponse<DriveFiles>).then(res => PhotoApi.convert(res));
     }
 
+    getPhotoAlbums(photoId: string): Promise<string[]> {
+        return PhotoApi.req(`/api/photos/${photoId}/albums`)
+            .then(res => res as MPhotosResponse<string[]>).then(res => PhotoApi.convert(res))
+    }
+
     getPhotos(limit: number): Promise<PhotoList> {
         return PhotoApi.req(`/api/photos?limit=${limit}`)
             .then(res => res as MPhotosResponse<PhotoList>).then(res => PhotoApi.convert(res))
@@ -179,11 +188,18 @@ class PhotoApi {
         return PhotoApi.req(`/api/photos/job/${id}`)
             .then(res => res as MPhotosResponse<Job>)
             .then(res => PhotoApi.convert(res))
-    }
+    };
 
     scheduleUpdatePhotos(): Promise<Job> {
         return PhotoApi.req('/api/photos/job/schedule', 'POST')
             .then(res => res as MPhotosResponse<Job>)
+            .then(res => PhotoApi.convert(res));
+    };
+
+    updateAlbum(description: string, coverPic: string, name: string): Promise<Album> {
+        const data = {description: description, coverPic: coverPic, name: name};
+        return PhotoApi.reqBody(`/api/albums/${name}`, data)
+            .then(res => res as MPhotosResponse<Album>)
             .then(res => PhotoApi.convert(res));
     }
 
