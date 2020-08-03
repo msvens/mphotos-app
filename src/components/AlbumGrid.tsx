@@ -24,6 +24,15 @@ const useStyles = makeStyles((theme: Theme) =>
     createStyles({
 
         root: {
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'space-around',
+            overflow: 'hidden',
+            paddingLeft: 0,
+            margin: 'auto',
+        },
+
+        grid: {
             width: 1020,
             maxWidth: 1020,
             margin: 'auto',
@@ -37,6 +46,9 @@ const useStyles = makeStyles((theme: Theme) =>
             width: '100%',
             height: 'auto',
             opacity: 0.5,
+        },
+        thumbBar: {
+            width: '100%',
         },
         icon: {
             color: 'rgba(255, 255, 255, 0.8)',
@@ -93,7 +105,7 @@ const AlbumGrid: React.FC<AlbumGridProps> = ({columns, spacing}) => {
     const AlbumInfo: React.FC<AlbumInfoProps> = ({album, index}) => {
         if(loggedIn) {
             return (
-                <GridListTileBar
+                <GridListTileBar className={classes.thumbBar}
                     title={album.name}
                     actionIcon={
                         <IconButton aria-label={`info about ${album.name}`} className={classes.icon}
@@ -104,10 +116,10 @@ const AlbumGrid: React.FC<AlbumGridProps> = ({columns, spacing}) => {
                 />
             );
         } else if(album.description == "") {
-            return (<GridListTileBar title={album.name}/>);
+            return (<GridListTileBar  className={classes.thumbBar} title={album.name}/>);
         } else {
             return (
-                <GridListTileBar
+                <GridListTileBar className={classes.thumbBar}
                     title={album.name}
                     actionIcon={
                         <IconButton aria-label={`info about ${album.name}`} className={classes.icon}>
@@ -120,8 +132,8 @@ const AlbumGrid: React.FC<AlbumGridProps> = ({columns, spacing}) => {
     }
 
     return (
-        <div>
-        <GridList cols={columns} cellHeight={'auto'} spacing={getSpacing()} className={classes.root}>
+        <div className={classes.root}>
+        <GridList cols={columns} cellHeight={'auto'} spacing={getSpacing()} className={classes.grid}>
             {albums.map((album,index) => (
                 <GridListTile className={classes.thumb} cols={1} key={album.name}>
                     <Link to={`/albums/${album.name}`}>

@@ -164,8 +164,10 @@ class PhotoApi {
             .then(res => res as MPhotosResponse<string[]>).then(res => PhotoApi.convert(res))
     }
 
-    getPhotos(limit: number): Promise<PhotoList> {
-        return PhotoApi.req(`/api/photos?limit=${limit}`)
+    getPhotos(limit: number, offset?: number): Promise<PhotoList> {
+        const url = offset ? `/api/photos?limit=${limit}&offset=${offset}`
+            : `/api/photos?limit=${limit}`;
+        return PhotoApi.req(url)
             .then(res => res as MPhotosResponse<PhotoList>).then(res => PhotoApi.convert(res))
     }
 
