@@ -237,6 +237,7 @@ const PhotoPage2: React.FC<PhotoProps2> = ({id, query, albumName}) => {
     const startTouch = (event: React.TouchEvent<HTMLDivElement>) => {
         setXPos(event.touches[0].clientX)
         console.log("touch")
+        event.preventDefault()
     }
 
     const leaveTouch = (event: React.TouchEvent<HTMLDivElement>) => {
@@ -249,6 +250,7 @@ const PhotoPage2: React.FC<PhotoProps2> = ({id, query, albumName}) => {
                 handleForward()
             }
         }
+        event.preventDefault()
     }
 
 
