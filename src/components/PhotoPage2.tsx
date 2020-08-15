@@ -1,6 +1,5 @@
 import React, {useEffect, useState, Fragment} from 'react';
 import {makeStyles, createStyles, Theme, Grid, Typography, fade, Tooltip} from "@material-ui/core";
-import {Photo} from "../types/photo";
 
 import PhotosApi, {Album, PhotoList} from "../services/api";
 import ArrowBackIosSharpIcon from "@material-ui/icons/ArrowBackIosSharp";
@@ -15,6 +14,7 @@ import PhotoAlbumIcon from '@material-ui/icons/PhotoAlbum';
 import DeletePhotosDialog from "./DeletePhotosDialog";
 import EditPhotoDialog from "./EditPhotoDialog";
 import PhotoDetail from "./PhotoDetail";
+import {Photo} from "../types/photo";
 
 
 interface PhotoProps2 {
@@ -44,7 +44,6 @@ const useStyles = makeStyles((theme: Theme) =>
             margin: 'auto',
             display: 'flex',
             // maxHeigh: 800,
-            // height: 800,
             maxWidth: 1080,
         },
         navButtons: {
@@ -96,6 +95,7 @@ const PhotoPage2: React.FC<PhotoProps2> = ({id, query, albumName}) => {
     const classes = useStyles();
     const [showDelete, setShowDelete] = useState(false)
     const [showUpdate, setShowUpdate] = useState(false)
+    const [xpos, setXPos] = useState<number>(-1)
 
     useEffect(() => {
         PhotosApi.isLoggedIn().then(res => setLoggedIn(res))
@@ -230,6 +230,40 @@ const PhotoPage2: React.FC<PhotoProps2> = ({id, query, albumName}) => {
         );
     }
 
+    const enterDrag = (event: React.DragEvent<HTMLDivElement>) => {
+        setXPos(event.clientX)
+    }
+
+    const startTouch = (event: React.TouchEvent<HTMLDivElement>) => {
+        setXPos(event.touches[0].clientX)
+        console.log("touch")
+    }
+
+    const leaveTouch = (event: React.TouchEvent<HTMLDivElement>) => {
+        const delta = xpos - event.touches[0].clientX
+        setXPos(-1)
+        if(Math.abs(delta) > 20) {
+            if (delta < 0) {
+                handleBackward()
+            } else {
+                handleForward()
+            }
+        }
+    }
+
+
+    const leaveDrag = (event: React.DragEvent<HTMLDivElement>) => {
+        const delta = xpos - event.clientX
+        setXPos(-1)
+        if(Math.abs(delta) > 20) {
+            if (delta < 0) {
+                handleBackward()
+            } else {
+                handleForward()
+            }
+        }
+    }
+
     const ProfilePicture: React.FC = () => {
         if(album) {
             return (
@@ -259,12 +293,19 @@ const PhotoPage2: React.FC<PhotoProps2> = ({id, query, albumName}) => {
                 <Grid item xs={12}>
                     <PhotoDetail photo={photos[idx]}/>
                 </Grid>
-                <Grid item xs={12} className={classes.imgItem} justify="center">
-                    <div className={classes.imgItem}>
+                <Grid item xs={12} className={classes.imgItem}>
+                    <div className={classes.imgItem}
+                         onTouchEnd={leaveTouch}
+                         onTouchStart={startTouch}
+                         onDragEnter={enterDrag}
+                         onDragLeave={leaveDrag}>
                         <DeletePhotosDialog open={showDelete} onDelete={deletePhoto} onClose={handleCancelDelete}/>
                         <EditPhotoDialog open={showUpdate} photo={photos[idx]}
                                          onClose={handleCloseUpdate} onSubmit={updatePhoto}/>
-                        <img className={classes.img} alt={photos[idx].title} src={PhotosApi.getImageUrl(photos[idx])}/>
+                             <div>
+                             <img className={classes.img} alt={photos[idx].title} src={PhotosApi.getImageUrl(photos[idx])}/>
+                             </div>
+
                         {loggedIn &&
                         <div className={classes.editButtons}>
                             <ProfilePicture/>

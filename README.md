@@ -19,13 +19,13 @@ photo blog.
 - Add photos to albums
 
 # TODO
-- Infinite Scrolling of Image Grid
+- Infinite Scrolling of Image Grid (DONE!)
 - Customizable UI
     - compact view (make more space for images)
     - columns in image grid
     - space between images in image grid
     - what image information to display and how
-- Swipable image list
+- Swipable image list (MOSTLY DONE!)
 - Smarter image sizing depending on landscape, portrait mode
 - Comments, Likes
 - Tablet/Mobile enhancements

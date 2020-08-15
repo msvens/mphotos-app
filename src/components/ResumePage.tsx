@@ -1,9 +1,7 @@
 import React, {Fragment} from 'react';
 
-import {Box, createStyles, Grid, GridListTile, Link, Theme, Tooltip, Typography} from "@material-ui/core";
+import {createStyles, Grid, Link, Theme, Typography} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
-import IconButton from "@material-ui/core/IconButton";
-import GridList from "@material-ui/core/GridList";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

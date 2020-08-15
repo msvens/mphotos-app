@@ -52,6 +52,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
+/*
 const LogoutForm: React.FC = () => {
     return (
         <Container>
@@ -62,7 +63,7 @@ const LogoutForm: React.FC = () => {
         </Container>
     )
 };
-
+*/
 
 
 

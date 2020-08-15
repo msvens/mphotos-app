@@ -16,7 +16,7 @@ interface EditAlbumProps {
     open: boolean,
     album: Album,
     onClose: () => void,
-    onSubmit: (name: string, description: string) => void,
+    onSubmit: (name: string, description: string, coverPic: string) => void,
     onDelete: (album: Album) => void,
 }
 
@@ -32,7 +32,7 @@ const EditAlbumDialog: React.FC<EditAlbumProps>  = ({open, album, onDelete, onCl
 
     const handleUpdate = () => {
         onClose()
-        onSubmit(name, description)
+        onSubmit(name, description, album.coverPic)
     }
 
     const handleDelete = () => {

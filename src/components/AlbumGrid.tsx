@@ -63,6 +63,7 @@ const AlbumGrid: React.FC<AlbumGridProps> = ({columns, spacing}) => {
     const [albums, setAlbums] = useState<Album[]>([]);
     const [loggedIn, setLoggedIn] = useState<boolean>(false);
     const [showUpdate, setShowUpdate] = useState(false);
+    const [, updateState] = React.useState();
 
     useEffect(() => {
         PhotosApi.getAlbums().then(res => setAlbums(res)).catch(e => alert(e.toString()))
@@ -94,11 +95,23 @@ const AlbumGrid: React.FC<AlbumGridProps> = ({columns, spacing}) => {
         setShowUpdate(false)
     }
 
-    const updateAlbum = (name: string, description: string) => {
-        alert(name+" "+description)
+    const updateAlbum = (name: string, description: string, coverPic: string) => {
+        PhotosApi.updateAlbum(description, coverPic, name)
+            .then(a => {
+                albums[idx] = a;
+                updateState({});
+            })
+            .catch(e => alert(e.toString()));
     }
 
     const deleteAlbum = (album: Album) => {
+        PhotosApi.deleteAlbum(album.name)
+            .then(a => {
+                albums.splice(idx, 1)
+                setIdx(0)
+                updateState({})
+            })
+            .catch(e => alert(e.toString()));
         alert("delete "+album.name)
     }
 
@@ -115,7 +128,7 @@ const AlbumGrid: React.FC<AlbumGridProps> = ({columns, spacing}) => {
                     }
                 />
             );
-        } else if(album.description == "") {
+        } else if(album.description === "") {
             return (<GridListTileBar  className={classes.thumbBar} title={album.name}/>);
         } else {
             return (

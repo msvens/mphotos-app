@@ -118,6 +118,11 @@ class PhotoApi {
             .then(res => res as MPhotosResponse<DriveFiles>).then(res => PhotoApi.convert(res));
     }
 
+    deleteAlbum(name: string): Promise<Album> {
+        return PhotoApi.req(`/api/albums/${name}`, 'DELETE')
+            .then(res => res as MPhotosResponse<Album>).then(res => PhotoApi.convert(res));
+    }
+
     deletePhoto(photoId: string, removeFiles: boolean): Promise<Photo> {
         return PhotoApi.reqBody(`/api/photos/${photoId}`, {removeFiles: removeFiles}, 'DELETE')
             .then(res => res as MPhotosResponse<Photo>).then(res => PhotoApi.convert(res));

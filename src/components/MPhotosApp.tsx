@@ -109,7 +109,7 @@ export default function MPhotosApp() {
             <div className={classes.root}>
                 <TopBar showSearch={false}/>
                 <Divider className={classes.appBarDivider}/>
-                <div className={classes.content}>
+                <div className={classes.content} id="contentPage">
                     <Switch>
                         <Route path="/albums/:id" render={({match}: MatchProps) => (
                             <PhotoPage2 albumName={match.params.id}/>)}/>
