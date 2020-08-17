@@ -95,7 +95,8 @@ const PhotoPage2: React.FC<PhotoProps2> = ({id, query, albumName}) => {
     const classes = useStyles();
     const [showDelete, setShowDelete] = useState(false)
     const [showUpdate, setShowUpdate] = useState(false)
-    const [xpos, setXPos] = useState<number>(-1)
+    const [xpos, setXPos] = useState<number>(0)
+    const [xend, setXEnd] = useState<number>(0)
 
     useEffect(() => {
         PhotosApi.isLoggedIn().then(res => setLoggedIn(res))
@@ -234,24 +235,40 @@ const PhotoPage2: React.FC<PhotoProps2> = ({id, query, albumName}) => {
         setXPos(event.clientX)
     }
 
-    const startTouch = (event: React.TouchEvent<HTMLDivElement>) => {
-        setXPos(event.touches[0].clientX)
-        console.log("touch")
-        event.preventDefault()
+    const onStartTouch = (event: React.TouchEvent<HTMLDivElement>) => {
+        //const { clientX, clientY } = event.touches ? event.touches[0] : event
+        //console.log("start touch "+event.touches.length)
+        if(event.touches[0]) {
+            setXPos(event.touches[0].clientX)
+            setXEnd(event.touches[0].clientX)
+        }
     }
 
-    const leaveTouch = (event: React.TouchEvent<HTMLDivElement>) => {
-        const delta = xpos - event.touches[0].clientX
-        setXPos(-1)
-        if(Math.abs(delta) > 20) {
-            if (delta < 0) {
-                handleBackward()
-            } else {
-                handleForward()
-            }
+    const onMoveTouch = (event: React.TouchEvent<HTMLDivElement>) => {
+        if(event.touches[0]) {
+            setXEnd(event.touches[0].clientX);
         }
-        event.preventDefault()
-    }
+    };
+
+    const onEndTouch = (event: React.TouchEvent<HTMLDivElement>) => {
+        //console.log("touch end "+event.touches.length)
+        const delta = xpos - xend
+        setXPos(0)
+        setXEnd(0)
+        if(Math.abs(delta) > 20) {
+            delta < 0 ? handleBackward() : handleForward();
+        }
+        // const delta = xpos - event.touches[0].clientX
+        // setXPos(-1)
+        // if(Math.abs(delta) > 20) {
+        //     if (delta < 0) {
+        //         handleBackward()
+        //     } else {
+        //         handleForward()
+        //     }
+        // }
+        //event.preventDefault()
+    };
 
 
     const leaveDrag = (event: React.DragEvent<HTMLDivElement>) => {
@@ -297,8 +314,9 @@ const PhotoPage2: React.FC<PhotoProps2> = ({id, query, albumName}) => {
                 </Grid>
                 <Grid item xs={12} className={classes.imgItem}>
                     <div className={classes.imgItem}
-                         onTouchEnd={leaveTouch}
-                         onTouchStart={startTouch}
+                         onTouchEnd={onEndTouch}
+                         onTouchStart={onStartTouch}
+                         onTouchMove={onMoveTouch}
                          onDragEnter={enterDrag}
                          onDragLeave={leaveDrag}>
                         <DeletePhotosDialog open={showDelete} onDelete={deletePhoto} onClose={handleCancelDelete}/>

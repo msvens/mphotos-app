@@ -91,7 +91,7 @@ export default function TopBar(props: TobBarProps) {
                 <Hidden smUp>
                     <Box className={classes.iconTitle}>
                         <IconButton aria-label="home" color="inherit" component={Link} to="/">
-                            <MPIcon key="topLogo" mpColor="white" fontSize="large"/>
+                            <MPIcon key="topLogo" mpcolor="white" fontSize="large"/>
                         </IconButton>
                     </Box>
                 </Hidden>

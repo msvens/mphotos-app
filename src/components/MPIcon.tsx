@@ -6,11 +6,10 @@ import {SvgIcon, SvgIconProps} from "@material-ui/core";
 
 type MPIconColor = "black" | "white"
 export interface MPIconProps extends SvgIconProps{
-        mpColor: MPIconColor
+        mpcolor: MPIconColor
 }
 
 function MPIcon(props: MPIconProps) {
-
 
     return (
         <SvgIcon component={MPLogoWhite} viewBox="0 0 1085.68 1085.68" {...props}>

@@ -99,8 +99,8 @@ const InfinitePhotoGrid: React.FC<InfinitePhotoGridProps> = (props: InfinitePhot
             <div className={classes.loader}>
                 <Typography variant="h5">Loading more photos...</Typography>
             </div>
-        )
-    }
+        );
+    };
 
     return (
         <div className={classes.root}>
@@ -108,7 +108,11 @@ const InfinitePhotoGrid: React.FC<InfinitePhotoGridProps> = (props: InfinitePhot
             dataLength={photos.length}
             next={fetchMoreData}
             hasMore={hasMore}
-            loader={LoadMessage}
+            loader={
+                <div className={classes.loader}>
+                    <Typography variant="h5">Loading more photos...</Typography>
+                </div>
+            }
             className={classes.grid}
         >
         <GridList cols={props.columns} cellHeight={'auto'} spacing={getSpacing()}>
