@@ -19,7 +19,7 @@ import {Photo} from "../types/photo";
 
 interface PhotoProps2 {
     id?: string,
-    query?: string
+    query?: string,
     albumName?: string
 }
 
@@ -82,7 +82,13 @@ const useStyles = makeStyles((theme: Theme) =>
 type EditButtonProps = {
     tooltip: string,
     onClick: () => void,
+}
 
+interface TouchState {
+    xStart: number,
+    xPos: number,
+    yStart: number,
+    yPos: number
 }
 
 const PhotoPage2: React.FC<PhotoProps2> = ({id, query, albumName}) => {
@@ -95,8 +101,9 @@ const PhotoPage2: React.FC<PhotoProps2> = ({id, query, albumName}) => {
     const classes = useStyles();
     const [showDelete, setShowDelete] = useState(false)
     const [showUpdate, setShowUpdate] = useState(false)
-    const [xpos, setXPos] = useState<number>(0)
-    const [xend, setXEnd] = useState<number>(0)
+    const [touch, setTouch] = useState<TouchState>({xStart: -1, xPos: -1, yStart: -1, yPos: -1})
+    //const [xpos, setXPos] = useState<number>(0)
+    //const [xend, setXEnd] = useState<number>(0)
 
     useEffect(() => {
         PhotosApi.isLoggedIn().then(res => setLoggedIn(res))
@@ -231,33 +238,44 @@ const PhotoPage2: React.FC<PhotoProps2> = ({id, query, albumName}) => {
         );
     }
 
+    /*
     const enterDrag = (event: React.DragEvent<HTMLDivElement>) => {
         setXPos(event.clientX)
-    }
+    }*/
 
     const onStartTouch = (event: React.TouchEvent<HTMLDivElement>) => {
         //const { clientX, clientY } = event.touches ? event.touches[0] : event
         //console.log("start touch "+event.touches.length)
-        if(event.touches[0]) {
-            setXPos(event.touches[0].clientX)
-            setXEnd(event.touches[0].clientX)
-        }
+        if (event.touches && event.touches.length > 1) return;
+
+        touch.xStart = event.touches[0].clientX
+        touch.yStart = event.touches[0].clientY
+        touch.xPos = touch.xStart
+        touch.yPos = touch.yPos
+
     }
 
     const onMoveTouch = (event: React.TouchEvent<HTMLDivElement>) => {
-        if(event.touches[0]) {
-            setXEnd(event.touches[0].clientX);
-        }
+        if (event.touches && event.touches.length > 1) return;
+
+        touch.xPos = event.touches[0].clientX
+        touch.yPos = event.touches[0].clientY
+
     };
 
     const onEndTouch = (event: React.TouchEvent<HTMLDivElement>) => {
         //console.log("touch end "+event.touches.length)
-        const delta = xpos - xend
-        setXPos(0)
-        setXEnd(0)
-        if(Math.abs(delta) > 20) {
+        const deltaX = touch.xStart - touch.xPos
+        const deltaY = touch.yStart - touch.yPos
+        touch.xStart = touch.yStart = touch.xPos = touch.yPos = -1
+
+        if(Math.abs(deltaX) > 30 && Math.abs(deltaY) < 40)
+            deltaX < 0 ? handleBackward() : handleForward();
+
+
+        /*if(Math.abs(delta) > 20) {
             delta < 0 ? handleBackward() : handleForward();
-        }
+        }*/
         // const delta = xpos - event.touches[0].clientX
         // setXPos(-1)
         // if(Math.abs(delta) > 20) {
@@ -271,6 +289,7 @@ const PhotoPage2: React.FC<PhotoProps2> = ({id, query, albumName}) => {
     };
 
 
+    /*
     const leaveDrag = (event: React.DragEvent<HTMLDivElement>) => {
         const delta = xpos - event.clientX
         setXPos(-1)
@@ -282,6 +301,7 @@ const PhotoPage2: React.FC<PhotoProps2> = ({id, query, albumName}) => {
             }
         }
     }
+     */
 
     const ProfilePicture: React.FC = () => {
         if(album) {
@@ -317,8 +337,8 @@ const PhotoPage2: React.FC<PhotoProps2> = ({id, query, albumName}) => {
                          onTouchEnd={onEndTouch}
                          onTouchStart={onStartTouch}
                          onTouchMove={onMoveTouch}
-                         onDragEnter={enterDrag}
-                         onDragLeave={leaveDrag}>
+                         /*onDragEnter={enterDrag}
+                         onDragLeave={leaveDrag}*/>
                         <DeletePhotosDialog open={showDelete} onDelete={deletePhoto} onClose={handleCancelDelete}/>
                         <EditPhotoDialog open={showUpdate} photo={photos[idx]}
                                          onClose={handleCloseUpdate} onSubmit={updatePhoto}/>
