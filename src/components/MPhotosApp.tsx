@@ -4,12 +4,7 @@ import AboutPage from "./AboutPage";
 import AccountPage from "./AccountPage";
 import HomePage from "./HomePage";
 import 'typeface-roboto';
-import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    RouteComponentProps
-} from "react-router-dom";
+import {BrowserRouter as Router, Route, RouteComponentProps, Switch} from "react-router-dom";
 import ScrollIntoView from "./ScrollIntoView";
 import TopBar from "./TopBar";
 import PhotoPage2 from "./PhotoPage2";
@@ -17,6 +12,7 @@ import {Divider} from "@material-ui/core";
 import BottomBar from "./BottomBar";
 import ResumePage from "./ResumePage";
 import AlbumPage from "./AlbumPage";
+import {PhotoType} from "../services/api";
 
 
 interface MatchParams {
@@ -112,16 +108,16 @@ export default function MPhotosApp() {
                 <div className={classes.content} id="contentPage">
                     <Switch>
                         <Route path="/albums/:id" render={({match}: MatchProps) => (
-                            <PhotoPage2 albumName={match.params.id}/>)}/>
+                            <PhotoPage2 photoType={PhotoType.Dynamic} albumName={match.params.id}/>)}/>
                         <Route path="/albums" render={() => <AlbumPage/>}/>
                         <Route path="/resume" render={() => <ResumePage/>}/>
-                        <Route path="/photos" render={() => <PhotoPage2 id=""/>}/>
+                        <Route path="/photos" render={() => <PhotoPage2 photoType={PhotoType.Dynamic} id=""/>}/>
                         <Route path="/about" render={() => <AboutPage/>}/>
                         <Route path="/login" render={() => <AccountPage/>}/>
                         <Route path={"/photo/:id"} render={({match}: MatchProps) => (
-                            <PhotoPage2 id={match.params.id}/>)}/>
+                            <PhotoPage2 photoType={PhotoType.Dynamic} id={match.params.id}/>)}/>
                         <Route path="/search" render={(props: RouteComponentProps) => {
-                            return <PhotoPage2 query={props.location.search}/>
+                            return <PhotoPage2 photoType={PhotoType.Dynamic} query={props.location.search}/>
                         }}/>
                         <Route path="/" render={() => <HomePage/>}/>
                     </Switch>

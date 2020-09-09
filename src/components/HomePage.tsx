@@ -1,6 +1,5 @@
 import React from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import PhotoGrid2 from "./PhotoGrid2";
 import BioDialog from "./BioDialog";
 import InfinitePhotoGrid from "./InfinitePhotoGrid";
 

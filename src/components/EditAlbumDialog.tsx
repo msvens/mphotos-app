@@ -8,7 +8,6 @@ import {
     DialogTitle,
     TextField
 } from "@material-ui/core";
-import {Photo} from "../types/photo";
 import {Album} from "../services/api";
 
 interface EditAlbumProps {

@@ -9,6 +9,16 @@ interface MPhotosResponse<T> {
     data?: T
 }
 
+export enum PhotoType {
+    Square = 0,
+    Landscape,
+    Portrait,
+    Resize,
+    Original,
+    Thumb,
+    Dynamic
+}
+
 export interface Album {
     name: string;
     description: string;
@@ -96,12 +106,34 @@ class PhotoApi {
             .then(res => res as MPhotosResponse<AlbumCollection>).then(res => PhotoApi.convert(res))
     }
 
-    getImageUrl(p: Photo):string {
-        return "/api/images/".concat(p.fileName)
+    getImageUrl(p: Photo, type: PhotoType):string {
+        switch(type) {
+            case PhotoType.Thumb:
+                return "/api/thumbs/".concat(p.fileName)
+            case PhotoType.Landscape:
+                return "/api/landscapes/".concat(p.fileName)
+            case PhotoType.Portrait:
+                return "/api/portraits/".concat(p.fileName)
+            case PhotoType.Square:
+                return "/api/squares/".concat(p.fileName)
+            case PhotoType.Resize:
+                return "/api/resizes/".concat(p.fileName)
+            case PhotoType.Original:
+                return "/api/images/".concat(p.fileName)
+            case PhotoType.Dynamic:
+                if(p.width === p.height)
+                    return "/api/squares/".concat(p.fileName)
+                else if(p.width > p.height)
+                    return "/api/landscapes/".concat(p.fileName)
+                else
+                    return "/api/portraits/".concat(p.fileName)
+        }
+
     }
 
     getThumbUrl(p: Photo):string {
-        return "/api/thumbs/".concat(p.fileName)
+        return this.getImageUrl(p, PhotoType.Thumb)
+        //return "/api/thumbs/".concat(p.fileName)
     };
 
     getThumbUrlId(id: string):string {

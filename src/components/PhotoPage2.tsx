@@ -1,10 +1,11 @@
-import React, {useEffect, useState, Fragment} from 'react';
-import {makeStyles, createStyles, Theme, Grid, Typography, fade, Tooltip} from "@material-ui/core";
+import React, {Fragment, useEffect, useState} from 'react';
+import {createStyles, fade, Grid, makeStyles, Theme, Tooltip, Typography} from "@material-ui/core";
 
-import PhotosApi, {Album, PhotoList} from "../services/api";
+import PhotosApi, {Album, PhotoList, PhotoType} from "../services/api";
 import ArrowBackIosSharpIcon from "@material-ui/icons/ArrowBackIosSharp";
 import ArrowForwardIosSharpIcon from "@material-ui/icons/ArrowForwardIosSharp";
 import FaceIcon from '@material-ui/icons/Face';
+import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import LockIcon from '@material-ui/icons/Lock';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 import EditIcon from '@material-ui/icons/Edit';
@@ -15,9 +16,11 @@ import DeletePhotosDialog from "./DeletePhotosDialog";
 import EditPhotoDialog from "./EditPhotoDialog";
 import PhotoDetail from "./PhotoDetail";
 import {Photo} from "../types/photo";
+import FullScreenPhoto from "./FullScreenPhoto";
 
 
 interface PhotoProps2 {
+    photoType: PhotoType
     id?: string,
     query?: string,
     albumName?: string
@@ -30,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) =>
             flexWrap: 'wrap',
             justifyContent: 'space-around',
             overflow: 'hidden',
-            maxWidth: 1024,
+            maxWidth: 1200,
             margin: 'auto'
 
         },
@@ -43,6 +46,7 @@ const useStyles = makeStyles((theme: Theme) =>
             position: 'relative',
             margin: 'auto',
             display: 'flex',
+            //width: '800',
             // maxHeigh: 800,
             maxWidth: 1080,
         },
@@ -91,7 +95,7 @@ interface TouchState {
     yPos: number
 }
 
-const PhotoPage2: React.FC<PhotoProps2> = ({id, query, albumName}) => {
+const PhotoPage2: React.FC<PhotoProps2> = ({photoType, id, query, albumName}) => {
 
     const [photos, setPhotos] = useState<Photo[]>([]);
     const [album, setAlbum] = useState<Album>();
@@ -101,9 +105,8 @@ const PhotoPage2: React.FC<PhotoProps2> = ({id, query, albumName}) => {
     const classes = useStyles();
     const [showDelete, setShowDelete] = useState(false)
     const [showUpdate, setShowUpdate] = useState(false)
+    const [showFullscreen, setShowFullscreen] = useState(false)
     const [touch, setTouch] = useState<TouchState>({xStart: -1, xPos: -1, yStart: -1, yPos: -1})
-    //const [xpos, setXPos] = useState<number>(0)
-    //const [xend, setXEnd] = useState<number>(0)
 
     useEffect(() => {
         PhotosApi.isLoggedIn().then(res => setLoggedIn(res))
@@ -238,28 +241,21 @@ const PhotoPage2: React.FC<PhotoProps2> = ({id, query, albumName}) => {
         );
     }
 
-    /*
-    const enterDrag = (event: React.DragEvent<HTMLDivElement>) => {
-        setXPos(event.clientX)
-    }*/
-
     const onStartTouch = (event: React.TouchEvent<HTMLDivElement>) => {
-        //const { clientX, clientY } = event.touches ? event.touches[0] : event
-        //console.log("start touch "+event.touches.length)
-        if (event.touches && event.touches.length > 1) return;
+        if (event.touches && event.touches.length > 1) return
 
         touch.xStart = event.touches[0].clientX
         touch.yStart = event.touches[0].clientY
         touch.xPos = touch.xStart
-        touch.yPos = touch.yPos
+        touch.yPos = touch.yStart
 
     }
 
     const onMoveTouch = (event: React.TouchEvent<HTMLDivElement>) => {
         if (event.touches && event.touches.length > 1) return;
 
-        touch.xPos = event.touches[0].clientX
-        touch.yPos = event.touches[0].clientY
+        touch.xPos = event.touches[0].clientX;
+        touch.yPos = event.touches[0].clientY;
 
     };
 
@@ -271,37 +267,7 @@ const PhotoPage2: React.FC<PhotoProps2> = ({id, query, albumName}) => {
 
         if(Math.abs(deltaX) > 30 && Math.abs(deltaY) < 40)
             deltaX < 0 ? handleBackward() : handleForward();
-
-
-        /*if(Math.abs(delta) > 20) {
-            delta < 0 ? handleBackward() : handleForward();
-        }*/
-        // const delta = xpos - event.touches[0].clientX
-        // setXPos(-1)
-        // if(Math.abs(delta) > 20) {
-        //     if (delta < 0) {
-        //         handleBackward()
-        //     } else {
-        //         handleForward()
-        //     }
-        // }
-        //event.preventDefault()
     };
-
-
-    /*
-    const leaveDrag = (event: React.DragEvent<HTMLDivElement>) => {
-        const delta = xpos - event.clientX
-        setXPos(-1)
-        if(Math.abs(delta) > 20) {
-            if (delta < 0) {
-                handleBackward()
-            } else {
-                handleForward()
-            }
-        }
-    }
-     */
 
     const ProfilePicture: React.FC = () => {
         if(album) {
@@ -336,14 +302,15 @@ const PhotoPage2: React.FC<PhotoProps2> = ({id, query, albumName}) => {
                     <div className={classes.imgItem}
                          onTouchEnd={onEndTouch}
                          onTouchStart={onStartTouch}
-                         onTouchMove={onMoveTouch}
-                         /*onDragEnter={enterDrag}
-                         onDragLeave={leaveDrag}*/>
+                         onTouchMove={onMoveTouch}>
+
                         <DeletePhotosDialog open={showDelete} onDelete={deletePhoto} onClose={handleCancelDelete}/>
+                        <FullScreenPhoto photo={photos[idx]} openDialog={showFullscreen}
+                                         onClose={() => setShowFullscreen(false)} onNext={handleForward} onPrev={handleBackward}/>
                         <EditPhotoDialog open={showUpdate} photo={photos[idx]}
                                          onClose={handleCloseUpdate} onSubmit={updatePhoto}/>
                              <div>
-                             <img className={classes.img} alt={photos[idx].title} src={PhotosApi.getImageUrl(photos[idx])}/>
+                             <img className={classes.img} alt={photos[idx].title} src={PhotosApi.getImageUrl(photos[idx], photoType)}/>
                              </div>
 
                         {loggedIn &&
@@ -372,6 +339,10 @@ const PhotoPage2: React.FC<PhotoProps2> = ({id, query, albumName}) => {
                             <IconButton aria-label="next" color="primary" onClick={handleForward}
                                         className={classes.editButton}>
                                 <ArrowForwardIosSharpIcon fontSize="small"/>
+                            </IconButton>
+                            <IconButton aria-label="fullScreen" color="primary" onClick={() => setShowFullscreen(true)}
+                                        className={classes.editButton}>
+                                <FullscreenIcon fontSize="small"/>
                             </IconButton>
                         </div>
                     </div>
