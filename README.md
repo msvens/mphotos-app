@@ -17,17 +17,19 @@ photo blog.
 - Create, delete and edit image information
 - Private photos - set photos to only be viewable if you are logged in
 - Add photos to albums
+- Infinite scrolling of image grid
+- Swipable images (not yet for fullscreen mode)
+- Fullscreen mode
+
 
 # TODO
-- Infinite Scrolling of Image Grid (DONE!)
 - Customizable UI
     - compact view (make more space for images)
     - columns in image grid
     - space between images in image grid
     - what image information to display and how
-- Swipable image list (MOSTLY DONE!)
-- Smarter image sizing depending on landscape, portrait mode
 - Comments, Likes
+- Swipeable Images for fullscreen image mode
 - Tablet/Mobile enhancements
 
 # Thanks
