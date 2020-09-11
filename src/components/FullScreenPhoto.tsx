@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
             backgroundColor: theme.palette.common.black,
-            color:  theme.palette.common.black,
+            color: theme.palette.common.black,
         },
         imgItem: {
             display: 'flex',
@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme: Theme) =>
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: theme.palette.common.black,
+            color: theme.palette.common.black,
             maxHeight: '100%'
         },
         dialogContent: {
@@ -61,6 +62,13 @@ interface FullScreenPhotoProps {
     onNext: () => void,
 }
 
+interface TouchState {
+    xStart: number,
+    xPos: number,
+    yStart: number,
+    yPos: number
+}
+
 
 const FullScreenPhoto: React.FC<FullScreenPhotoProps> = ({photo, openDialog, onClose, onPrev, onNext}) => {
 
@@ -68,7 +76,7 @@ const FullScreenPhoto: React.FC<FullScreenPhotoProps> = ({photo, openDialog, onC
 
     return (
         <React.Fragment>
-            <Dialog className={classes.root} fullScreen open={openDialog} onClose={onClose} maxWidth="lg">
+            <Dialog PaperProps={{ classes: {root: classes.root} }} fullScreen open={openDialog} onClose={onClose} maxWidth="lg">
                 <div className={classes.imgItem}>
                     <img alt={photo.title} className={classes.img} src={PhotosApi.getImageUrl(photo, PhotoType.Original)}/>
                     <div className={classes.navButtons}>
@@ -85,7 +93,6 @@ const FullScreenPhoto: React.FC<FullScreenPhotoProps> = ({photo, openDialog, onC
                         </IconButton>
                     </div>
                 </div>
-
                 {/*<DialogContent className={classes.dialogContent} >
                     <img className={classes.img} src={props.url} onClick={props.onClose}/>
                 </DialogContent>*/}

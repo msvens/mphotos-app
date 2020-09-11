@@ -46,8 +46,6 @@ const useStyles = makeStyles((theme: Theme) =>
             position: 'relative',
             margin: 'auto',
             display: 'flex',
-            //width: '800',
-            // maxHeigh: 800,
             maxWidth: 1080,
         },
         navButtons: {
@@ -242,7 +240,7 @@ const PhotoPage2: React.FC<PhotoProps2> = ({photoType, id, query, albumName}) =>
     }
 
     const onStartTouch = (event: React.TouchEvent<HTMLDivElement>) => {
-        if (event.touches && event.touches.length > 1) return
+        if (showFullscreen || (event.touches && event.touches.length > 1)) return
 
         touch.xStart = event.touches[0].clientX
         touch.yStart = event.touches[0].clientY
@@ -252,15 +250,15 @@ const PhotoPage2: React.FC<PhotoProps2> = ({photoType, id, query, albumName}) =>
     }
 
     const onMoveTouch = (event: React.TouchEvent<HTMLDivElement>) => {
-        if (event.touches && event.touches.length > 1) return;
-
+        if (showFullscreen || (event.touches && event.touches.length > 1)) return
         touch.xPos = event.touches[0].clientX;
         touch.yPos = event.touches[0].clientY;
 
     };
 
     const onEndTouch = (event: React.TouchEvent<HTMLDivElement>) => {
-        //console.log("touch end "+event.touches.length)
+        if (showFullscreen || (event.touches && event.touches.length > 1)) return
+
         const deltaX = touch.xStart - touch.xPos
         const deltaY = touch.yStart - touch.yPos
         touch.xStart = touch.yStart = touch.xPos = touch.yPos = -1
