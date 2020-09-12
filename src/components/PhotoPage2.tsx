@@ -1,5 +1,15 @@
 import React, {Fragment, useEffect, useState} from 'react';
-import {createStyles, fade, Grid, makeStyles, Theme, Tooltip, Typography} from "@material-ui/core";
+import {
+    createStyles,
+    fade,
+    Grid,
+    makeStyles,
+    Theme,
+    Tooltip,
+    Typography,
+    useMediaQuery,
+    useTheme
+} from "@material-ui/core";
 
 import PhotosApi, {Album, PhotoList, PhotoType} from "../services/api";
 import ArrowBackIosSharpIcon from "@material-ui/icons/ArrowBackIosSharp";
@@ -46,7 +56,7 @@ const useStyles = makeStyles((theme: Theme) =>
             position: 'relative',
             margin: 'auto',
             display: 'flex',
-            maxWidth: 1080,
+            maxWidth: 1200,
         },
         navButtons: {
             position: 'absolute',
@@ -105,6 +115,13 @@ const PhotoPage2: React.FC<PhotoProps2> = ({photoType, id, query, albumName}) =>
     const [showUpdate, setShowUpdate] = useState(false)
     const [showFullscreen, setShowFullscreen] = useState(false)
     const [touch, setTouch] = useState<TouchState>({xStart: -1, xPos: -1, yStart: -1, yPos: -1})
+
+    const theme = useTheme()
+    //const isPhone = useMediaQuery(theme.breakpoints.down('sm'))
+    //const isTablet = useMediaQuery(theme.breakpoints.between('sm','md'))
+    const isPortrait = useMediaQuery('(orientation: portrait)')
+    const isLargeDisplay = useMediaQuery(theme.breakpoints.up('lg'))
+    //const isTableOrMobileDevice = useMediaQuery('(max-device-width: 1224px)')
 
     useEffect(() => {
         PhotosApi.isLoggedIn().then(res => setLoggedIn(res))
@@ -308,7 +325,7 @@ const PhotoPage2: React.FC<PhotoProps2> = ({photoType, id, query, albumName}) =>
                         <EditPhotoDialog open={showUpdate} photo={photos[idx]}
                                          onClose={handleCloseUpdate} onSubmit={updatePhoto}/>
                              <div>
-                             <img className={classes.img} alt={photos[idx].title} src={PhotosApi.getImageUrl(photos[idx], photoType)}/>
+                             <img className={classes.img} alt={photos[idx].title} src={PhotosApi.getImageUrl(photos[idx], photoType, isPortrait)}/>
                              </div>
 
                         {loggedIn &&

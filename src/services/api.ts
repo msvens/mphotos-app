@@ -74,6 +74,13 @@ export interface SearchPhotoParams {
     cameraModel?: string
 }
 
+export enum ImageAspect {
+    LANDSCAPE,
+    PORTRAIT,
+    SQUARE
+}
+
+
 class PhotoApi {
 
     private static convert<T>(resp: MPhotosResponse<T>): T {
@@ -96,6 +103,83 @@ class PhotoApi {
             .then(res => res.json())
     }
 
+    landscapeURL(p: Photo): string {
+        return "/api/landscapes/".concat(p.fileName)
+    }
+
+    portraitURL(p: Photo): string {
+        return "/api/portraits/".concat(p.fileName)
+    }
+
+    squareURL(p: Photo): string {
+        return "/api/squares/".concat(p.fileName)
+    }
+
+    resizeURL(p: Photo): string {
+        return "/api/resizes/".concat(p.fileName)
+    }
+
+    orignialURL(p: Photo): string {
+        return "/api/images/".concat(p.fileName)
+    }
+
+
+    aspect(p: Photo): ImageAspect {
+        const rat = p.width / p.height
+        if(rat >= 1.25)
+            return ImageAspect.LANDSCAPE
+        else if(rat >= 0.8)
+            return ImageAspect.SQUARE
+        else
+            return ImageAspect.PORTRAIT
+    }
+
+    imagePath(p: Photo): string {
+        switch(this.aspect(p)) {
+            case ImageAspect.PORTRAIT:
+                return this.portraitURL(p)
+            case ImageAspect.SQUARE:
+                return this.squareURL(p)
+            case ImageAspect.LANDSCAPE:
+                return this.landscapeURL(p)
+        }
+    }
+
+    getImageUrl(p: Photo, type: PhotoType, portraitView?: boolean, largeDisplay?: boolean):string {
+        switch(type) {
+            case PhotoType.Thumb:
+                return "/api/thumbs/".concat(p.fileName)
+            case PhotoType.Landscape:
+                return this.landscapeURL(p)
+            case PhotoType.Portrait:
+                return this.portraitURL(p)
+            case PhotoType.Square:
+                return this.squareURL(p)
+            case PhotoType.Resize:
+                return this.resizeURL(p)
+            case PhotoType.Original:
+                return this.orignialURL(p)
+            case PhotoType.Dynamic:
+                const a = this.aspect(p)
+                if (portraitView === undefined && largeDisplay === undefined) {
+                    return this.imagePath(p).concat(p.fileName)
+                } else if(largeDisplay === undefined) {
+                    if (portraitView) {
+                        return a == ImageAspect.PORTRAIT ? this.portraitURL(p) : this.squareURL(p)
+                    } else {
+                        return "/api/landscapes/".concat(p.fileName)
+                    }
+                } else {//both portrait and large display
+                    if (portraitView)
+                        return a === ImageAspect.PORTRAIT ? this.portraitURL(p) : this.squareURL(p)
+                    else if(largeDisplay && a === ImageAspect.LANDSCAPE)
+                        return this.resizeURL(p)
+                    else
+                        return this.landscapeURL(p)
+                }
+        }
+    }
+
     getAlbums(): Promise<Album[]> {
         return PhotoApi.req(`/api/albums`)
             .then(res => res as MPhotosResponse<Album[]>).then(res => PhotoApi.convert(res));
@@ -106,34 +190,8 @@ class PhotoApi {
             .then(res => res as MPhotosResponse<AlbumCollection>).then(res => PhotoApi.convert(res))
     }
 
-    getImageUrl(p: Photo, type: PhotoType):string {
-        switch(type) {
-            case PhotoType.Thumb:
-                return "/api/thumbs/".concat(p.fileName)
-            case PhotoType.Landscape:
-                return "/api/landscapes/".concat(p.fileName)
-            case PhotoType.Portrait:
-                return "/api/portraits/".concat(p.fileName)
-            case PhotoType.Square:
-                return "/api/squares/".concat(p.fileName)
-            case PhotoType.Resize:
-                return "/api/resizes/".concat(p.fileName)
-            case PhotoType.Original:
-                return "/api/images/".concat(p.fileName)
-            case PhotoType.Dynamic:
-                if(p.width === p.height)
-                    return "/api/squares/".concat(p.fileName)
-                else if(p.width > p.height)
-                    return "/api/landscapes/".concat(p.fileName)
-                else
-                    return "/api/portraits/".concat(p.fileName)
-        }
-
-    }
-
     getThumbUrl(p: Photo):string {
         return this.getImageUrl(p, PhotoType.Thumb)
-        //return "/api/thumbs/".concat(p.fileName)
     };
 
     getThumbUrlId(id: string):string {
