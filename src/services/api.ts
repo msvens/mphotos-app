@@ -160,22 +160,16 @@ class PhotoApi {
             case PhotoType.Original:
                 return this.orignialURL(p)
             case PhotoType.Dynamic:
+                //for now dont use large display)
                 const a = this.aspect(p)
-                if (portraitView === undefined && largeDisplay === undefined) {
+                if (portraitView === undefined) {
                     return this.imagePath(p).concat(p.fileName)
-                } else if(largeDisplay === undefined) {
+                } else {
                     if (portraitView) {
                         return a == ImageAspect.PORTRAIT ? this.portraitURL(p) : this.squareURL(p)
                     } else {
                         return "/api/landscapes/".concat(p.fileName)
                     }
-                } else {//both portrait and large display
-                    if (portraitView)
-                        return a === ImageAspect.PORTRAIT ? this.portraitURL(p) : this.squareURL(p)
-                    else if(largeDisplay && a === ImageAspect.LANDSCAPE)
-                        return this.resizeURL(p)
-                    else
-                        return this.landscapeURL(p)
                 }
         }
     }
@@ -190,13 +184,16 @@ class PhotoApi {
             .then(res => res as MPhotosResponse<AlbumCollection>).then(res => PhotoApi.convert(res))
     }
 
+    /*
     getThumbUrl(p: Photo):string {
         return this.getImageUrl(p, PhotoType.Thumb)
     };
+    */
 
     getThumbUrlId(id: string):string {
         return "/api/thumbs/".concat(id)
     };
+
 
     getProfilePicUrl(u: User): string {
         return u.pic !== "" ? "/api/thumbs/".concat(u.pic) : u.pic;

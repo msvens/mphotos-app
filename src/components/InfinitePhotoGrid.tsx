@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
-import { LazyLoadImage } from 'react-lazy-load-image-component';
+import {LazyLoadImage} from 'react-lazy-load-image-component';
 import GridListTile from "@material-ui/core/GridListTile";
 import {Link} from "react-router-dom";
-import PhotosApi from "../services/api";
+import PhotosApi, {PhotoType} from "../services/api";
 import GridList from "@material-ui/core/GridList";
 import {Photo} from "../types/photo";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -120,8 +120,10 @@ const InfinitePhotoGrid: React.FC<InfinitePhotoGridProps> = (props: InfinitePhot
                 <GridListTile className={classes.thumb} cols={1} key={photo.driveId}>
                     <Link to={`/photo/${photo.driveId}`}>
                         {photo.private
-                            ? <LazyLoadImage alt={photo.fileName} className={classes.thumbPrivate} src={PhotosApi.getThumbUrl(photo)}/>
-                            : <LazyLoadImage alt={photo.fileName} className={classes.thumb} src={PhotosApi.getThumbUrl(photo)}/>
+                            ? <LazyLoadImage alt={photo.fileName} className={classes.thumbPrivate}
+                                             src={PhotosApi.getImageUrl(photo, PhotoType.Thumb)}/>
+                            : <LazyLoadImage alt={photo.fileName} className={classes.thumb}
+                                             src={PhotosApi.getImageUrl(photo, PhotoType.Thumb)}/>
                         }
 
                     </Link>

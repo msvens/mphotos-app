@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {createStyles, Dialog, fade, makeStyles, Theme} from "@material-ui/core";
 import {Photo} from "../types/photo";
 import PhotosApi, {PhotoType} from "../services/api";
@@ -34,9 +34,6 @@ const useStyles = makeStyles((theme: Theme) =>
             maxHeight: '100%',
             width: 'auto',
             height: 'auto',
-            //borderColor: theme.palette.common.black,
-            //width: '100%',
-            //height: '100%',
         },
         navButtons: {
             position: 'absolute',
@@ -74,10 +71,42 @@ const FullScreenPhoto: React.FC<FullScreenPhotoProps> = ({photo, openDialog, onC
 
     const classes = useStyles();
 
+    const [touch, setTouch] = useState<TouchState>({xStart: -1, xPos: -1, yStart: -1, yPos: -1})
+
+
+
+    const onStartTouch = (event: React.TouchEvent<HTMLDivElement>) => {
+        if (!openDialog || (event.touches && event.touches.length > 1)) return
+
+        touch.xStart = event.touches[0].clientX
+        touch.yStart = event.touches[0].clientY
+        touch.xPos = touch.xStart
+        touch.yPos = touch.yStart
+
+    }
+
+    const onMoveTouch = (event: React.TouchEvent<HTMLDivElement>) => {
+        if (!openDialog || (event.touches && event.touches.length > 1)) return
+        touch.xPos = event.touches[0].clientX;
+        touch.yPos = event.touches[0].clientY;
+
+    };
+
+    const onEndTouch = (event: React.TouchEvent<HTMLDivElement>) => {
+        if (!openDialog || (event.touches && event.touches.length > 1)) return
+
+        const deltaX = touch.xStart - touch.xPos
+        const deltaY = touch.yStart - touch.yPos
+        touch.xStart = touch.yStart = touch.xPos = touch.yPos = -1
+
+        if(Math.abs(deltaX) > 30 && Math.abs(deltaY) < 40)
+            deltaX < 0 ? onPrev() : onNext();
+    };
+
     return (
         <React.Fragment>
             <Dialog PaperProps={{ classes: {root: classes.root} }} fullScreen open={openDialog} onClose={onClose} maxWidth="lg">
-                <div className={classes.imgItem}>
+                <div className={classes.imgItem} onTouchEnd={onEndTouch} onTouchStart={onStartTouch} onTouchMove={onMoveTouch}>
                     <img alt={photo.title} className={classes.img} src={PhotosApi.getImageUrl(photo, PhotoType.Original)}/>
                     <div className={classes.navButtons}>
                         <IconButton aria-label="previous" className={classes.editButton} onClick={onPrev}>
