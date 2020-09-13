@@ -18,7 +18,7 @@ photo blog.
 - Private photos - set photos to only be viewable if you are logged in
 - Add photos to albums
 - Infinite scrolling of image grid
-- Swipable images (not yet for fullscreen mode)
+- Swipable images
 - Fullscreen mode
 
 
@@ -28,8 +28,8 @@ photo blog.
     - columns in image grid
     - space between images in image grid
     - what image information to display and how
+    - etc...
 - Comments, Likes
-- Swipeable Images for fullscreen image mode
 - Tablet/Mobile enhancements
 
 # Thanks
