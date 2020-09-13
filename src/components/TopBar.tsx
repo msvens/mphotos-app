@@ -9,7 +9,6 @@ import SearchIcon from "@material-ui/icons/Search";
 import InputBase from "@material-ui/core/InputBase";
 import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
 import MonochromePhotosIcon from "@material-ui/icons/MonochromePhotos";
-//import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
 import PhotoAlbumOutlinedIcon from '@material-ui/icons/PhotoAlbumOutlined';
 import AccountBoxOutlinedIcon from "@material-ui/icons/AccountBoxOutlined";
 import AppBar from "@material-ui/core/AppBar";
@@ -88,7 +87,12 @@ export default function TopBar(props: TobBarProps) {
     return (
         <AppBar className={classes.appBar} position="sticky" color={'transparent'} elevation={0}>
             <Toolbar style={{paddingLeft:0, paddingRight:0}}>
-                <Hidden smUp>
+                <Box className={classes.iconTitle}>
+                    <IconButton aria-label="home" color="inherit" component={Link} to="/">
+                        <MPIcon key="topLogo" mpcolor="white" fontSize="large"/>
+                    </IconButton>
+                </Box>
+                {/*<Hidden smUp>
                     <Box className={classes.iconTitle}>
                         <IconButton aria-label="home" color="inherit" component={Link} to="/">
                             <MPIcon key="topLogo" mpcolor="white" fontSize="large"/>
@@ -99,7 +103,7 @@ export default function TopBar(props: TobBarProps) {
                     <Box className={classes.wordTitle}>
                         <MPWordIcon height={32}/>
                     </Box>
-                </Hidden>
+                </Hidden>*/}
                 {props.showSearch &&
                 <div className={classes.search}>
                     <div className={classes.searchIcon}>

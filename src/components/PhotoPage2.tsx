@@ -41,7 +41,9 @@ const useStyles = makeStyles((theme: Theme) =>
         root: {
             display: 'flex',
             flexWrap: 'wrap',
-            justifyContent: 'space-around',
+            alignItems: 'center',
+            justifyContent: 'center',
+            //justifyContent: 'space-around',
             overflow: 'hidden',
             maxWidth: 1200,
             margin: 'auto'
