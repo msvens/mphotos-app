@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import withWidth, {isWidthUp, WithWidth} from '@material-ui/core/withWidth';
 import PhotosApi, {User} from "../services/api";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
-import {Avatar, Grid, Typography} from "@material-ui/core";
+import {Avatar, Grid, Typography, useMediaQuery, useTheme} from "@material-ui/core";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -40,8 +39,11 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-const BioDialog: React.FC<WithWidth> = (props:WithWidth) => {
+const BioDialog: React.FC = () => {
     const classes = useStyles();
+
+    const theme = useTheme()
+    const isLargeDisplay = useMediaQuery(theme.breakpoints.up('sm'))
 
     const [user, setUser] = useState<User> ();
 
@@ -52,7 +54,7 @@ const BioDialog: React.FC<WithWidth> = (props:WithWidth) => {
     }, []);
 
     const getImgClass = ():string => {
-        if(isWidthUp('sm', props.width)) {
+        if(isLargeDisplay) {
             return classes.image
         } else {
             return classes.imageSmall
@@ -78,4 +80,4 @@ const BioDialog: React.FC<WithWidth> = (props:WithWidth) => {
   );
 };
 
-export default withWidth() (BioDialog);
+export default BioDialog
