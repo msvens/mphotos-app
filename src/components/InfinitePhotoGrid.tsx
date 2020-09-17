@@ -109,9 +109,7 @@ const InfinitePhotoGrid: React.FC<InfinitePhotoGridProps> = (props: InfinitePhot
             next={fetchMoreData}
             hasMore={hasMore}
             loader={
-                <div className={classes.loader}>
-                    <Typography variant="h5">Loading more photos...</Typography>
-                </div>
+                <div/>
             }
             className={classes.grid}
         >

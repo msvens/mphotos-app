@@ -9,11 +9,18 @@ const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
             display: 'flex',
-            flexWrap: 'wrap',
+            //flexWrap: 'wrap',
+            //position: 'absolute',
+            alignSelf: 'flex-end',
             justifyContent: 'space-around',
             overflow: 'hidden',
             paddingLeft: theme.spacing(2),
-            paddingTop: theme.spacing(6),
+            //paddingTop: theme.spacing(6),
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            //flexGrow: 1,
+            marginTop: theme.spacing(2),
+            marginBottom: theme.spacing(2),
             paddingRight: theme.spacing(2),
         },
         linkText: {

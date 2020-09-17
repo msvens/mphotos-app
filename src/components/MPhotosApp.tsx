@@ -25,8 +25,9 @@ interface MatchProps extends RouteComponentProps<MatchParams> {
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
-            flexGrow: 1,
-            margin: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            marginBottom: 0,
             minHeight: '100vh',
             backgroundColor: theme.palette.grey["50"],
             paddingBottom: theme.spacing(5)
@@ -50,6 +51,7 @@ const useStyles = makeStyles((theme: Theme) =>
         appBarDivider: {},
         content: {
             paddingTop: theme.spacing(5),
+            flexGrow: 1,
         },
         grow: {
             flexGrow: 1,
@@ -121,8 +123,8 @@ export default function MPhotosApp() {
                         }}/>
                         <Route path="/" render={() => <HomePage/>}/>
                     </Switch>
-                    <BottomBar showSearch={false}/>
                 </div>
+                <BottomBar showSearch={false}/>
             </div>
         </Router>
     );
