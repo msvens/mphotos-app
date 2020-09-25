@@ -34,11 +34,7 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 );
 
-interface BottomBarProps {
-    showSearch: boolean
-}
-
-export default function BottomBar(props: BottomBarProps) {
+export default function BottomBar() {
     const classes = useStyles();
 
     return (

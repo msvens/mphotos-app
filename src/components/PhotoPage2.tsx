@@ -11,7 +11,7 @@ import {
     useTheme
 } from "@material-ui/core";
 
-import PhotosApi, {Album, PhotoList, PhotoType} from "../services/api";
+import PhotosApi, {Album, Photo, PhotoList, PhotoType} from "../services/api";
 import ArrowBackIosSharpIcon from "@material-ui/icons/ArrowBackIosSharp";
 import ArrowForwardIosSharpIcon from "@material-ui/icons/ArrowForwardIosSharp";
 import FaceIcon from '@material-ui/icons/Face';
@@ -25,7 +25,6 @@ import PhotoAlbumIcon from '@material-ui/icons/PhotoAlbum';
 import DeletePhotosDialog from "./DeletePhotosDialog";
 import EditPhotoDialog from "./EditPhotoDialog";
 import PhotoDetail from "./PhotoDetail";
-import {Photo} from "../types/photo";
 import FullScreenPhoto from "./FullScreenPhoto";
 
 

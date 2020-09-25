@@ -3,9 +3,8 @@ import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import {LazyLoadImage} from 'react-lazy-load-image-component';
 import GridListTile from "@material-ui/core/GridListTile";
 import {Link} from "react-router-dom";
-import PhotosApi, {PhotoType} from "../services/api";
+import PhotosApi, {PhotoType, Photo} from "../services/api";
 import GridList from "@material-ui/core/GridList";
-import {Photo} from "../types/photo";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {Typography} from "@material-ui/core";
 
@@ -66,12 +65,6 @@ const InfinitePhotoGrid: React.FC<InfinitePhotoGridProps> = (props: InfinitePhot
             }
         });
     }, [props.fetchItems]);
-    /*useEffect(() => {
-        PhotosApi.getPhotos(props.maxItems).then(res => {
-            if (res.photos)
-                setPhotos(res.photos)
-        }).catch(e => alert(e.toString()));
-    }, [props.maxItems]);*/
 
     const getSpacing = (): number => {
         if(props.spacing === "normal") {
@@ -94,13 +87,14 @@ const InfinitePhotoGrid: React.FC<InfinitePhotoGridProps> = (props: InfinitePhot
         });
     }
 
+    /*
     const LoadMessage: React.FC = () => {
         return (
             <div className={classes.loader}>
                 <Typography variant="h5">Loading more photos...</Typography>
             </div>
         );
-    };
+    };*/
 
     return (
         <div className={classes.root}>

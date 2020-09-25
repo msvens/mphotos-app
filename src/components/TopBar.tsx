@@ -1,10 +1,9 @@
 import {createStyles, fade, makeStyles, Theme} from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
-import {Box, Hidden} from "@material-ui/core";
+import {Box, Divider} from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import {Link} from "react-router-dom";
 import MPIcon from "./MPIcon";
-import MPWordIcon from "./MPWordIcon";
 import SearchIcon from "@material-ui/icons/Search";
 import InputBase from "@material-ui/core/InputBase";
 import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
@@ -18,9 +17,9 @@ import React from "react";
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         appBar: {
-            paddingLeft:theme.spacing(2),
+            //paddingLeft:theme.spacing(2),
             marginLeft: 0,
-            paddingRight:theme.spacing(2),
+            //paddingRight:theme.spacing(2),
             marginRight: 0,
             backgroundColor: theme.palette.common.white
         },
@@ -133,6 +132,7 @@ export default function TopBar(props: TobBarProps) {
                     <AccountBoxOutlinedIcon fontSize={"large"}/>
                 </IconButton>
             </Toolbar>
+            <Divider/>
         </AppBar>
     );
 }

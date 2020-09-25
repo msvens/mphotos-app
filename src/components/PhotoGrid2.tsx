@@ -3,9 +3,8 @@ import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import {LazyLoadImage} from 'react-lazy-load-image-component';
 import GridListTile from "@material-ui/core/GridListTile";
 import {Link} from "react-router-dom";
-import PhotosApi, {PhotoType} from "../services/api";
+import PhotosApi, {PhotoType, Photo} from "../services/api";
 import GridList from "@material-ui/core/GridList";
-import {Photo} from "../types/photo";
 
 interface PhotoGrid2Props {
     maxItems: number,

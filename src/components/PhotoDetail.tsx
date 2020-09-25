@@ -6,9 +6,9 @@ import {
     Theme,
     Typography
 } from "@material-ui/core";
-import {Photo} from "../types/photo";
 import {Link as RouterLink} from "react-router-dom";
 import Link from "@material-ui/core/Link";
+import {Photo} from "../services/api";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

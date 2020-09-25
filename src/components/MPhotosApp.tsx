@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme: Theme) =>
             flexDirection: 'column',
             marginBottom: 0,
             minHeight: '100vh',
-            backgroundColor: theme.palette.grey["50"],
+            //backgroundColor: theme.palette.grey["50"],
             paddingBottom: theme.spacing(5)
         },
         appBar: {
@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme: Theme) =>
             marginLeft: 0,
             paddingRight: theme.spacing(2),
             marginRight: 0,
-            backgroundColor: theme.palette.common.white
+            //backgroundColor: theme.palette.common.white
         },
         wordTitle: {
             marginLeft: 0,
@@ -99,14 +99,13 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function MPhotosApp() {
     const classes = useStyles();
-    const showSearch = false;
 
     return (
         <Router>
             <ScrollIntoView/>
             <div className={classes.root}>
                 <TopBar showSearch={false}/>
-                <Divider className={classes.appBarDivider}/>
+                {/*<Divider className={classes.appBarDivider}/>*/}
                 <div className={classes.content} id="contentPage">
                     <Switch>
                         <Route path="/albums/:id" render={({match}: MatchProps) => (
@@ -124,7 +123,7 @@ export default function MPhotosApp() {
                         <Route path="/" render={() => <HomePage/>}/>
                     </Switch>
                 </div>
-                <BottomBar showSearch={false}/>
+                <BottomBar/>
             </div>
         </Router>
     );
