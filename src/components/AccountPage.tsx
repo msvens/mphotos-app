@@ -8,6 +8,7 @@ import PhotosApi from "../services/api";
 import Profile from "./Profile";
 import Drive from "./Drive";
 import Login from "./Login";
+import UXConfigDialog from "./UXConfigDialog";
 
 
 const drawerWidth = 140;
@@ -15,10 +16,11 @@ const drawerWidth = 140;
 const PROFILE = 'Profile';
 const DRIVE = 'Drive';
 const LOGOUT = 'Logout';
+const UXCONFIG = 'UX Config'
 
-type MenuItems = 'Profile' | 'Drive' | 'Logout';
+type MenuItems = 'Profile' | 'Drive' | 'Logout' | 'UX Config';
 
-const Items:MenuItems[] = [PROFILE, DRIVE, LOGOUT];
+const Items:MenuItems[] = [PROFILE, DRIVE, UXCONFIG, LOGOUT];
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -92,7 +94,6 @@ export default function AccountPage() {
     return (
         <div className={classes.root}>
             <Box className={classes.drawer} component={"span"} borderRight={1}>
-                {/*<Typography variant={"h5"}>Settings</Typography>*/}
                 <List>
                     {Items.map((item, idx) => (
                         <ListItem button key={item} onClick={_ => setItem(item)}>
@@ -105,6 +106,7 @@ export default function AccountPage() {
                {!loggedIn && <Login submitHandler={handleLogin}/>}
                {loggedIn && mi === PROFILE && <Profile />}
                {loggedIn && mi === DRIVE && <Drive />}
+                {loggedIn && mi === UXCONFIG && <UXConfigDialog/>}
                {loggedIn && mi === LOGOUT &&
                <Container>
                    <Typography paragraph>

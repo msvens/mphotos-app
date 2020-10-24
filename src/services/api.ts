@@ -132,6 +132,12 @@ export interface SearchPhotoParams {
     cameraModel?: string
 }
 
+export interface UXConfig {
+    photoGridCols: number
+    photoItemsLoad: number
+    photoGridSpacing: number
+}
+
 export enum ImageAspect {
     LANDSCAPE,
     PORTRAIT,
@@ -139,7 +145,10 @@ export enum ImageAspect {
 }
 
 
+
 class PhotoApi {
+
+    defaultUxConfig: UXConfig = {photoGridCols: 3, photoGridSpacing: 5, photoItemsLoad: 12}
 
     private static convert<T>(resp: MPhotosResponse<T>): T {
         if(resp.data)
@@ -230,6 +239,13 @@ class PhotoApi {
                     }
                 }
         }
+    }
+
+    getUXConfig(): Promise<UXConfig> {
+        return PhotoApi.req('/api/user/config')
+            .then(res => res as MPhotosResponse<UXConfig>)
+            .then(res => PhotoApi.convert(res))
+        //return this.uxConfig
     }
 
     getAlbums(): Promise<Album[]> {
@@ -367,6 +383,14 @@ class PhotoApi {
         return PhotoApi.req(`/api/photos/${photoId}/private`, "POST")
             .then(res => res as MPhotosResponse<Photo>)
             .then(res => PhotoApi.convert(res));
+    }
+
+    updateUXConfig(uxConfig: UXConfig): Promise<UXConfig> {
+        return PhotoApi.reqBody('/api/user/config', uxConfig, "POST")
+            .then(res => res as MPhotosResponse<UXConfig>)
+            .then(res => PhotoApi.convert(res))
+        //this.uxConfig = uxConfig
+        //return this.uxConfig
     }
 
     updateUserDrive(name: string): Promise <User> {

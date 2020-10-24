@@ -12,7 +12,7 @@ import {Typography} from "@material-ui/core";
 interface InfinitePhotoGridProps {
     fetchItems: number,
     columns: number,
-    spacing: "thin" | "normal" | "thick",
+    spacing: number,
     order: "original" | "drive"
 }
 
@@ -38,11 +38,11 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         thumb: {
             width: '100%',
-            height: 'auto'
+            height: '100%'
         },
         thumbPrivate: {
             width: '100%',
-            height: 'auto',
+            height: '100%',
             opacity: 0.5,
         },
     }),
@@ -65,16 +65,6 @@ const InfinitePhotoGrid: React.FC<InfinitePhotoGridProps> = (props: InfinitePhot
             }
         });
     }, [props.fetchItems]);
-
-    const getSpacing = (): number => {
-        if(props.spacing === "normal") {
-            return 15;
-        } else if(props.spacing === "thin") {
-            return 10;
-        } else {
-            return 20;
-        }
-    }
 
     const fetchMoreData = () => {
         PhotosApi.getPhotos(props.fetchItems, offset).then(res => {
@@ -107,7 +97,7 @@ const InfinitePhotoGrid: React.FC<InfinitePhotoGridProps> = (props: InfinitePhot
             }
             className={classes.grid}
         >
-        <GridList cols={props.columns} cellHeight={'auto'} spacing={getSpacing()}>
+        <GridList cols={props.columns} cellHeight={'auto'} spacing={props.spacing}>
             {photos.map(photo => (
                 <GridListTile className={classes.thumb} cols={1} key={photo.driveId}>
                     <Link to={`/photo/${photo.driveId}`}>

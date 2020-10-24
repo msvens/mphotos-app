@@ -2,7 +2,7 @@
 
 **Under Construction**
 
-This project is the frontend for [mphotos](https://www.github.com/msvens/photos).
+This project is the frontend for [mphotos](https://www.github.com/msvens/mphotos).
 
 It is my personal [photo blog](https://www.mellowtech.org). The focus is to create
 a simplified workflow from lightroom to photo blog such that once you export
