@@ -2,6 +2,10 @@ interface AuthUser {
     authenticated: boolean
 }
 
+interface GuestLike {
+    like: boolean
+}
+
 interface MPhotosResponse<T> {
     error?: ApiError
     data?: T
@@ -88,6 +92,17 @@ export interface Exif {
     city?: string;
     country?: string;
     state?: string;
+}
+
+export interface Guest {
+    email: string;
+    name: string;
+}
+
+export interface Verify {
+    verified: boolean
+    time: string
+
 }
 
 export interface Photo {
@@ -233,7 +248,7 @@ class PhotoApi {
                     return this.imagePath(p).concat(p.fileName)
                 } else {
                     if (portraitView) {
-                        return a == ImageAspect.PORTRAIT ? this.portraitURL(p) : this.squareURL(p)
+                        return a === ImageAspect.PORTRAIT ? this.portraitURL(p) : this.squareURL(p)
                     } else {
                         return "/api/landscapes/".concat(p.fileName)
                     }
@@ -288,6 +303,16 @@ class PhotoApi {
             .then(res => res as MPhotosResponse<PhotoList>).then(res => PhotoApi.convert(res));
     }
 
+    likePhoto(photoId: string): Promise<string> {
+        return PhotoApi.req(`/api/likes/${photoId}`,'POST')
+            .then(res => res as MPhotosResponse<string>).then(res => PhotoApi.convert(res))
+    }
+
+    unlikePhoto(photoId: string): Promise<string> {
+        return PhotoApi.req(`/api/likes/${photoId}`,'DELETE')
+            .then(res => res as MPhotosResponse<string>).then(res => PhotoApi.convert(res))
+    }
+
     login(password: string): Promise<AuthUser> {
         return PhotoApi.reqBody('/api/login', {password: password}, 'POST')
             .then(res => res as MPhotosResponse<AuthUser>).then(res => PhotoApi.convert(res));
@@ -304,6 +329,12 @@ class PhotoApi {
             .then(res => PhotoApi.convert(res).authenticated);
     }
 
+    isGuest(): Promise<boolean> {
+        return PhotoApi.req('/api/guest/is')
+            .then(res => res as MPhotosResponse<AuthUser>)
+            .then(res => PhotoApi.convert(res).authenticated)
+    }
+
     authGoogle(callback: string = '/login') {
 
     }
@@ -317,6 +348,30 @@ class PhotoApi {
     listDrive(): Promise<DriveFiles> {
         return PhotoApi.req('/api/drive')
             .then(res => res as MPhotosResponse<DriveFiles>).then(res => PhotoApi.convert(res));
+    }
+
+    getPhotoLikes(photoId: string): Promise<Guest[]> {
+        return PhotoApi.req(`/api/likes/${photoId}`)
+            .then(res => res as MPhotosResponse<Guest[]>)
+            .then(res => PhotoApi.convert(res))
+    }
+
+    getGuest(): Promise<Guest> {
+        return PhotoApi.req('/api/guest')
+            .then(res => res as MPhotosResponse<Guest>)
+            .then(res => PhotoApi.convert(res))
+    }
+
+    getGuestLikes(): Promise<string[]> {
+        return PhotoApi.req('/api/guest/likes')
+            .then(res => res as MPhotosResponse<string[]>)
+            .then(res => PhotoApi.convert(res))
+    }
+
+    getGuestLike(photoId: string): Promise<boolean> {
+        return PhotoApi.req(`/api/guest/likes/${photoId}`)
+            .then(res => res as MPhotosResponse<GuestLike>)
+            .then(res => PhotoApi.convert(res).like)
     }
 
     getPhotoAlbums(photoId: string): Promise<string[]> {
@@ -345,6 +400,7 @@ class PhotoApi {
         return PhotoApi.req('/api/user')
             .then(res => res as MPhotosResponse<User>).then(res => PhotoApi.convert(res));
     }
+
 
     statusJob(id: string): Promise<Job> {
         return PhotoApi.req(`/api/photos/job/${id}`)
@@ -409,6 +465,12 @@ class PhotoApi {
         return PhotoApi.reqBody('/api/user', {name: name, bio: bio, pic: pic})
             .then(res => res as MPhotosResponse<User>)
             .then(res => PhotoApi.convert(res));
+    }
+
+    verifyGuest(query: string): Promise<boolean> {
+        return PhotoApi.req(`/api/guest/verify${query}`)
+            .then(res => res as MPhotosResponse<Verify>)
+            .then(res => PhotoApi.convert(res).verified)
     }
 
 }

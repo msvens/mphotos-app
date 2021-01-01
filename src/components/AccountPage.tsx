@@ -10,9 +10,6 @@ import Drive from "./Drive";
 import Login from "./Login";
 import UXConfigDialog from "./UXConfigDialog";
 
-
-const drawerWidth = 140;
-
 const PROFILE = 'Profile';
 const DRIVE = 'Drive';
 const LOGOUT = 'Logout';
@@ -30,44 +27,16 @@ const useStyles = makeStyles((theme: Theme) =>
             margin: 'auto',
         },
         drawer: {
-            minWidth: drawerWidth,
+            minWidth: 140,
             flexShrink: 0,
-        },
-        drawerPaper: {
-            width: drawerWidth,
-        },
-        divider:  {
-            marginTop: theme.spacing(2),
-            marginBottom: theme.spacing(2),
         },
         content: {
             flexGrow: 1,
             paddingLeft: theme.spacing(3),
             paddingRight: theme.spacing(3),
         },
-        textField: {
-            marginBottom: theme.spacing(4)
-        },
-        textFieldLabel: {
-            fontSize: theme.typography.body1.fontSize
-        }
     }),
-);
-
-/*
-const LogoutForm: React.FC = () => {
-    return (
-        <Container>
-            <Typography paragraph>
-                By Logging out you will no longer be able to upload pictures, etc.
-            </Typography>
-            <Button variant="contained" color="primary">Logout Now</Button>
-        </Container>
-    )
-};
-*/
-
-
+)
 
 export default function AccountPage() {
     const [mi, setItem] = useState<MenuItems> (PROFILE);

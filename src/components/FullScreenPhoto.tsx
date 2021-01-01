@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {createStyles, Dialog, fade, makeStyles, Theme} from "@material-ui/core";
 import PhotosApi, {PhotoType, Photo} from "../services/api";
 import IconButton from "@material-ui/core/IconButton";
@@ -21,13 +21,6 @@ const useStyles = makeStyles((theme: Theme) =>
             color: theme.palette.common.black,
             maxHeight: '100%',
             height: '100%',
-            //width: 'auto',
-        },
-        dialogContent: {
-            backgroundColor: theme.palette.common.black,
-            padding: 0,
-            margin: 0,
-            border: 0,
         },
         img: {
             objectFit: 'contain',
@@ -73,8 +66,8 @@ const FullScreenPhoto: React.FC<FullScreenPhotoProps> = ({photo, openDialog, onC
 
     const classes = useStyles();
 
-    const [touch, setTouch] = useState<TouchState>({xStart: -1, xPos: -1, yStart: -1, yPos: -1})
-
+    //const [touch, setTouch] = useState<TouchState>({xStart: -1, xPos: -1, yStart: -1, yPos: -1})
+    const touch: TouchState = {xStart: -1, xPos: -1, yStart: -1, yPos: -1}
 
 
     const onStartTouch = (event: React.TouchEvent<HTMLDivElement>) => {
@@ -124,9 +117,6 @@ const FullScreenPhoto: React.FC<FullScreenPhotoProps> = ({photo, openDialog, onC
                         </IconButton>
                     </div>
                 </div>
-                {/*<DialogContent className={classes.dialogContent} >
-                    <img className={classes.img} src={props.url} onClick={props.onClose}/>
-                </DialogContent>*/}
             </Dialog>
         </React.Fragment>
     );

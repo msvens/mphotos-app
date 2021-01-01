@@ -1,14 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
     Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle, MenuItem,
+    MenuItem,
     TextField
 } from "@material-ui/core";
-import PhotosApi, {Photo} from "../services/api";
+import PhotosApi from "../services/api";
 
 
 const gridSpacings = [

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import BioDialog from "./BioDialog";
 import InfinitePhotoGrid from "./InfinitePhotoGrid";
-import PhotosApi, {Photo, UXConfig} from "../services/api";
+import PhotosApi, {UXConfig} from "../services/api";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -32,8 +32,6 @@ export default function HomePage() {
         <div className={classes.root}>
             <BioDialog/>
             <InfinitePhotoGrid fetchItems={12} columns={config.photoGridCols} spacing={config.photoGridSpacing} order="drive"/>
-            {/*<PhotoGrid2 columns={3} maxItems={1000} order="drive" spacing="thin"/>*/}
-            {/*<PhotoGrid maxItems={9} order="drive"/>*/}
         </div>
     );
 

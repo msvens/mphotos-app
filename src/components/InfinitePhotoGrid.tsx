@@ -6,8 +6,6 @@ import {Link} from "react-router-dom";
 import PhotosApi, {PhotoType, Photo} from "../services/api";
 import GridList from "@material-ui/core/GridList";
 import InfiniteScroll from "react-infinite-scroll-component";
-import {Typography} from "@material-ui/core";
-
 
 interface InfinitePhotoGridProps {
     fetchItems: number,

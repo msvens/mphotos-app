@@ -8,8 +8,9 @@ import GridList from "@material-ui/core/GridList";
 import InfoIcon from '@material-ui/icons/Info';
 import EditIcon from '@material-ui/icons/Edit';
 import AddPhotoAlternateOutlinedIcon from '@material-ui/icons/AddPhotoAlternateOutlined';
-import {GridListTileBar, IconButton} from "@material-ui/core";
+import {Box, Button, GridListTileBar, IconButton} from "@material-ui/core";
 import EditAlbumDialog from "./EditAlbumDialog";
+import AddAlbumDialog from "./AddAlbumDialog";
 
 interface AlbumGridProps {
     columns: number,
@@ -39,6 +40,14 @@ const useStyles = makeStyles((theme: Theme) =>
             margin: 'auto',
 
         },
+        addAlbum: {
+            width: 1020,
+            maxWidth: 1020,
+            margin: 'auto',
+            paddingBottom: theme.spacing(1),
+
+
+        },
         thumb: {
             width: '100%',
             height: 'auto'
@@ -64,7 +73,8 @@ const AlbumGrid: React.FC<AlbumGridProps> = ({columns, spacing}) => {
     const [albums, setAlbums] = useState<Album[]>([]);
     const [loggedIn, setLoggedIn] = useState<boolean>(false);
     const [showUpdate, setShowUpdate] = useState(false);
-    const [, updateState] = React.useState();
+    const [showAdd, setShowAdd] = useState(false)
+    const [, updateState] = React.useState()
 
     useEffect(() => {
         PhotosApi.getAlbums().then(res => setAlbums(res)).catch(e => alert(e.toString()))
@@ -94,6 +104,19 @@ const AlbumGrid: React.FC<AlbumGridProps> = ({columns, spacing}) => {
 
     const handleCloseUpdate = () => {
         setShowUpdate(false)
+    }
+
+    const handleCloseAdd = () => {
+        setShowAdd(false)
+    }
+
+    const addAlbum = (name: string, description: string) => {
+        PhotosApi.updateAlbum(description, "", name)
+            .then(a => {
+                updateState({})
+                alert("Album Added: "+a.name)
+            }
+        ).catch(e => alert(e.toString()))
     }
 
     const updateAlbum = (name: string, description: string, coverPic: string) => {
@@ -147,6 +170,15 @@ const AlbumGrid: React.FC<AlbumGridProps> = ({columns, spacing}) => {
 
     return (
         <div className={classes.root}>
+            {loggedIn &&
+            <Box className={classes.addAlbum} display="flex" flexGrow={1}>
+                <Button variant="outlined"
+                        startIcon={<AddPhotoAlternateOutlinedIcon/>}
+                        onClick={() => {setShowAdd(true)}}>
+                    Add Album
+                </Button>
+            </Box>
+            }
         <GridList cols={columns} cellHeight={'auto'} spacing={getSpacing()} className={classes.grid}>
             {albums.map((album,index) => (
                 <GridListTile className={classes.thumb} cols={1} key={album.name}>
@@ -160,6 +192,7 @@ const AlbumGrid: React.FC<AlbumGridProps> = ({columns, spacing}) => {
             {albums.length > 0 &&
             <EditAlbumDialog open={showUpdate} album={albums[idx]} onDelete={deleteAlbum} onClose={handleCloseUpdate} onSubmit={updateAlbum}/>
             }
+            <AddAlbumDialog open={showAdd} onClose={handleCloseAdd} onSubmit={addAlbum}/>
         </div>
     );
 };

@@ -8,7 +8,6 @@ import {
     Tooltip,
     Typography,
     useMediaQuery,
-    useTheme
 } from "@material-ui/core";
 
 import PhotosApi, {Album, Photo, PhotoList, PhotoType} from "../services/api";
@@ -24,8 +23,8 @@ import IconButton from "@material-ui/core/IconButton";
 import PhotoAlbumIcon from '@material-ui/icons/PhotoAlbum';
 import DeletePhotosDialog from "./DeletePhotosDialog";
 import EditPhotoDialog from "./EditPhotoDialog";
-import PhotoDetail from "./PhotoDetail";
 import FullScreenPhoto from "./FullScreenPhoto";
+import PhotoDetail2 from "./PhotoDetail2";
 
 
 interface PhotoProps2 {
@@ -42,11 +41,9 @@ const useStyles = makeStyles((theme: Theme) =>
             flexWrap: 'wrap',
             alignItems: 'center',
             justifyContent: 'center',
-            //justifyContent: 'space-around',
             overflow: 'hidden',
             maxWidth: 1200,
-            margin: 'auto'
-
+            margin: 'auto',
         },
         img: {
             maxWidth: '100%',
@@ -58,10 +55,22 @@ const useStyles = makeStyles((theme: Theme) =>
             margin: 'auto',
             display: 'flex',
             maxWidth: 1200,
+            marginTop: theme.spacing(1),
         },
-        navButtons: {
+        topRight: {
             position: 'absolute',
             top: theme.spacing(2),
+            right: theme.spacing(2),
+        },
+        middleLeft: {
+            position: 'absolute',
+            //top: theme.spacing(2),
+            top: '50%',
+            left: theme.spacing(2),
+        },
+        middleRight: {
+            position: 'absolute',
+            top: '50%',
             right: theme.spacing(2),
         },
         editButtons: {
@@ -71,24 +80,12 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         editButton: {
             color: '#FFFFFF',
-            backgroundColor: fade(theme.palette.grey.A700, 0.3).toString(),
+            backgroundColor: fade(theme.palette.common.black, 0.7).toString(),
             marginRight: theme.spacing(1),
             '&:hover': {
-                backgroundColor: fade(theme.palette.grey.A700, 0.6).toString(),
+                backgroundColor: fade(theme.palette.common.black, 0.9).toString(),
             },
         },
-        // Keeping this layout for future reference:
-        // backButton: {
-        //     position: 'absolute',
-        //     top: '50%',
-        //     left: theme.spacing(2),
-        //     transform: 'translateY(-50%)',
-        //     color: '#FFFFFF',
-        //     backgroundColor: fade(theme.palette.grey.A700, 0.3).toString(),
-        //     '&:hover': {
-        //         backgroundColor: fade(theme.palette.grey.A700, 0.6).toString(),
-        //     },
-        // },
     }),
 );
 
@@ -115,14 +112,11 @@ const PhotoPage2: React.FC<PhotoProps2> = ({photoType, id, query, albumName}) =>
     const [showDelete, setShowDelete] = useState(false)
     const [showUpdate, setShowUpdate] = useState(false)
     const [showFullscreen, setShowFullscreen] = useState(false)
-    const [touch, setTouch] = useState<TouchState>({xStart: -1, xPos: -1, yStart: -1, yPos: -1})
+    //const [touch, setTouch] = useState<TouchState>({xStart: -1, xPos: -1, yStart: -1, yPos: -1})
+    const touch: TouchState = {xStart: -1, xPos: -1, yStart: -1, yPos: -1}
 
-    const theme = useTheme()
-    //const isPhone = useMediaQuery(theme.breakpoints.down('sm'))
-    //const isTablet = useMediaQuery(theme.breakpoints.between('sm','md'))
+    //const theme = useTheme()
     const isPortrait = useMediaQuery('(orientation: portrait)')
-    const isLargeDisplay = useMediaQuery(theme.breakpoints.up('lg'))
-    //const isTableOrMobileDevice = useMediaQuery('(max-device-width: 1224px)')
 
     useEffect(() => {
         PhotosApi.isLoggedIn().then(res => setLoggedIn(res))
@@ -164,10 +158,11 @@ const PhotoPage2: React.FC<PhotoProps2> = ({photoType, id, query, albumName}) =>
     }
 
     const handleForward = () => {
-        let newIdx = idx + 1;
+        let newIdx = idx + 1
         if (newIdx >= photos.length)
-            newIdx = 0;
-        setIdx(newIdx);
+            newIdx = 0
+        setIdx(newIdx)
+        window.history.pushState({}, '', '/photo/'+photos[newIdx].driveId)
     };
 
     const handleBackward = () => {
@@ -175,6 +170,7 @@ const PhotoPage2: React.FC<PhotoProps2> = ({photoType, id, query, albumName}) =>
         if (newIdx < 0)
             newIdx = photos.length - 1;
         setIdx(newIdx);
+        window.history.pushState({}, '', '/photo/'+photos[newIdx].driveId)
     };
 
     const parseFilter = () => {
@@ -311,9 +307,6 @@ const PhotoPage2: React.FC<PhotoProps2> = ({photoType, id, query, albumName}) =>
                     </Typography>
                 </Grid>
                 }
-                <Grid item xs={12}>
-                    <PhotoDetail photo={photos[idx]}/>
-                </Grid>
                 <Grid item xs={12} className={classes.imgItem}>
                     <div className={classes.imgItem}
                          onTouchEnd={onEndTouch}
@@ -348,7 +341,7 @@ const PhotoPage2: React.FC<PhotoProps2> = ({photoType, id, query, albumName}) =>
                             </EditButton>
                         </div>
                         }
-                        <div className={classes.navButtons}>
+                        <div className={classes.topRight}>
                             <IconButton aria-label="previous" onClick={handleBackward} className={classes.editButton}>
                                 <ArrowBackIosSharpIcon fontSize="small"/>
                             </IconButton>
@@ -362,6 +355,9 @@ const PhotoPage2: React.FC<PhotoProps2> = ({photoType, id, query, albumName}) =>
                             </IconButton>
                         </div>
                     </div>
+                </Grid>
+                <Grid item xs={12}>
+                    <PhotoDetail2 photo={photos[idx]}/>
                 </Grid>
             </Grid>
             }
