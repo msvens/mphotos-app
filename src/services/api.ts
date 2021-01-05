@@ -45,6 +45,14 @@ export interface User {
     driveFolderName?: string;
 }
 
+export interface PhotoComment {
+    id: number
+    driveId: string
+    guest: string
+    time: string
+    body: string
+}
+
 export interface DriveFile {
     id: string;
     name: string;
@@ -185,8 +193,16 @@ class PhotoApi {
             .then(res => res.json())
     }
 
+    authGoogle(callback: string = '/login') {
+
+    }
+
     landscapeURL(p: Photo): string {
         return "/api/landscapes/".concat(p.fileName)
+    }
+
+    toDate(ts: string): Date {
+        return new Date(ts)
     }
 
     portraitURL(p: Photo): string {
@@ -225,6 +241,31 @@ class PhotoApi {
             case ImageAspect.LANDSCAPE:
                 return this.landscapeURL(p)
         }
+    }
+
+    checkDrive(): Promise<DriveFiles> {
+        return PhotoApi.req('api/drive/check')
+            .then(res => res as MPhotosResponse<DriveFiles>).then(res => PhotoApi.convert(res));
+    }
+
+    commentPhoto(photoId: string, comment: string): Promise <Comment> {
+        return PhotoApi.reqBody(`/api/comments/${photoId}`, {body: comment}, 'POST')
+            .then(res => res as MPhotosResponse<Comment>).then(res => PhotoApi.convert(res))
+    }
+
+    deleteAlbum(name: string): Promise<Album> {
+        return PhotoApi.req(`/api/albums/${name}`, 'DELETE')
+            .then(res => res as MPhotosResponse<Album>).then(res => PhotoApi.convert(res));
+    }
+
+    deletePhoto(photoId: string, removeFiles: boolean): Promise<Photo> {
+        return PhotoApi.reqBody(`/api/photos/${photoId}`, {removeFiles: removeFiles}, 'DELETE')
+            .then(res => res as MPhotosResponse<Photo>).then(res => PhotoApi.convert(res));
+    }
+
+    deletePhotos(removeFiles: boolean): Promise<PhotoList> {
+        return PhotoApi.reqBody('/api/photos', {removeFiles: removeFiles}, 'DELETE')
+            .then(res => res as MPhotosResponse<PhotoList>).then(res => PhotoApi.convert(res));
     }
 
     getImageUrl(p: Photo, type: PhotoType, portraitView?: boolean, largeDisplay?: boolean):string {
@@ -275,79 +316,17 @@ class PhotoApi {
 
     getThumbUrlId(id: string):string {
         return "/api/thumbs/".concat(id)
-    };
+    }
 
 
     getProfilePicUrl(u: User): string {
         return u.pic !== "" ? "/api/thumbs/".concat(u.pic) : u.pic;
     }
 
-
-    checkDrive(): Promise<DriveFiles> {
-        return PhotoApi.req('api/drive/check')
-            .then(res => res as MPhotosResponse<DriveFiles>).then(res => PhotoApi.convert(res));
-    }
-
-    deleteAlbum(name: string): Promise<Album> {
-        return PhotoApi.req(`/api/albums/${name}`, 'DELETE')
-            .then(res => res as MPhotosResponse<Album>).then(res => PhotoApi.convert(res));
-    }
-
-    deletePhoto(photoId: string, removeFiles: boolean): Promise<Photo> {
-        return PhotoApi.reqBody(`/api/photos/${photoId}`, {removeFiles: removeFiles}, 'DELETE')
-            .then(res => res as MPhotosResponse<Photo>).then(res => PhotoApi.convert(res));
-    }
-
-    deletePhotos(removeFiles: boolean): Promise<PhotoList> {
-        return PhotoApi.reqBody('/api/photos', {removeFiles: removeFiles}, 'DELETE')
-            .then(res => res as MPhotosResponse<PhotoList>).then(res => PhotoApi.convert(res));
-    }
-
-    likePhoto(photoId: string): Promise<string> {
-        return PhotoApi.req(`/api/likes/${photoId}`,'POST')
-            .then(res => res as MPhotosResponse<string>).then(res => PhotoApi.convert(res))
-    }
-
-    unlikePhoto(photoId: string): Promise<string> {
-        return PhotoApi.req(`/api/likes/${photoId}`,'DELETE')
-            .then(res => res as MPhotosResponse<string>).then(res => PhotoApi.convert(res))
-    }
-
-    login(password: string): Promise<AuthUser> {
-        return PhotoApi.reqBody('/api/login', {password: password}, 'POST')
-            .then(res => res as MPhotosResponse<AuthUser>).then(res => PhotoApi.convert(res));
-    }
-
-    logout(): Promise<AuthUser> {
-        return PhotoApi.req('/api/logout')
-            .then(res => res as MPhotosResponse<AuthUser>).then(res => PhotoApi.convert(res));
-    }
-
-    isLoggedIn(): Promise<boolean> {
-        return PhotoApi.req('/api/loggedin')
-            .then(res => res as MPhotosResponse<AuthUser>)
-            .then(res => PhotoApi.convert(res).authenticated);
-    }
-
-    isGuest(): Promise<boolean> {
-        return PhotoApi.req('/api/guest/is')
-            .then(res => res as MPhotosResponse<AuthUser>)
-            .then(res => PhotoApi.convert(res).authenticated)
-    }
-
-    authGoogle(callback: string = '/login') {
-
-    }
-
-    isGoogleAuth(): Promise<boolean> {
-        return PhotoApi.req('/api/drive/authenticated')
-            .then(res => res as MPhotosResponse<AuthUser>)
-            .then(res => PhotoApi.convert(res).authenticated)
-    }
-
-    listDrive(): Promise<DriveFiles> {
-        return PhotoApi.req('/api/drive')
-            .then(res => res as MPhotosResponse<DriveFiles>).then(res => PhotoApi.convert(res));
+    getPhotoComments(photoId: string): Promise<PhotoComment[]> {
+        return PhotoApi.req(`/api/comments/${photoId}`)
+            .then(res => res as MPhotosResponse<PhotoComment[]>)
+            .then(res => PhotoApi.convert(res))
     }
 
     getPhotoLikes(photoId: string): Promise<Guest[]> {
@@ -386,11 +365,6 @@ class PhotoApi {
             .then(res => res as MPhotosResponse<PhotoList>).then(res => PhotoApi.convert(res))
     }
 
-    searchPhotos(query: string): Promise<PhotoList> {
-        return PhotoApi.req(`/api/photos/search${query}`)
-            .then(res => res as MPhotosResponse<PhotoList>).then(res => PhotoApi.convert(res))
-    }
-
     getPhoto(photoId: string): Promise<Photo> {
         return PhotoApi.req(`/api/photos/${photoId}`)
             .then(res => res as MPhotosResponse<Photo>).then(res => PhotoApi.convert(res));
@@ -401,6 +375,54 @@ class PhotoApi {
             .then(res => res as MPhotosResponse<User>).then(res => PhotoApi.convert(res));
     }
 
+    isGoogleAuth(): Promise<boolean> {
+        return PhotoApi.req('/api/drive/authenticated')
+            .then(res => res as MPhotosResponse<AuthUser>)
+            .then(res => PhotoApi.convert(res).authenticated)
+    }
+
+    isGuest(): Promise<boolean> {
+        return PhotoApi.req('/api/guest/is')
+            .then(res => res as MPhotosResponse<AuthUser>)
+            .then(res => PhotoApi.convert(res).authenticated)
+    }
+
+    isLoggedIn(): Promise<boolean> {
+        return PhotoApi.req('/api/loggedin')
+            .then(res => res as MPhotosResponse<AuthUser>)
+            .then(res => PhotoApi.convert(res).authenticated);
+    }
+
+    likePhoto(photoId: string): Promise<string> {
+        return PhotoApi.req(`/api/likes/${photoId}`,'POST')
+            .then(res => res as MPhotosResponse<string>).then(res => PhotoApi.convert(res))
+    }
+
+    listDrive(): Promise<DriveFiles> {
+        return PhotoApi.req('/api/drive')
+            .then(res => res as MPhotosResponse<DriveFiles>).then(res => PhotoApi.convert(res));
+    }
+
+    login(password: string): Promise<AuthUser> {
+        return PhotoApi.reqBody('/api/login', {password: password}, 'POST')
+            .then(res => res as MPhotosResponse<AuthUser>).then(res => PhotoApi.convert(res));
+    }
+
+    logout(): Promise<AuthUser> {
+        return PhotoApi.req('/api/logout')
+            .then(res => res as MPhotosResponse<AuthUser>).then(res => PhotoApi.convert(res));
+    }
+
+    registerGuest(name: string, email: string): Promise<Guest> {
+        const data = {name: name, email: email}
+        return PhotoApi.reqBody('/api/guest', data, 'POST')
+            .then(res => res as MPhotosResponse<Guest>).then(res => PhotoApi.convert(res))
+    }
+
+    searchPhotos(query: string): Promise<PhotoList> {
+        return PhotoApi.req(`/api/photos/search${query}`)
+            .then(res => res as MPhotosResponse<PhotoList>).then(res => PhotoApi.convert(res))
+    }
 
     statusJob(id: string): Promise<Job> {
         return PhotoApi.req(`/api/photos/job/${id}`)
@@ -412,7 +434,18 @@ class PhotoApi {
         return PhotoApi.req('/api/photos/job/schedule', 'POST')
             .then(res => res as MPhotosResponse<Job>)
             .then(res => PhotoApi.convert(res));
-    };
+    }
+
+    togglePrivate(photoId: string): Promise<Photo> {
+        return PhotoApi.req(`/api/photos/${photoId}/private`, "POST")
+            .then(res => res as MPhotosResponse<Photo>)
+            .then(res => PhotoApi.convert(res));
+    }
+
+    unlikePhoto(photoId: string): Promise<string> {
+        return PhotoApi.req(`/api/likes/${photoId}`,'DELETE')
+            .then(res => res as MPhotosResponse<string>).then(res => PhotoApi.convert(res))
+    }
 
     updateAlbum(description: string, coverPic: string, name: string): Promise<Album> {
         const data = {description: description, coverPic: coverPic, name: name};
@@ -435,18 +468,10 @@ class PhotoApi {
             .then(res => PhotoApi.convert(res));
     }
 
-    togglePrivate(photoId: string): Promise<Photo> {
-        return PhotoApi.req(`/api/photos/${photoId}/private`, "POST")
-            .then(res => res as MPhotosResponse<Photo>)
-            .then(res => PhotoApi.convert(res));
-    }
-
     updateUXConfig(uxConfig: UXConfig): Promise<UXConfig> {
         return PhotoApi.reqBody('/api/user/config', uxConfig, "POST")
             .then(res => res as MPhotosResponse<UXConfig>)
             .then(res => PhotoApi.convert(res))
-        //this.uxConfig = uxConfig
-        //return this.uxConfig
     }
 
     updateUserDrive(name: string): Promise <User> {

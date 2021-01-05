@@ -21,12 +21,13 @@ export default function HomePage() {
     const classes = useStyles();
 
 
-    const [config, setConfig] = useState<UXConfig>(PhotosApi.defaultUxConfig);
+    const [config, setConfig] = useState<UXConfig>(PhotosApi.defaultUxConfig)
+
     useEffect(() => {
         PhotosApi.getUXConfig().then(res => {
             setConfig(res)
         })
-    }, []);
+    }, [])
 
     return (
         <div className={classes.root}>

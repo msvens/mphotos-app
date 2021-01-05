@@ -1,13 +1,10 @@
 import React from 'react';
 import {
     Button,
-    createStyles,
     Dialog, DialogActions,
     DialogContent,
     DialogContentText,
     DialogTitle,
-    makeStyles,
-    Theme
 } from "@material-ui/core";
 
 interface AlertDialogProps {

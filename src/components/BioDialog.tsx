@@ -45,6 +45,7 @@ const BioDialog: React.FC = () => {
     const theme = useTheme()
     const isLargeDisplay = useMediaQuery(theme.breakpoints.up('sm'))
 
+
     const [user, setUser] = useState<User> ();
 
     useEffect( () => {

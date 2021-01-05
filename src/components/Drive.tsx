@@ -29,7 +29,7 @@ const Drive: React.FC = () => {
         PhotosApi.isGoogleAuth()
             .then(a => setAuthenticated(a))
             .catch(e => alert(e.toString()))
-    });
+    }, [])
 
     useEffect(() => {
         PhotosApi.getUser()
@@ -40,7 +40,7 @@ const Drive: React.FC = () => {
                     setFolder(u.driveFolderName);
             })
             .catch(e => alert(e.toString()));
-    }, []);
+    }, [])
 
     const handleFolderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFolder(event.target.value);

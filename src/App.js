@@ -13,9 +13,11 @@ function App() {
       type: 'light'
     },
     typography: {
-      fontFamily: 'Roboto',
       body1: {
         lineHeight: '1.5em',
+      },
+      body2: {
+        lineHeight: '1.3em',
       },
       h4: {
         marginTop: '2em',

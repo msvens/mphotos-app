@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from 'react';
+import React, {Fragment, useContext, useEffect, useState} from 'react';
 import {
     createStyles,
     fade,
@@ -25,6 +25,7 @@ import DeletePhotosDialog from "./DeletePhotosDialog";
 import EditPhotoDialog from "./EditPhotoDialog";
 import FullScreenPhoto from "./FullScreenPhoto";
 import PhotoDetail2 from "./PhotoDetail2";
+import {AuthContext} from "./MPhotosApp";
 
 
 interface PhotoProps2 {
@@ -107,22 +108,29 @@ const PhotoPage2: React.FC<PhotoProps2> = ({photoType, id, query, albumName}) =>
     const [album, setAlbum] = useState<Album>();
     const [, updateState] = React.useState();
     const [idx, setIdx] = useState<number>(0);
-    const [loggedIn, setLoggedIn] = useState<boolean>(false);
     const classes = useStyles();
     const [showDelete, setShowDelete] = useState(false)
     const [showUpdate, setShowUpdate] = useState(false)
     const [showFullscreen, setShowFullscreen] = useState(false)
-    //const [touch, setTouch] = useState<TouchState>({xStart: -1, xPos: -1, yStart: -1, yPos: -1})
     const touch: TouchState = {xStart: -1, xPos: -1, yStart: -1, yPos: -1}
-
-    //const theme = useTheme()
     const isPortrait = useMediaQuery('(orientation: portrait)')
+    const context = useContext(AuthContext)
 
     useEffect(() => {
-        PhotosApi.isLoggedIn().then(res => setLoggedIn(res))
-    }, []);
 
-    useEffect(() => {
+        const updatePhotos = (pl: PhotoList) => {
+            if(pl.photos) {
+                if(id) {
+                    for (let i = 0; i < pl.length; i++) {
+                        if(pl.photos[i].driveId === id) {
+                            setIdx(i)
+                        }
+                    }
+                }
+                setPhotos(pl.photos)
+            }
+        }
+
         const fetchData = async () => {
             if (query) {
                 await PhotosApi.searchPhotos(query).then(res => {
@@ -143,19 +151,6 @@ const PhotoPage2: React.FC<PhotoProps2> = ({photoType, id, query, albumName}) =>
         };
         fetchData();
     }, [id, query, albumName]);
-
-    const updatePhotos = (pl: PhotoList) => {
-        if(pl.photos) {
-            if(id) {
-                for (let i = 0; i < pl.length; i++) {
-                    if(pl.photos[i].driveId === id) {
-                        setIdx(i)
-                    }
-                }
-            }
-            setPhotos(pl.photos)
-        }
-    }
 
     const handleForward = () => {
         let newIdx = idx + 1
@@ -322,7 +317,7 @@ const PhotoPage2: React.FC<PhotoProps2> = ({photoType, id, query, albumName}) =>
                              <img className={classes.img} alt={photos[idx].title} src={PhotosApi.getImageUrl(photos[idx], photoType, isPortrait)}/>
                              </div>
 
-                        {loggedIn &&
+                        {context.isUser &&
                         <div className={classes.editButtons}>
                             <ProfilePicture/>
                             {photos[idx].private

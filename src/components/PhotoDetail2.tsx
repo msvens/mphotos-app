@@ -1,13 +1,20 @@
-import React, {useEffect, useState} from 'react';
-import {Box, createStyles, Grid, makeStyles, Theme, Typography} from "@material-ui/core";
-import PhotosApi, {Guest, Photo} from "../services/api";
+import React, {useContext, useEffect, useState} from 'react';
+import {
+    Box, Button,
+    createStyles,
+    Grid, InputBase,
+    makeStyles, Paper,
+    Theme,
+    Typography
+} from "@material-ui/core";
+import PhotosApi, {Guest, Photo, PhotoComment} from "../services/api";
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import FavoriteIcon from '@material-ui/icons/Favorite';
-import CommentOutlinedIcon from '@material-ui/icons/CommentOutlined';
 import IconButton from "@material-ui/core/IconButton";
 import Link from "@material-ui/core/Link";
 import {Link as RouterLink} from "react-router-dom";
 import AddGuestDialog from "./AddGuestDialog";
+import {AuthContext} from "./MPhotosApp";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -15,11 +22,27 @@ const useStyles = makeStyles((theme: Theme) =>
             display: 'flex',
             flexWrap: 'wrap',
             marginTop: theme.spacing(1),
-            //alignItems: 'center',
-            //justifyContent: 'center',
         },
         likedIcon: {
             color: '#b5043c'
+        },
+        commentBox: {
+            marginTop: theme.spacing(2),
+            marginRight: theme.spacing(4)
+        },
+        commentInput: {
+            marginLeft: theme.spacing(2),
+            flex: 1,
+            fontSize: '0.9rem'
+        },
+        commentRoot: {
+            marginTop: theme.spacing(3),
+            marginRight: theme.spacing(2),
+            padding: '2px 4px',
+            display: 'flex',
+            alignItems: 'center',
+            backgroundColor: theme.palette.grey[50]
+
         }
     })
 )
@@ -39,35 +62,54 @@ const PhotoDetail2: React.FC<PhotoDetail2Props> = (props: PhotoDetail2Props) => 
     const classes = useStyles()
 
     const [guests, setGuests] = useState<Guest[]>([])
+    const [comments, setComments] = useState<PhotoComment[]> ([])
     const [showAddGuest, setShowAddGuest] = useState(false)
-    const [isGuest, setIsGuest] = useState<boolean> (false)
+    const [newComment, setNewComment] = useState<string>('')
     const [likesPhoto, setLikesPhoto] = useState<boolean> (false)
+    const context = useContext(AuthContext)
 
     useEffect( () => {
-        const fetchData = async () => {
-            await PhotosApi.isGuest().then(res => {
-                setIsGuest(res)
-            }).catch(e => alert("error: "+e.toString()))
-        }
-        fetchData()
-    }, [])
-
-    useEffect( () => {
-        if(isGuest) {
+        if(context.isGuest) {
             PhotosApi.getGuestLike(props.photo.driveId).then(res => setLikesPhoto(res)).catch(e => alert("error: "+e.toString()))
+        } else {
+            setLikesPhoto(prev => false)
         }
-    }, [props.photo, isGuest])
+    }, [props.photo, context.isGuest])
 
     useEffect(() => {
         PhotosApi.getPhotoLikes(props.photo.driveId).then(res => setGuests(res)).catch(e => alert("error: "+e.toString()))
-    }, [props.photo, likesPhoto]);
 
-    const handleCloseUpdate = () => {
+    }, [props.photo, likesPhoto])
+
+    useEffect(() => {
+        PhotosApi.getPhotoComments(props.photo.driveId).then(res => setComments(res)).catch(e => alert("error: "+e.toString()))
+
+    }, [props.photo])
+
+    const handleCommentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setNewComment(event.target.value);
+    }
+
+    const handleAddComment = () => {
+        if(!context.isGuest) {
+            setShowAddGuest(true)
+        } else {
+            PhotosApi.commentPhoto(props.photo.driveId, newComment)
+                .then(res => {
+                    setNewComment('')
+                    PhotosApi.getPhotoComments(props.photo.driveId)
+                        .then(res => setComments(res))
+                }).catch(err => alert(err))
+        }
+    }
+
+    const handleCloseAddGuest = () => {
         setShowAddGuest(false)
     }
 
+
     const handleClickLike = () => {
-        if(!isGuest) {
+        if(!context.isGuest) {
             setShowAddGuest(true)
         } else {
             PhotosApi.likePhoto(props.photo.driveId).then(res => setLikesPhoto(true)).catch(e => alert(e))
@@ -77,11 +119,10 @@ const PhotoDetail2: React.FC<PhotoDetail2Props> = (props: PhotoDetail2Props) => 
 
     const handleClickUnlike = () => {
         PhotosApi.unlikePhoto(props.photo.driveId).then(res => setLikesPhoto(false)).catch(e => alert(e))
-        //alert("unlike")
     }
 
-    const addGuest = (name: string, email: string) => {
-        alert("clicked Register")
+    const handleAddGuest = (name: string, email: string) => {
+        PhotosApi.registerGuest(name, email).then(res => context.checkGuest()).catch(e => alert(e))
     }
 
     const getDate = () => {
@@ -103,9 +144,9 @@ const PhotoDetail2: React.FC<PhotoDetail2Props> = (props: PhotoDetail2Props) => 
         } else {
             switch (guests.length) {
                 case 1:
-                    return "Liked by you"
+                    return "Liked by "+guests[0].name
                 default:
-                    return "liked by you and " + (guests.length - 1) + " others"
+                    return "liked by "+guests[0].name+" and " + (guests.length - 1) + " others"
             }
         }
     }
@@ -147,17 +188,49 @@ const PhotoDetail2: React.FC<PhotoDetail2Props> = (props: PhotoDetail2Props) => 
         }
     }
 
+    interface CommentBoxProps {
+        comment: PhotoComment,
+        index: number
+    }
+
+    const CommentBox: React.FC<CommentBoxProps> = ({comment, index}) => {
+        const d = PhotosApi.toDate(comment.time)
+        const dStr = d.toDateString()
+        return (
+            <div className={classes.commentBox}>
+                <Typography variant="body2" color={"secondary"}>
+                        {comment.guest}, {dStr}
+                </Typography>
+                <Typography variant="body2">
+                    {comment.body}
+                </Typography>
+            </div>
+        )
+    }
+
     return (
         <div className={classes.root}>
             <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                     {getLikesButton()}
-                    <IconButton aria-label={"comment"} color="inherit" size={"small"}>
-                        <CommentOutlinedIcon fontSize={"large"}/>
-                    </IconButton>
-                    <Typography variant="body2">
+                    <Typography variant="body2" display={"inline"}>
                             {getLikes()}
                     </Typography>
+                    <Paper component="form" variant="outlined" className={classes.commentRoot}>
+                    <InputBase
+                        className={classes.commentInput}
+                        placeholder="Add comment..."
+                        multiline={true}
+                        onChange={handleCommentChange}
+                        value={newComment}
+                        inputProps={{ 'aria-label': 'Add comment...' }}
+                    />
+                    <Button onClick={handleAddComment}>Post</Button>
+                    </Paper>
+                    {comments.map((comment,index) => (
+                        <CommentBox comment={comment} index={index}/>
+                    ))}
+
                 </Grid>
                 <Grid item xs={12} sm={6}>
                     <Typography variant="subtitle1">
@@ -178,7 +251,7 @@ const PhotoDetail2: React.FC<PhotoDetail2Props> = (props: PhotoDetail2Props) => 
                 </Grid>
             </Grid>
             <AddGuestDialog open={showAddGuest}
-                             onClose={handleCloseUpdate} onSubmit={addGuest}/>
+                             onClose={handleCloseAddGuest} onSubmit={handleAddGuest}/>
         </div>
     )
 }

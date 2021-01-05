@@ -1,6 +1,6 @@
 import {createStyles, fade, makeStyles, Theme} from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
-import {Box, Divider} from "@material-ui/core";
+import {Box, Button, Divider} from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import {Link} from "react-router-dom";
 import MPIcon from "./MPIcon";
@@ -11,26 +11,28 @@ import MonochromePhotosIcon from "@material-ui/icons/MonochromePhotos";
 import PhotoAlbumOutlinedIcon from '@material-ui/icons/PhotoAlbumOutlined';
 import AccountBoxOutlinedIcon from "@material-ui/icons/AccountBoxOutlined";
 import AppBar from "@material-ui/core/AppBar";
-import React from "react";
+import React, {useContext} from "react";
+import {AuthContext} from "./MPhotosApp";
 
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         appBar: {
-            //paddingLeft:theme.spacing(2),
             marginLeft: 0,
-            //paddingRight:theme.spacing(2),
             marginRight: 0,
             backgroundColor: theme.palette.common.white
         },
-        wordTitle: {
-            marginLeft:0,
+        guestRoot: {
+            marginLeft: 0,
             paddingLeft: theme.spacing(1),
             flexGrow: 1,
         },
+        guestButton: {
+            marginLeft: theme.spacing(3)
+        },
         iconTitle: {
-            flexGrow:1,
-            marginLeft:0,
+            //flexGrow:1,
+            marginLeft: 0,
         },
         grow: {
             flexGrow: 1,
@@ -81,28 +83,43 @@ interface TobBarProps {
 }
 
 export default function TopBar(props: TobBarProps) {
-    const classes = useStyles();
+    const classes = useStyles()
+    const context = useContext(AuthContext)
+
+    const GuestBar: React.FC = () => {
+
+        if (context.isGuestLoading) {
+            return (
+                <div className={classes.guestRoot}>
+                </div>
+            )
+        } else if (!context.isGuest) {
+            return (
+                <div className={classes.guestRoot}>
+                    Guest: not registered
+                    <Button className={classes.guestButton}>Register</Button>
+                </div>
+            )
+        } else {
+            return (
+                <div className={classes.guestRoot}>
+                    Guest: {context.guest.name}
+                    <Button className={classes.guestButton} onClick={() => context.checkGuest()}>Update</Button>
+                </div>
+            )
+        }
+
+    }
 
     return (
         <AppBar className={classes.appBar} position="sticky" color={'transparent'} elevation={0}>
-            <Toolbar style={{paddingLeft:0, paddingRight:0}}>
+            <Toolbar style={{paddingLeft: 0, paddingRight: 0}}>
                 <Box className={classes.iconTitle}>
                     <IconButton aria-label="home" color="inherit" component={Link} to="/">
                         <MPIcon key="topLogo" mpcolor="white" fontSize="large"/>
                     </IconButton>
                 </Box>
-                {/*<Hidden smUp>
-                    <Box className={classes.iconTitle}>
-                        <IconButton aria-label="home" color="inherit" component={Link} to="/">
-                            <MPIcon key="topLogo" mpcolor="white" fontSize="large"/>
-                        </IconButton>
-                    </Box>
-                </Hidden>
-                <Hidden xsDown>
-                    <Box className={classes.wordTitle}>
-                        <MPWordIcon height={32}/>
-                    </Box>
-                </Hidden>*/}
+                <GuestBar/>
                 {props.showSearch &&
                 <div className={classes.search}>
                     <div className={classes.searchIcon}>
@@ -118,7 +135,7 @@ export default function TopBar(props: TobBarProps) {
                     />
                 </div>
                 }
-                <div className={classes.grow} />
+                <div className={classes.grow}/>
                 <IconButton aria-label="home" color="inherit" component={Link} to="/">
                     <HomeOutlinedIcon fontSize="large"/>
                 </IconButton>

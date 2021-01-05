@@ -5,14 +5,15 @@ import AccountPage from "./AccountPage";
 import HomePage from "./HomePage";
 import 'typeface-roboto';
 import {BrowserRouter as Router, Route, RouteComponentProps, Switch} from "react-router-dom";
-import ScrollIntoView from "./ScrollIntoView";
 import TopBar from "./TopBar";
 import PhotoPage2 from "./PhotoPage2";
 import ResumePage from "./ResumePage";
 import AlbumPage from "./AlbumPage";
-import {PhotoType} from "../services/api";
+import {Guest, PhotoType, User} from "../services/api";
 import BottomBar2 from "./BottomBar2";
 import VerifyPage from "./VerifyPage";
+import ScrollToTop from "./ScrollIntoView";
+import {useGuest, useUser} from "../services/hooks";
 
 
 interface MatchParams {
@@ -22,6 +23,35 @@ interface MatchParams {
 interface MatchProps extends RouteComponentProps<MatchParams> {
 }
 
+interface IAuthContext {
+    isGuest: boolean
+    guest: Guest
+    isGuestLoading: boolean
+    checkGuest: () => void
+    isUser: boolean
+    user: User
+    checkUser: () => void
+}
+
+const dummyContext: IAuthContext = {
+    isGuest: false,
+    isGuestLoading: false,
+    guest: {
+        name: "",
+        email: ""
+    },
+    checkGuest: () => {alert("dummy")},
+    isUser: false,
+    user: {
+        name: "",
+        bio: "",
+        pic: ""
+    },
+    checkUser: () => {alert("dummy")}
+}
+
+export const AuthContext = React.createContext<IAuthContext>(dummyContext)
+
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
@@ -29,7 +59,6 @@ const useStyles = makeStyles((theme: Theme) =>
             flexDirection: 'column',
             marginBottom: 0,
             minHeight: '100vh',
-            /*paddingBottom: theme.spacing(5)*/
         },
         content: {
             paddingTop: theme.spacing(3),
@@ -41,12 +70,28 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
+
+
 export default function MPhotosApp() {
-    const classes = useStyles();
+    const classes = useStyles()
+
+    const [isGuest, guest, isGuestLoading, checkGuest] = useGuest()
+    const [isUser, user, checkUser] = useUser()
+
+    const defaultContext: IAuthContext = {
+        isGuest: isGuest,
+        guest: guest,
+        isGuestLoading: isGuestLoading,
+        checkGuest: checkGuest,
+        isUser: isUser,
+        user: user,
+        checkUser: checkUser
+    }
 
     return (
+        <AuthContext.Provider value={defaultContext}>
         <Router>
-            <ScrollIntoView/>
+            <ScrollToTop/>
             <div className={classes.root}>
                 <TopBar showSearch={false}/>
                 <div className={classes.content} id="contentPage">
@@ -73,5 +118,6 @@ export default function MPhotosApp() {
                 <BottomBar2 showSearch={false}/>
             </div>
         </Router>
+        </AuthContext.Provider>
     );
 }

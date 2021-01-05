@@ -20,8 +20,9 @@ interface AddGuestDialogProps {
 
 const AddGuestDialog: React.FC<AddGuestDialogProps>  = ({open, email, name, onClose, onSubmit}) => {
 
-    const [newEmail, setNewName] = useState<string>('')
-    const [newName, setNewEmail] = useState<string>('')
+    const [newEmail, setNewEmail] = useState<string>("")
+    const [newName, setNewName] = useState<string>("")
+
 
     useEffect(() => {
         if(email)
@@ -57,9 +58,9 @@ const AddGuestDialog: React.FC<AddGuestDialogProps>  = ({open, email, name, onCl
                     a nickname and your email address. You will get at a verification email sent to your provided
                     email.
                 </DialogContentText>
-                <TextField margin="dense" id="name" label="Name" value={newName}
+                <TextField margin="dense" id="newName" label="Name" value={newName}
                            onChange={handleNameChange} fullWidth/>
-                <TextField margin="dense" id="email" label="Albums" value={newEmail}
+                <TextField margin="dense" id="newEmail" label="Email" value={newEmail}
                            onChange={handleEmailChange} fullWidth/>
                 <DialogActions>
                     <Button onClick={onClose} color="primary">

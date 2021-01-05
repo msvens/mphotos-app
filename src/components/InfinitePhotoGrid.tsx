@@ -28,8 +28,6 @@ const useStyles = makeStyles((theme: Theme) =>
         grid: {
             maxWidth: 1020,
             margin: 'auto',
-            // overflowY: 'scroll'
-
         },
         loader: {
             margin: 'auto'
@@ -72,17 +70,8 @@ const InfinitePhotoGrid: React.FC<InfinitePhotoGridProps> = (props: InfinitePhot
                 setPhotos(photos.concat(res.photos))
                 setOffset(offset + res.length)
             }
-        });
+        })
     }
-
-    /*
-    const LoadMessage: React.FC = () => {
-        return (
-            <div className={classes.loader}>
-                <Typography variant="h5">Loading more photos...</Typography>
-            </div>
-        );
-    };*/
 
     return (
         <div className={classes.root}>

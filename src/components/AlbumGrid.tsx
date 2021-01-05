@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import GridListTile from "@material-ui/core/GridListTile";
@@ -11,6 +11,7 @@ import AddPhotoAlternateOutlinedIcon from '@material-ui/icons/AddPhotoAlternateO
 import {Box, Button, GridListTileBar, IconButton} from "@material-ui/core";
 import EditAlbumDialog from "./EditAlbumDialog";
 import AddAlbumDialog from "./AddAlbumDialog";
+import {AuthContext} from "./MPhotosApp";
 
 interface AlbumGridProps {
     columns: number,
@@ -71,17 +72,16 @@ const AlbumGrid: React.FC<AlbumGridProps> = ({columns, spacing}) => {
 
     const [idx, setIdx] = useState<number>(0);
     const [albums, setAlbums] = useState<Album[]>([]);
-    const [loggedIn, setLoggedIn] = useState<boolean>(false);
+    //const [loggedIn, setLoggedIn] = useState<boolean>(false);
     const [showUpdate, setShowUpdate] = useState(false);
     const [showAdd, setShowAdd] = useState(false)
     const [, updateState] = React.useState()
 
-    useEffect(() => {
-        PhotosApi.getAlbums().then(res => setAlbums(res)).catch(e => alert(e.toString()))
-    }, []);
+    const context = useContext(AuthContext)
 
     useEffect(() => {
-        PhotosApi.isLoggedIn().then(res => setLoggedIn(res))
+        PhotosApi.getAlbums().then(res => setAlbums(res)).catch(e => alert(e.toString()))
+        //PhotosApi.isLoggedIn().then(res => setLoggedIn(res))
     }, []);
 
     const getSpacing = (): number => {
@@ -140,7 +140,7 @@ const AlbumGrid: React.FC<AlbumGridProps> = ({columns, spacing}) => {
     }
 
     const AlbumInfo: React.FC<AlbumInfoProps> = ({album, index}) => {
-        if(loggedIn) {
+        if(context.isUser) {
             return (
                 <GridListTileBar className={classes.thumbBar}
                     title={album.name}
@@ -170,7 +170,7 @@ const AlbumGrid: React.FC<AlbumGridProps> = ({columns, spacing}) => {
 
     return (
         <div className={classes.root}>
-            {loggedIn &&
+            {context.isUser &&
             <Box className={classes.addAlbum} display="flex" flexGrow={1}>
                 <Button variant="outlined"
                         startIcon={<AddPhotoAlternateOutlinedIcon/>}

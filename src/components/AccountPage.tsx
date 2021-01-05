@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import {
     Box, Button, Container, List, ListItem, ListItemText, Typography
@@ -9,6 +9,7 @@ import Profile from "./Profile";
 import Drive from "./Drive";
 import Login from "./Login";
 import UXConfigDialog from "./UXConfigDialog";
+import {AuthContext} from "./MPhotosApp";
 
 const PROFILE = 'Profile';
 const DRIVE = 'Drive';
@@ -39,24 +40,19 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 export default function AccountPage() {
-    const [mi, setItem] = useState<MenuItems> (PROFILE);
-    const [loggedIn, setLoggedIn] = useState<boolean>(false);
-    const classes = useStyles();
-
-    useEffect(() => {
-        PhotosApi.isLoggedIn().then(res => setLoggedIn(res))
-    },[]);
+    const classes = useStyles()
+    const [mi, setItem] = useState<MenuItems> (PROFILE)
+    const context = useContext(AuthContext)
 
     const handleLogin = (password: string) => {
-        PhotosApi.login(password).then(res => setLoggedIn(res.authenticated));
-    };
+        PhotosApi.login(password).then(res => context.checkUser())
+    }
 
     const handleLogout = async (e: React.MouseEvent) =>  {
         e.preventDefault();
-        alert("before logout");
         PhotosApi.logout().then(res => {
-            alert(res.authenticated);
-            setLoggedIn(res.authenticated)
+            alert(res.authenticated)
+            context.checkUser()
         }).catch(e => alert(e));
     };
 
@@ -72,11 +68,11 @@ export default function AccountPage() {
                 </List>
             </Box>
             <main className={classes.content}>
-               {!loggedIn && <Login submitHandler={handleLogin}/>}
-               {loggedIn && mi === PROFILE && <Profile />}
-               {loggedIn && mi === DRIVE && <Drive />}
-                {loggedIn && mi === UXCONFIG && <UXConfigDialog/>}
-               {loggedIn && mi === LOGOUT &&
+               {!context.isUser && <Login submitHandler={handleLogin}/>}
+               {context.isUser && mi === PROFILE && <Profile />}
+               {context.isUser && mi === DRIVE && <Drive />}
+                {context.isUser && mi === UXCONFIG && <UXConfigDialog/>}
+               {context.isUser && mi === LOGOUT &&
                <Container>
                    <Typography paragraph>
                        By Logging out you will no longer be able to upload pictures, etc.
