@@ -61,7 +61,8 @@ const GuestPage: React.FC<GuestPageProps> = ({query}) => {
                     <Typography variant="h6">Thank you for verifying!</Typography>
                     <Typography variant="body2" gutterBottom={true}>
                         As a guest at mellowtech you can comment and like photos!<br/>
-                        To change your guest name or email go here: XXX. You are registered as
+                        To change your guest name or email go to your <Link component={RouterLink} to={'/guest'}>guest page</Link>.
+                        You are registered as
                         <ul>
                             <li><b>Name</b>: {context.guest.name}</li>
                             <li><b>Email</b>: {context.guest.email}</li>
