@@ -1,18 +1,32 @@
 import {createStyles, fade, makeStyles, Theme} from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
-import {Box, Button, Divider} from "@material-ui/core";
+import {
+    Box,
+    Button,
+    Divider,
+    Drawer,
+    Hidden,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    Typography
+} from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import {Link} from "react-router-dom";
 import MPIcon from "./MPIcon";
+import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from "@material-ui/icons/Search";
 import InputBase from "@material-ui/core/InputBase";
 import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
 import MonochromePhotosIcon from "@material-ui/icons/MonochromePhotos";
 import PhotoAlbumOutlinedIcon from '@material-ui/icons/PhotoAlbumOutlined';
-import AccountBoxOutlinedIcon from "@material-ui/icons/AccountBoxOutlined";
+import PersonIcon from '@material-ui/icons/Person';
+import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import AppBar from "@material-ui/core/AppBar";
-import React, {useContext} from "react";
+import React, {useContext, useState} from "react";
 import {AuthContext} from "./MPhotosApp";
+import AddGuestDialog2 from "./dialogs/AddGuestDialog2";
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -22,13 +36,16 @@ const useStyles = makeStyles((theme: Theme) =>
             marginRight: 0,
             backgroundColor: theme.palette.common.white
         },
+        drawerList: {
+            width: 250,
+        },
         guestRoot: {
             marginLeft: 0,
             paddingLeft: theme.spacing(1),
             flexGrow: 1,
         },
         guestButton: {
-            marginLeft: theme.spacing(3)
+            marginLeft: theme.spacing(2)
         },
         iconTitle: {
             //flexGrow:1,
@@ -88,6 +105,8 @@ export default function TopBar(props: TobBarProps) {
 
     const GuestBar: React.FC = () => {
 
+        const [showAddGuest, setShowAddGuest] = useState<boolean>(false)
+
         if (context.isGuestLoading) {
             return (
                 <div className={classes.guestRoot}>
@@ -96,19 +115,82 @@ export default function TopBar(props: TobBarProps) {
         } else if (!context.isGuest) {
             return (
                 <div className={classes.guestRoot}>
-                    Guest: not registered
-                    <Button className={classes.guestButton}>Register</Button>
+                    <Button variant="outlined" className={classes.guestButton} color="default" size={"small"}
+                            startIcon={<PersonAddIcon/>} onClick={() => setShowAddGuest(true)}>Register Guest</Button>
+                    <AddGuestDialog2 update={false} open={showAddGuest} onClose={(res: boolean) => {setShowAddGuest(false)}}/>
                 </div>
             )
         } else {
             return (
                 <div className={classes.guestRoot}>
-                    Guest: {context.guest.name}
-                    <Button className={classes.guestButton} onClick={() => context.checkGuest()}>Update</Button>
+                    <Typography variant={"body2"}>
+                        Welcome {context.guest.name}
+                    </Typography>
                 </div>
             )
         }
+    }
 
+    const BurgerMenu: React.FC = () => {
+
+        type Anchor = 'top' | 'left' | 'bottom' | 'right'
+
+        const [state, setState] = useState({
+            top: false,
+            left: false,
+            bottom: false,
+            right: false,
+        })
+
+        const toggleDrawer = (anchor: Anchor, open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+            if (
+                event.type === 'keydown' &&
+                ((event as React.KeyboardEvent).key === 'Tab' ||
+                    (event as React.KeyboardEvent).key === 'Shift')
+            ) {
+                return;
+            }
+            setState({ ...state, [anchor]: open });
+        }
+
+        const menuList = (anchor: Anchor) => (
+            <div className={classes.drawerList}
+                role="presentation"
+                onClick={toggleDrawer('right', false)}
+                onKeyDown={toggleDrawer('right', false)}>
+
+                <List>
+                    <ListItem button key='Home' component={Link} to="/">
+                        <ListItemIcon><HomeOutlinedIcon/></ListItemIcon>
+                        <ListItemText primary='Home'/>
+                    </ListItem>
+                    <ListItem button key='Photos' component={Link} to="/photos">
+                        <ListItemIcon><MonochromePhotosIcon/></ListItemIcon>
+                        <ListItemText primary='Photos'/>
+                    </ListItem>
+                    <ListItem button key='Albums' component={Link} to="/albums">
+                        <ListItemIcon><PhotoAlbumOutlinedIcon/></ListItemIcon>
+                        <ListItemText primary='Albums'/>
+                    </ListItem>
+                    <ListItem button key='Guest' component={Link} to="/guest">
+                        <ListItemIcon><PersonIcon/></ListItemIcon>
+                        <ListItemText primary='Guest'/>
+                    </ListItem>
+                </List>
+            </div>
+        );
+
+        return (
+            <>
+                <IconButton edge="start" aria-label="menu" onClick={toggleDrawer("right", true)}>
+                    <MenuIcon fontSize="large"/>
+                </IconButton>
+
+                <Drawer anchor='right' open={state['right']} onClose={toggleDrawer('right', false)}>
+                    {menuList('right')}
+                </Drawer>
+            </>
+        )
     }
 
     return (
@@ -121,6 +203,7 @@ export default function TopBar(props: TobBarProps) {
                 </Box>
                 <GuestBar/>
                 {props.showSearch &&
+                    <Hidden xsDown>
                 <div className={classes.search}>
                     <div className={classes.searchIcon}>
                         <SearchIcon/>
@@ -134,20 +217,26 @@ export default function TopBar(props: TobBarProps) {
                         inputProps={{'aria-label': 'search'}}
                     />
                 </div>
+                    </Hidden>
                 }
                 <div className={classes.grow}/>
-                <IconButton aria-label="home" color="inherit" component={Link} to="/">
-                    <HomeOutlinedIcon fontSize="large"/>
-                </IconButton>
-                <IconButton aria-label="photos" color="inherit" component={Link} to="/photos">
-                    <MonochromePhotosIcon fontSize={"large"}/>
-                </IconButton>
-                <IconButton aria-label="albums" color="inherit" component={Link} to="/albums">
-                    <PhotoAlbumOutlinedIcon fontSize={"large"}/>
-                </IconButton>
-                <IconButton aria-label="login" color="inherit" component={Link} to="/login">
-                    <AccountBoxOutlinedIcon fontSize={"large"}/>
-                </IconButton>
+                <Hidden smDown>
+                    <IconButton aria-label="home" color="inherit" component={Link} to="/">
+                        <HomeOutlinedIcon fontSize="large"/>
+                    </IconButton>
+                    <IconButton aria-label="photos" color="inherit" component={Link} to="/photos">
+                        <MonochromePhotosIcon fontSize={"large"}/>
+                    </IconButton>
+                    <IconButton aria-label="albums" color="inherit" component={Link} to="/albums">
+                        <PhotoAlbumOutlinedIcon fontSize={"large"}/>
+                    </IconButton>
+                    <IconButton aria-label="guest" color="inherit" component={Link} to="/guest">
+                        <PersonIcon fontSize={"large"}/>
+                    </IconButton>
+                </Hidden>
+                <Hidden mdUp>
+                    <BurgerMenu/>
+                </Hidden>
             </Toolbar>
             <Divider/>
         </AppBar>

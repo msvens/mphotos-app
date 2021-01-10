@@ -10,6 +10,7 @@ import Drive from "./Drive";
 import Login from "./Login";
 import UXConfigDialog from "./UXConfigDialog";
 import {AuthContext} from "./MPhotosApp";
+import PersonAddIcon from "@material-ui/icons/PersonAdd";
 
 const PROFILE = 'Profile';
 const DRIVE = 'Drive';
@@ -77,6 +78,8 @@ export default function AccountPage() {
                    <Typography paragraph>
                        By Logging out you will no longer be able to upload pictures, etc.
                    </Typography>
+                   <Button variant="outlined" color="default" size={"small"}
+                           startIcon={<PersonAddIcon/>}>Register Guest</Button>
                    <Button variant="outlined" onClick={handleLogout}>Logout Now</Button>
                </Container>
                }

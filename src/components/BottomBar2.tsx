@@ -41,6 +41,7 @@ export default function BottomBar2(props: BottomBarProps) {
                     <Link className={classes.linkText} component={RouterLink} to={`/about`}>About</Link>
                     <Link className={classes.linkText} component={RouterLink} to={`/resume`}>Resume</Link>
                     <Link className={classes.linkText} component={RouterLink} to={'/'}>mellowtech.org</Link>
+                    <Link className={classes.linkText} component={RouterLink} to={'/login'}>Admin</Link>
                 </Typography>
             </Toolbar>
         </AppBar>

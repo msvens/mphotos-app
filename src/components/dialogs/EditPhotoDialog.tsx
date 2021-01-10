@@ -8,7 +8,7 @@ import {
     DialogTitle,
     TextField
 } from "@material-ui/core";
-import PhotosApi, {Photo} from "../services/api";
+import PhotosApi, {Photo} from "../../services/api";
 
 interface EditDialogProps {
 

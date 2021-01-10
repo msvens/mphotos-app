@@ -11,7 +11,7 @@ import ResumePage from "./ResumePage";
 import AlbumPage from "./AlbumPage";
 import {Guest, PhotoType, User} from "../services/api";
 import BottomBar2 from "./BottomBar2";
-import VerifyPage from "./VerifyPage";
+import VerifyPage from "./GuestPage";
 import ScrollToTop from "./ScrollIntoView";
 import {useGuest, useUser} from "../services/hooks";
 
@@ -93,7 +93,7 @@ export default function MPhotosApp() {
         <Router>
             <ScrollToTop/>
             <div className={classes.root}>
-                <TopBar showSearch={false}/>
+                <TopBar showSearch={true}/>
                 <div className={classes.content} id="contentPage">
                     <Switch>
                         <Route path="/albums/:id" render={({match}: MatchProps) => (
@@ -108,7 +108,7 @@ export default function MPhotosApp() {
                         <Route path="/search" render={(props: RouteComponentProps) => {
                             return <PhotoPage2 photoType={PhotoType.Dynamic} query={props.location.search}/>
                         }}/>
-                        <Route path="/verify" render={(props: RouteComponentProps) => {
+                        <Route path="/guest" render={(props: RouteComponentProps) => {
                             return <VerifyPage query={props.location.search}/>
                         }}/>
                         <Route path="/" render={() => <HomePage/>}/>

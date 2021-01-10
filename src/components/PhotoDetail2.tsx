@@ -13,8 +13,8 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import IconButton from "@material-ui/core/IconButton";
 import Link from "@material-ui/core/Link";
 import {Link as RouterLink} from "react-router-dom";
-import AddGuestDialog from "./AddGuestDialog";
 import {AuthContext} from "./MPhotosApp";
+import AddGuestDialog2 from "./dialogs/AddGuestDialog2";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -22,22 +22,23 @@ const useStyles = makeStyles((theme: Theme) =>
             display: 'flex',
             flexWrap: 'wrap',
             marginTop: theme.spacing(1),
+            marginLeft: theme.spacing(2),
+            marginRight: theme.spacing(2)
         },
         likedIcon: {
             color: '#b5043c'
         },
         commentBox: {
             marginTop: theme.spacing(2),
-            marginRight: theme.spacing(4)
+            marginRight: theme.spacing(2)
         },
         commentInput: {
-            marginLeft: theme.spacing(2),
+            marginLeft: theme.spacing(1),
             flex: 1,
             fontSize: '0.9rem'
         },
         commentRoot: {
             marginTop: theme.spacing(3),
-            marginRight: theme.spacing(2),
             padding: '2px 4px',
             display: 'flex',
             alignItems: 'center',
@@ -103,7 +104,7 @@ const PhotoDetail2: React.FC<PhotoDetail2Props> = (props: PhotoDetail2Props) => 
         }
     }
 
-    const handleCloseAddGuest = () => {
+    const handleCloseAddGuest = (registered: boolean) => {
         setShowAddGuest(false)
     }
 
@@ -119,10 +120,6 @@ const PhotoDetail2: React.FC<PhotoDetail2Props> = (props: PhotoDetail2Props) => 
 
     const handleClickUnlike = () => {
         PhotosApi.unlikePhoto(props.photo.driveId).then(res => setLikesPhoto(false)).catch(e => alert(e))
-    }
-
-    const handleAddGuest = (name: string, email: string) => {
-        PhotosApi.registerGuest(name, email).then(res => context.checkGuest()).catch(e => alert(e))
     }
 
     const getDate = () => {
@@ -250,8 +247,8 @@ const PhotoDetail2: React.FC<PhotoDetail2Props> = (props: PhotoDetail2Props) => 
                     </Typography>
                 </Grid>
             </Grid>
-            <AddGuestDialog open={showAddGuest}
-                             onClose={handleCloseAddGuest} onSubmit={handleAddGuest}/>
+            <AddGuestDialog2 open={showAddGuest} update={false}
+                             onClose={handleCloseAddGuest} />
         </div>
     )
 }

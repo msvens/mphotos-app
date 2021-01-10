@@ -7,7 +7,7 @@ import {
     Typography
 } from "@material-ui/core";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
-import DeletePhotosDialog from "./DeletePhotosDialog";
+import DeletePhotosDialog from "./dialogs/DeletePhotosDialog";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

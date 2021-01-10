@@ -9,8 +9,8 @@ import InfoIcon from '@material-ui/icons/Info';
 import EditIcon from '@material-ui/icons/Edit';
 import AddPhotoAlternateOutlinedIcon from '@material-ui/icons/AddPhotoAlternateOutlined';
 import {Box, Button, GridListTileBar, IconButton} from "@material-ui/core";
-import EditAlbumDialog from "./EditAlbumDialog";
-import AddAlbumDialog from "./AddAlbumDialog";
+import EditAlbumDialog from "./dialogs/EditAlbumDialog";
+import AddAlbumDialog from "./dialogs/AddAlbumDialog";
 import {AuthContext} from "./MPhotosApp";
 
 interface AlbumGridProps {

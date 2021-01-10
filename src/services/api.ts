@@ -413,6 +413,11 @@ class PhotoApi {
             .then(res => res as MPhotosResponse<AuthUser>).then(res => PhotoApi.convert(res));
     }
 
+    logoutGuest(): Promise<AuthUser> {
+        return PhotoApi.req('/api/guest/logout')
+            .then(res => res as MPhotosResponse<AuthUser>).then(res => PhotoApi.convert(res))
+    }
+
     registerGuest(name: string, email: string): Promise<Guest> {
         const data = {name: name, email: email}
         return PhotoApi.reqBody('/api/guest', data, 'POST')
@@ -452,6 +457,12 @@ class PhotoApi {
         return PhotoApi.reqBody(`/api/albums/${name}`, data)
             .then(res => res as MPhotosResponse<Album>)
             .then(res => PhotoApi.convert(res));
+    }
+
+    updateGuest(name: string, email: string): Promise<Guest> {
+        const data = {name: name, email: email}
+        return PhotoApi.reqBody('/api/guest/update', data, 'POST')
+            .then(res => res as MPhotosResponse<Guest>).then(res => PhotoApi.convert(res))
     }
 
     updatePhotos(): Promise<DriveFiles> {

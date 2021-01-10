@@ -17,10 +17,9 @@ const DeletePhotosDialog: React.FC<DialogProps>  = (props: DialogProps) => {
     const handleDelete = (forever: boolean) => {
         props.onClose();
         props.onDelete(forever)
-    };
+    }
 
     return(
-        <React.Fragment>
             <Dialog
                 open={props.open}
                 onClose={props.onClose}
@@ -48,8 +47,7 @@ const DeletePhotosDialog: React.FC<DialogProps>  = (props: DialogProps) => {
                     </Button>
                 </DialogActions>
             </Dialog>
-        </React.Fragment>
-    );
+    )
 }
 
 export default DeletePhotosDialog

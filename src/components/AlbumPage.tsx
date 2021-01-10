@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import AlbumGrid from "./AlbumGrid";
-import AlbumDialog from "./AlbumDialog";
+import {Grid, Typography} from "@material-ui/core";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -26,11 +26,28 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function AlbumPage() {
-    const classes = useStyles();
+    const classes = useStyles()
+
+    const AlbumPageHeader: React.FC = () => {
+        const classes = useStyles();
+
+        return (
+            <div className={classes.info}>
+                <Grid container spacing={3} justify="flex-start" alignItems="center">
+                    <Grid item>
+                        <Typography variant="subtitle1" gutterBottom>
+                            <strong>Photo Albums</strong>
+                        </Typography>
+                        <Typography variant="body2" gutterBottom>Things that fit</Typography>
+                    </Grid>
+                </Grid>
+            </div>
+        )
+    }
 
     return (
         <div className={classes.root}>
-            <AlbumDialog/>
+            <AlbumPageHeader/>
             <AlbumGrid columns={3} spacing="normal"/>
         </div>
     );

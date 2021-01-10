@@ -14,10 +14,6 @@ const useStyles = makeStyles((theme: Theme) =>
             paddingBottom: theme.spacing(4),
             paddingLeft: theme.spacing(4)
         },
-        paper: {
-            padding: theme.spacing(2),
-            margin: 'auto',
-        },
         image: {
             width: 128,
             height: 128,
@@ -29,12 +25,6 @@ const useStyles = makeStyles((theme: Theme) =>
             height: 68,
             maxWidth: 68,
             maxHeight: 68,
-        },
-        img: {
-            margin: 'auto',
-            display: 'block',
-            maxWidth: '100%',
-            maxHeight: '100%',
         },
     }),
 );
