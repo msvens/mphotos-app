@@ -1,10 +1,11 @@
 import React from 'react';
 import { createMuiTheme, responsiveFontSizes, ThemeProvider } from '@material-ui/core/styles';
+//import '@material-ui/lab/themeAugmentation'
 import 'typeface-roboto';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
 import './App.css';
-import MPhotosApp from "./components/MPhotosApp";
+import MPhotosApp from "./MPhotosApp";
 
 function App() {
 
