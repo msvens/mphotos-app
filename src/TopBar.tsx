@@ -205,14 +205,14 @@ export default function TopBar(props: TobBarProps) {
                         <MPIcon key="topLogo" mpcolor="white" fontSize="large"/>
                     </IconButton>
                 </Box>
-                <Hidden xsDown>
+                {/*<Hidden xsDown>*/}
                         <Typography variant={"body2"} component={'span'}>
                             <Box letterSpacing={2}>
                             MELLOWTECH<br/>
                             PHOTOS
                             </Box>
                         </Typography>
-                </Hidden>
+                {/*</Hidden>*/}
                 {props.showSearch &&
                     <Hidden xsDown>
                 <div className={classes.search}>
