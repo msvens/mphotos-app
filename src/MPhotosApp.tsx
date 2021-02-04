@@ -14,6 +14,7 @@ import BottomBar2 from "./BottomBar2";
 import VerifyPage from "./guest/GuestPage";
 import ScrollToTop from "./ScrollIntoView";
 import {useGuest, useUser} from "./common/hooks";
+import DynamicPhotoPage from "./photos/DynamicPhotoPage";
 
 
 interface MatchParams {
@@ -61,8 +62,8 @@ const useStyles = makeStyles((theme: Theme) =>
             minHeight: '100vh',
         },
         content: {
-            paddingTop: theme.spacing(3),
-            paddingBottom: theme.spacing(3),
+            // paddingTop: theme.spacing(2),
+            paddingBottom: theme.spacing(2),
             flexGrow: 1,
             backgroundColor: theme.palette.grey["50"],
 
@@ -97,16 +98,16 @@ export default function MPhotosApp() {
                 <div className={classes.content} id="contentPage">
                     <Switch>
                         <Route path="/albums/:id" render={({match}: MatchProps) => (
-                            <PhotoPage photoType={PhotoType.Dynamic} albumId={parseInt(match.params.id)}/>)}/>
+                            <DynamicPhotoPage albumId={parseInt(match.params.id)}/>)}/>
                         <Route path="/albums" render={() => <AlbumPage/>}/>
                         <Route path="/resume" render={() => <ResumePage/>}/>
-                        <Route path="/photos" render={() => <PhotoPage photoType={PhotoType.Dynamic} id=""/>}/>
+                        <Route path="/photos" render={() => <DynamicPhotoPage id=""/>}/>
                         <Route path="/about" render={() => <AboutPage/>}/>
                         <Route path="/login" render={() => <AccountPage/>}/>
                         <Route path={"/photo/:id"} render={({match}: MatchProps) => (
-                            <PhotoPage photoType={PhotoType.Dynamic} id={match.params.id}/>)}/>
+                            <DynamicPhotoPage id={match.params.id}/>)}/>
                         <Route path="/search" render={(props: RouteComponentProps) => {
-                            return <PhotoPage photoType={PhotoType.Dynamic} query={props.location.search}/>
+                            return <DynamicPhotoPage query={props.location.search}/>
                         }}/>
                         <Route path="/guest" render={(props: RouteComponentProps) => {
                             return <VerifyPage query={props.location.search}/>
@@ -114,7 +115,6 @@ export default function MPhotosApp() {
                         <Route path="/" render={() => <HomePage/>}/>
                     </Switch>
                 </div>
-                {/*<BottomBar/>*/}
                 <BottomBar2 showSearch={false}/>
             </div>
         </Router>

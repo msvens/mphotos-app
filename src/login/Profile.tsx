@@ -37,8 +37,7 @@ const Profile: React.FC = () => {
         setPic(event.target.value);
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) =>  {
-        e.preventDefault();
+    const handleSubmit = () =>  {
         PhotosApi.updateUser(name, bio, pic)
             .then(u => {
                 setName(u.name);
@@ -50,21 +49,16 @@ const Profile: React.FC = () => {
 
     return (
 
-        <React.Fragment>
-            <form onSubmit={handleSubmit}>
+        <>
                 <TextField id="nameField" label="Name" size="medium" margin="normal" variant="outlined"
                            value={name} onChange={handleNameChange} fullWidth/>
-
                 <TextField id="picField" label="Profile Picture" variant="outlined" margin="normal"
                            value={pic} onChange={handlePicChange} fullWidth/>
-
                 <TextField className={classes.textField} id="bioField" label="BioDialog" multiline rows={4}
                            size="medium" margin="normal" variant="outlined"
                            value={bio} onChange={handleBioChange} fullWidth/>
-
-                <Button variant="outlined" type="submit">Submit</Button>
-            </form>
-        </React.Fragment>
+                <Button variant="outlined" onClick={handleSubmit}>Submit</Button>
+        </>
     )
 };
 

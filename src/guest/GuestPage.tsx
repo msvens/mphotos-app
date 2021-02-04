@@ -6,8 +6,8 @@ import {Link as RouterLink} from "react-router-dom";
 import Link from "@material-ui/core/Link";
 import {AuthContext} from "../MPhotosApp";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
-import LogoutGuestDialog from "./LogoutGuestDialog";
 import AddGuestDialog from "./AddGuestDialog";
+import MPDialog from "../common/MPDialog";
 
 interface GuestPageProps {
     query?: string
@@ -52,6 +52,19 @@ const GuestPage: React.FC<GuestPageProps> = ({query}) => {
         }
     }, [query, context])
 
+    const handleLogout = () => {
+        const logout = async () => {
+            try {
+                await PhotosApi.logoutGuest()
+                context.checkGuest()
+                setShowLogoutGuest(false)
+            } catch (error) {
+                alert(error)
+            }
+        }
+        logout()
+    }
+
 
     return (
         <div className={classes.root}>
@@ -93,6 +106,9 @@ const GuestPage: React.FC<GuestPageProps> = ({query}) => {
                             startIcon={<PersonAddIcon/>} onClick={() => setShowAddGuest(true)}>Update Guest</Button>
                     <Button variant="outlined" color="default" size={"small"} className={classes.guestButton}
                             onClick={() => setShowLogoutGuest(true)}>Logout Guest</Button>
+                    <MPDialog open={showLogoutGuest} onClose={() => setShowLogoutGuest(false)}
+                              onOk={handleLogout} closeOnOk={false} title={"Logout Guest"}
+                              text={"Logout guest. In order to login again you need to register with your email."}/>
 
                 </>
                 }
@@ -109,7 +125,6 @@ const GuestPage: React.FC<GuestPageProps> = ({query}) => {
                 </>
                 }
                 <AddGuestDialog update={context.isGuest} name={context.guest.name} email={context.guest.email} open={showAddGuest} onClose={() => {setShowAddGuest(false)}}/>
-                <LogoutGuestDialog open={showLogoutGuest} onClose={() => {setShowLogoutGuest(false)}}/>
             </div>
         </div>
     )

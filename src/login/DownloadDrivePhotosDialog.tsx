@@ -93,7 +93,7 @@ const DownloadDrivePhotosDialog: React.FC<DownloadDrivePhotosDialogProps> = ({op
                     </DialogContent>
                     <DialogActions>
                         <Button disabled={isRunning} onClick={() => {
-                            onClose();
+                            onClose()
                             setJob(undefined)
                         }} color="primary" autoFocus>
                             Ok
@@ -127,7 +127,6 @@ const DownloadDrivePhotosDialog: React.FC<DownloadDrivePhotosDialogProps> = ({op
         <Dialog open={open} aria-labelledby="dialog-title" aria-describedby="dialog-content"
                 fullWidth maxWidth='md'>
             <Content/>
-
         </Dialog>
     )
 }

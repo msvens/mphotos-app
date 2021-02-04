@@ -14,6 +14,7 @@ const useStyles = makeStyles((theme: Theme) =>
             paddingLeft: 0,
             maxWidth: 1200,
             margin: 'auto',
+            paddingTop: theme.spacing(4)
         },
     }),
 );
@@ -32,7 +33,9 @@ export default function HomePage() {
 
     return (
         <div className={classes.root}>
+            {config.showBio &&
             <BioDialog/>
+            }
             <InfinitePhotoGrid fetchItems={12} columns={config.photoGridCols} spacing={config.photoGridSpacing} order="drive"/>
         </div>
     );

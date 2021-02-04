@@ -165,10 +165,11 @@ export interface SearchPhotoParams {
     cameraModel?: string
 }
 
-export interface UXConfig {
+export type UXConfig = {
     photoGridCols: number
     photoItemsLoad: number
     photoGridSpacing: number
+    showBio: boolean
 }
 
 export enum ImageAspect {
@@ -181,7 +182,7 @@ export enum ImageAspect {
 
 class PhotoApi {
 
-    defaultUxConfig: UXConfig = {photoGridCols: 3, photoGridSpacing: 5, photoItemsLoad: 12}
+    defaultUxConfig: UXConfig = {photoGridCols: 3, photoGridSpacing: 0, photoItemsLoad: 12, showBio: true}
 
     private idCounter = 0
 
@@ -293,7 +294,7 @@ class PhotoApi {
             .then(res => res as MPhotosResponse<PhotoList>).then(res => PhotoApi.convert(res));
     }
 
-    getImageUrl(p: Photo, type: PhotoType, portraitView?: boolean, largeDisplay?: boolean):string {
+    getImageUrl(p: Photo, type: PhotoType, portraitView: boolean, largeDisplay: boolean):string {
         switch(type) {
             case PhotoType.Thumb:
                 return "/api/thumbs/".concat(p.fileName)
@@ -308,16 +309,14 @@ class PhotoApi {
             case PhotoType.Original:
                 return this.orignialURL(p)
             case PhotoType.Dynamic:
-                //for now dont use large display)
-                const a = this.aspect(p)
-                if (portraitView === undefined) {
-                    return this.imagePath(p).concat(p.fileName)
+                if (largeDisplay) { //dont use any specifics
+                    return this.resizeURL(p)
+                }
+                if (portraitView) {
+                    const a = this.aspect(p)
+                    return a === ImageAspect.PORTRAIT ? this.portraitURL(p) : this.squareURL(p)
                 } else {
-                    if (portraitView) {
-                        return a === ImageAspect.PORTRAIT ? this.portraitURL(p) : this.squareURL(p)
-                    } else {
-                        return "/api/landscapes/".concat(p.fileName)
-                    }
+                    return "/api/landscapes/".concat(p.fileName)
                 }
         }
     }
@@ -482,14 +481,6 @@ class PhotoApi {
             .then(res => res as MPhotosResponse<Album>)
             .then(res => PhotoApi.convert(res))
     }
-    /*
-    updateAlbum(description: string, coverPic: string, name: string): Promise<Album> {
-        const data = {description: description, coverPic: coverPic, name: name};
-        return PhotoApi.reqBody(`/api/albums/${name}`, data)
-            .then(res => res as MPhotosResponse<Album>)
-            .then(res => PhotoApi.convert(res));
-    }
-     */
 
     updateGuest(name: string, email: string): Promise<Guest> {
         const data = {name: name, email: email}
@@ -510,14 +501,6 @@ class PhotoApi {
             .then(res => res as MPhotosResponse<Photo>)
             .then(res => PhotoApi.convert(res));
     }
-
-    /*updatePhoto(photoId: string, title: string, description: string, keywords: string, albums: string): Promise<Photo> {
-        const data = {id: photoId, title: title, description: description,
-            keywords: keywords.split(","), albums: albums.split(",")};
-        return PhotoApi.reqBody(`/api/photos/${photoId}`, data)
-            .then(res => res as MPhotosResponse<Photo>)
-            .then(res => PhotoApi.convert(res));
-    }*/
 
     updateUXConfig(uxConfig: UXConfig): Promise<UXConfig> {
         return PhotoApi.reqBody('/api/user/config', uxConfig, "POST")

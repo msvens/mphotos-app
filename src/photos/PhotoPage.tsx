@@ -104,8 +104,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const PhotoPage: React.FC<PhotoPageProps> = ({photoType, id, query, albumId}) => {
 
-    const [photos, setPhotos] = useState<Photo[]>([]);
-    const [album, setAlbum] = useState<Album>();
+    const [photos, setPhotos] = useState<Photo[]>([])
+    const [album, setAlbum] = useState<Album>()
     const [, updateState] = React.useState();
     const [idx, setIdx] = useState<number>(0);
     const classes = useStyles();
@@ -316,7 +316,7 @@ const PhotoPage: React.FC<PhotoPageProps> = ({photoType, id, query, albumId}) =>
                                          onPrev={handleBackward}/>
                         <div>
                             <img className={classes.img} alt={photos[idx].title}
-                                 src={PhotosApi.getImageUrl(photos[idx], photoType, isPortrait)}/>
+                                 src={PhotosApi.getImageUrl(photos[idx], photoType, isPortrait, false)}/>
                         </div>
 
                         {context.isUser &&

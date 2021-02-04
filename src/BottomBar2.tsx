@@ -16,9 +16,18 @@ const useStyles = makeStyles((theme: Theme) =>
             top: 'auto',
             bottom: 0,
         },
+        toolBar: {
+            margin: 0,
+            padding: 0,
+            /*paddingLeft:0,
+            paddingRight:0,*/
+            marginRight: "auto",
+            marginLeft: "auto"
+        },
         linkText: {
             textTransform: 'uppercase',
             fontWeight: 'bold',
+            margin: 0,
             marginRight: theme.spacing(1),
             marginLeft: theme.spacing(1),
             fontSize: '80%'
@@ -36,7 +45,7 @@ export default function BottomBar2(props: BottomBarProps) {
     return (
         <AppBar className={classes.appBar} position="relative" color={'transparent'} elevation={0}>
             <Divider/>
-            <Toolbar style={{paddingLeft:0, paddingRight:0, marginRight: "auto", marginLeft: "auto"}}>
+            <Toolbar style={{paddingLeft:0, paddingRight:0, marginRight: "auto", marginLeft: "auto", marginTop:0}} variant={"dense"}>
                 <Typography variant="body1">
                     <Link className={classes.linkText} component={RouterLink} to={`/about`}>About</Link>
                     <Link className={classes.linkText} component={RouterLink} to={`/resume`}>Resume</Link>

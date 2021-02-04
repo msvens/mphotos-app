@@ -11,6 +11,7 @@ const useStyles = makeStyles((theme: Theme) =>
             flexWrap: 'wrap',
             justifyContent: 'space-around',
             overflow: 'hidden',
+            paddingTop: theme.spacing(4)
         },
         paper: {
             maxWidth: 700,

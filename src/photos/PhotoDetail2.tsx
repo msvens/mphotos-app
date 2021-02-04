@@ -218,6 +218,7 @@ const PhotoDetail2: React.FC<PhotoDetail2Props> = (props: PhotoDetail2Props) => 
                         className={classes.commentInput}
                         placeholder="Add comment..."
                         multiline={true}
+                        fullWidth={true}
                         onChange={handleCommentChange}
                         value={newComment}
                         inputProps={{ 'aria-label': 'Add comment...' }}

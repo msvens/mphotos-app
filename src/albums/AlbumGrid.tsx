@@ -77,7 +77,6 @@ const AlbumGrid: React.FC<AlbumGridProps> = ({columns, spacing}) => {
     const [showUpdate, setShowUpdate] = useState(false);
     const [showAdd, setShowAdd] = useState(false)
     const [showDelete, setShowDelete] = useState(false)
-    //const [, updateState] = React.useState()
 
     const context = useContext(AuthContext)
 
@@ -110,8 +109,7 @@ const AlbumGrid: React.FC<AlbumGridProps> = ({columns, spacing}) => {
                         return a
                     else
                         return aa
-                }
-            )
+                })
             setAlbums(newAlbums)
         }
         setShowUpdate(false)

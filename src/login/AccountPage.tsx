@@ -9,7 +9,7 @@ import Profile from "./Profile";
 import Login from "./Login";
 import UXConfigDialog from "./UXConfigDialog";
 import {AuthContext} from "../MPhotosApp";
-import Drive2 from "./Drive2";
+import Drive from "./Drive";
 
 const PROFILE = 'Profile';
 const DRIVE = 'Drive';
@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme: Theme) =>
             display: 'flex',
             maxWidth: 1000,
             margin: 'auto',
+            paddingTop: theme.spacing(4)
         },
         drawer: {
             minWidth: 140,
@@ -64,7 +65,7 @@ export default function AccountPage() {
             <main className={classes.content}>
                {!context.isUser && <Login/>}
                {context.isUser && mi === PROFILE && <Profile />}
-               {context.isUser && mi === DRIVE && <Drive2 />}
+               {context.isUser && mi === DRIVE && <Drive />}
                 {context.isUser && mi === UXCONFIG && <UXConfigDialog/>}
                {context.isUser && mi === LOGOUT &&
                <Box>

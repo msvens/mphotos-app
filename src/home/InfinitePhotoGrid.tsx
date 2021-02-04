@@ -90,9 +90,9 @@ const InfinitePhotoGrid: React.FC<InfinitePhotoGridProps> = (props: InfinitePhot
                     <Link to={`/photo/${photo.driveId}`}>
                         {photo.private
                             ? <LazyLoadImage alt={photo.fileName} className={classes.thumbPrivate}
-                                             src={PhotosApi.getImageUrl(photo, PhotoType.Thumb)}/>
+                                             src={PhotosApi.getImageUrl(photo, PhotoType.Thumb, false, false)}/>
                             : <LazyLoadImage alt={photo.fileName} className={classes.thumb}
-                                             src={PhotosApi.getImageUrl(photo, PhotoType.Thumb)}/>
+                                             src={PhotosApi.getImageUrl(photo, PhotoType.Thumb, false, false)}/>
                         }
 
                     </Link>

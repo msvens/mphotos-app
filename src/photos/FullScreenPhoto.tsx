@@ -102,7 +102,7 @@ const FullScreenPhoto: React.FC<FullScreenPhotoProps> = ({photo, openDialog, onC
         <React.Fragment>
             <Dialog PaperProps={{ classes: {root: classes.root} }} fullScreen open={openDialog} onClose={onClose}>
                 <div className={classes.imgItem} onTouchEnd={onEndTouch} onTouchStart={onStartTouch} onTouchMove={onMoveTouch}>
-                    <img alt={photo.title} className={classes.img} src={PhotosApi.getImageUrl(photo, PhotoType.Original)}/>
+                    <img alt={photo.title} className={classes.img} src={PhotosApi.getImageUrl(photo, PhotoType.Original, false, false)}/>
                     <div className={classes.navButtons}>
                         <IconButton aria-label="previous" className={classes.editButton} onClick={onPrev}>
                             <ArrowBackIosSharpIcon fontSize="small"/>

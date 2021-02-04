@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-const Drive2: React.FC = () => {
+const Drive: React.FC = () => {
     const [folder, setFolder] = useState('')
     const [id, setId] = useState('')
     const [openDelete, setOpenDelete] = useState(false)
@@ -117,4 +117,4 @@ const Drive2: React.FC = () => {
     )
 };
 
-export default Drive2
+export default Drive

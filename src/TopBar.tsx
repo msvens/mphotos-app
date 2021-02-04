@@ -231,7 +231,7 @@ export default function TopBar(props: TobBarProps) {
                     </Hidden>
                 }
                 <div className={classes.grow}/>
-                <Hidden smDown>
+                <Hidden xsDown>
                     <IconButton aria-label="home" color="inherit" component={RouterLink} to="/">
                         <HomeOutlinedIcon fontSize="large"/>
                     </IconButton>
@@ -245,7 +245,7 @@ export default function TopBar(props: TobBarProps) {
                         {context.isGuest ? <PersonIcon fontSize={"large"}/> : <PersonAddIcon fontSize={"large"}/>}
                     </IconButton>
                 </Hidden>
-                <Hidden mdUp>
+                <Hidden smUp>
                     <BurgerMenu/>
                 </Hidden>
             </Toolbar>
