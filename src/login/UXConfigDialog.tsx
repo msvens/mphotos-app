@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {
-    Button, FormControlLabel, Grid,
-    MenuItem, Switch,
+    Button, FormControl, FormControlLabel, FormLabel, Grid,
+    MenuItem, Radio, RadioGroup, Switch,
     TextField
 } from "@material-ui/core";
-import PhotosApi, {UXConfig} from "../common/api";
+import PhotosApi, {Colors, UXConfig} from "../common/api";
 
 
 const gridSpacings = [
@@ -31,6 +31,7 @@ const UXConfigDialog: React.FC  = () => {
     const [loadItems, setLoadItems] = useState<number>(12)
     const [gridSpacing, setGridSpacing] = useState<number> (0)
     const [showBio, setShowBio] = useState<boolean>(true)
+    const [photoBackground, setPhotoBackground] = useState<string>("")
     const [conf, setConf] = useState<UXConfig> (PhotosApi.defaultUxConfig)
 
     useEffect(() => {
@@ -50,6 +51,7 @@ const UXConfigDialog: React.FC  = () => {
         setLoadItems(conf.photoItemsLoad)
         setGridSpacing(conf.photoGridSpacing)
         setShowBio(conf.showBio)
+        setPhotoBackground(conf.photoBackgroundColor)
     }, [conf])
 
 
@@ -60,7 +62,8 @@ const UXConfigDialog: React.FC  = () => {
                     photoGridCols: cols,
                     photoGridSpacing: gridSpacing,
                     photoItemsLoad: loadItems,
-                    showBio: showBio
+                    showBio: showBio,
+                    photoBackgroundColor: photoBackground
                 }
                 const res = await PhotosApi.updateUXConfig(conf)
                 setConf(res)
@@ -87,6 +90,10 @@ const UXConfigDialog: React.FC  = () => {
         setShowBio(event.target.checked)
     }
 
+    const handlePhotoBackgroundChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setPhotoBackground((event.target as HTMLInputElement).value);
+    }
+
     return(
         <>
                 <TextField size="medium" margin="normal" variant="outlined" id="cols" label="Grid Columns" value={cols}
@@ -106,6 +113,20 @@ const UXConfigDialog: React.FC  = () => {
                     <Switch checked={showBio} onChange={handleShowBio} name="showBioS" color="primary"/>
                 }
             />
+            <br/>
+            <br/>
+            <FormControl component="fieldset">
+                <FormLabel component="legend">Photo Background Color</FormLabel>
+                <RadioGroup aria-label="Photo Background" name="photoBackground" value={photoBackground}
+                            onChange={handlePhotoBackgroundChange}>
+                    <FormControlLabel value={Colors.Black} control={<Radio />} label="Black" />
+                    <FormControlLabel value={Colors.White} control={<Radio />} label="White" />
+                    <FormControlLabel value={Colors.LightGrey} control={<Radio />} label="Light Grey" />
+                    <FormControlLabel value={Colors.Grey} control={<Radio />} label="Grey" />
+                    <FormControlLabel value={Colors.DarkGrey} control={<Radio />} label="Dark Grey" />
+                </RadioGroup>
+            </FormControl>
+
             <Grid container justify="flex-end">
                 <Button onClick={handleUpdate} variant="outlined">Save Config</Button>
             </Grid>

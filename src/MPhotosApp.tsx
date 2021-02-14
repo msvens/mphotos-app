@@ -6,7 +6,6 @@ import HomePage from "./home/HomePage";
 import 'typeface-roboto';
 import {BrowserRouter as Router, Route, RouteComponentProps, Switch} from "react-router-dom";
 import TopBar from "./TopBar";
-import PhotoPage from "./photos/PhotoPage";
 import ResumePage from "./resume/ResumePage";
 import AlbumPage from "./albums/AlbumPage";
 import {Guest, PhotoType, User} from "./common/api";

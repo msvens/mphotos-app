@@ -1,24 +1,21 @@
 import React from 'react';
 import {createStyles, Dialog, fade, makeStyles, Theme} from "@material-ui/core";
 import PhotosApi, {PhotoType, Photo} from "../common/api";
-import IconButton from "@material-ui/core/IconButton";
-import ArrowBackIosSharpIcon from "@material-ui/icons/ArrowBackIosSharp";
-import ArrowForwardIosSharpIcon from "@material-ui/icons/ArrowForwardIosSharp";
-import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
+import PhotoControls from "./PhotoControls";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
-            backgroundColor: theme.palette.common.black,
-            color: theme.palette.common.black,
+            //backgroundColor: theme.palette.common.black,
+            //color: theme.palette.common.black,
         },
         imgItem: {
             display: 'flex',
             margin: 'auto',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: theme.palette.common.black,
-            color: theme.palette.common.black,
+            //backgroundColor: theme.palette.common.black,
+            //color: theme.palette.common.black,
             maxHeight: '100%',
             height: '100%',
         },
@@ -52,6 +49,8 @@ interface FullScreenPhotoProps {
     onClose: () => void,
     onPrev: () => void,
     onNext: () => void,
+    photoBackground: string,
+    largeDisplay: boolean
 }
 
 interface TouchState {
@@ -62,7 +61,8 @@ interface TouchState {
 }
 
 
-const FullScreenPhoto: React.FC<FullScreenPhotoProps> = ({photo, openDialog, onClose, onPrev, onNext}) => {
+const FullScreenPhoto: React.FC<FullScreenPhotoProps> = ({photo, openDialog, largeDisplay,
+                                                             onClose, onPrev, onNext, photoBackground}) => {
 
     const classes = useStyles();
 
@@ -99,26 +99,19 @@ const FullScreenPhoto: React.FC<FullScreenPhotoProps> = ({photo, openDialog, onC
     };
 
     return (
-        <React.Fragment>
-            <Dialog PaperProps={{ classes: {root: classes.root} }} fullScreen open={openDialog} onClose={onClose}>
-                <div className={classes.imgItem} onTouchEnd={onEndTouch} onTouchStart={onStartTouch} onTouchMove={onMoveTouch}>
+            <Dialog PaperProps={{ classes: {root: classes.root}, style: {backgroundColor: photoBackground} }}
+                    fullScreen open={openDialog} onClose={onClose} onTouchStart={onStartTouch} onTouchMove={onMoveTouch}>
+                <div style={{backgroundColor: photoBackground}} className={classes.imgItem} onTouchEnd={onEndTouch}>
                     <img alt={photo.title} className={classes.img} src={PhotosApi.getImageUrl(photo, PhotoType.Original, false, false)}/>
-                    <div className={classes.navButtons}>
-                        <IconButton aria-label="previous" className={classes.editButton} onClick={onPrev}>
-                            <ArrowBackIosSharpIcon fontSize="small"/>
-                        </IconButton>
-                        <IconButton aria-label="next" color="primary" onClick={onNext}
-                                    className={classes.editButton}>
-                            <ArrowForwardIosSharpIcon fontSize="small"/>
-                        </IconButton>
-                        <IconButton aria-label="fullScreen" color="primary" onClick={onClose}
-                                    className={classes.editButton}>
-                            <FullscreenExitIcon fontSize="small"/>
-                        </IconButton>
-                    </div>
+                    <PhotoControls photoBackground={photoBackground}
+                                   onBackward={onPrev}
+                                   onForward={onNext}
+                                   onFullScreen={onClose}
+                                   showEditControls={false}
+                                   isLargeDisplay={largeDisplay}
+                                   inFullscreen={true}/>
                 </div>
             </Dialog>
-        </React.Fragment>
     );
 };
 

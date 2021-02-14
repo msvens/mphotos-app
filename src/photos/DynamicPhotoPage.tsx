@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {createStyles, Grid, makeStyles, Theme, useMediaQuery, useTheme} from "@material-ui/core";
 import PhotoDetail2 from "./PhotoDetail2";
 import {AuthContext} from "../MPhotosApp";
-import PhotosApi, {Album, Photo, PhotoList, PhotoType} from "../common/api";
+import PhotosApi, {Album, Photo, PhotoList, PhotoType, UXConfig} from "../common/api";
 import PhotoControls from "./PhotoControls";
 import MPDialog from "../common/MPDialog";
 import EditPhoto from "./EditPhoto";
@@ -46,8 +46,8 @@ const useStyles = makeStyles((theme: Theme) =>
             maxheight: '80vh',
             //paddingTop: theme.spacing(2),
             //paddingBottom: theme.spacing(2),
-            //backgroundColor: theme.palette.grey["700"],
-            backgroundColor: theme.palette.common.black
+            //backgroundColor: '#000000',
+            //backgroundColor: theme.palette.common.black
         },
         imgCanvasSmall: {
             position: 'relative',
@@ -87,6 +87,14 @@ const DynamicPhotoPage: React.FC<DynamicPhotoPageProps> = ({id, query, albumId})
 
     const isPortrait = useMediaQuery('(orientation: portrait)')
     const isLargeDisplay = useMediaQuery(theme.breakpoints.up('sm'))
+
+    const [config, setConfig] = useState<UXConfig>(PhotosApi.defaultUxConfig)
+
+    useEffect(() => {
+        PhotosApi.getUXConfig().then(res => {
+            setConfig(res)
+        })
+    }, [])
 
 
     useEffect(() => {
@@ -219,14 +227,14 @@ const DynamicPhotoPage: React.FC<DynamicPhotoPageProps> = ({id, query, albumId})
             {photos.length > 0 &&
             <>
                 <Grid container alignItems="center" justify="space-around">
-                    <Grid item xs={12} className={getImageCanvasClass()}
+                    <Grid item xs={12} style={{backgroundColor: config.photoBackgroundColor}} className={getImageCanvasClass()}
                           onTouchEnd={onEndTouch}
                           onTouchStart={onStartTouch}
                           onTouchMove={onMoveTouch}>
                         <img className={isLargeDisplay ? classes.img : classes.imgSmall} alt={photos[idx].title}
                              src={PhotosApi.getImageUrl(photos[idx], PhotoType.Dynamic, isPortrait, isLargeDisplay)}/>
 
-                        <PhotoControls onBackward={handleBackward}
+                        <PhotoControls photoBackground={config.photoBackgroundColor} onBackward={handleBackward}
                                        onForward={handleForward}
                                        onFullScreen={() => setShowFullscreen(true)}
                                        onPrivate={handlePrivate}
@@ -237,6 +245,7 @@ const DynamicPhotoPage: React.FC<DynamicPhotoPageProps> = ({id, query, albumId})
                                        isAlbum={album ? true : false}
                                        isPrivate={photos[idx].private}
                                        isLargeDisplay={isLargeDisplay}
+                                       inFullscreen={false}
 
                         />
                     </Grid>
@@ -246,7 +255,8 @@ const DynamicPhotoPage: React.FC<DynamicPhotoPageProps> = ({id, query, albumId})
                 </Grid>
                 <FullScreenPhoto photo={photos[idx]} openDialog={showFullscreen}
                                  onClose={() => setShowFullscreen(false)} onNext={handleForward}
-                                 onPrev={handleBackward}/>
+                                 onPrev={handleBackward} photoBackground={config.photoBackgroundColor}
+                                 largeDisplay={isLargeDisplay}/>
                 <EditPhoto open={showUpdate} photo={photos[idx]} onClose={handleCloseUpdate}/>
                 <MPDialog open={showDelete}
                           onClose={() => setShowDelete(false)}

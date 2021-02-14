@@ -170,6 +170,7 @@ export type UXConfig = {
     photoItemsLoad: number
     photoGridSpacing: number
     showBio: boolean
+    photoBackgroundColor: string
 }
 
 export enum ImageAspect {
@@ -178,11 +179,17 @@ export enum ImageAspect {
     SQUARE
 }
 
-
+export enum Colors {
+    White = "#ffffff",
+    LightGrey = "#e0e0e0",
+    Grey = "#757575",
+    DarkGrey = "#212121",
+    Black = "#000000"
+}
 
 class PhotoApi {
 
-    defaultUxConfig: UXConfig = {photoGridCols: 3, photoGridSpacing: 0, photoItemsLoad: 12, showBio: true}
+    defaultUxConfig: UXConfig = {photoGridCols: 3, photoGridSpacing: 0, photoItemsLoad: 12, showBio: true, photoBackgroundColor: Colors.Black}
 
     private idCounter = 0
 

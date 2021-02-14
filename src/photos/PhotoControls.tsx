@@ -4,25 +4,29 @@ import IconButton from "@material-ui/core/IconButton";
 import ArrowBackIosSharpIcon from "@material-ui/icons/ArrowBackIosSharp";
 import ArrowForwardIosSharpIcon from "@material-ui/icons/ArrowForwardIosSharp";
 import FullscreenIcon from "@material-ui/icons/Fullscreen";
+import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import LockIcon from "@material-ui/icons/Lock";
 import LockOpenIcon from "@material-ui/icons/LockOpen";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import PhotoAlbumIcon from "@material-ui/icons/PhotoAlbum";
 import FaceIcon from "@material-ui/icons/Face";
+import {Colors} from "../common/api";
 
 type PhotoControlsProps = {
-    isPrivate: boolean,
+    photoBackground: string
+    isLargeDisplay: boolean
+    showEditControls: boolean
+    inFullscreen: boolean
     onBackward: () => void
     onForward: () => void
     onFullScreen: () => void
-    onPrivate: () => void
-    onDelete: () => void
-    onEdit: () => void
-    onProfilePic: () => void
-    isAlbum: boolean
-    showEditControls: boolean
-    isLargeDisplay: boolean
+    isPrivate?: boolean,
+    onPrivate?: () => void
+    onDelete?: () => void
+    onEdit?: () => void
+    onProfilePic?: () => void
+    isAlbum?: boolean
 }
 
 type EditButtonProps = {
@@ -30,15 +34,21 @@ type EditButtonProps = {
     onClick: () => void,
 }
 
-const useStyles = makeStyles((theme: Theme) => {
+type StyleProps = {
+    backgroundColor: string,
+    color: string
+}
+
+const useStyles = makeStyles<Theme,StyleProps>((theme: Theme) => {
+
 
         const editB = {
-            color: '#FFFFFF',
-            backgroundColor: fade(theme.palette.common.black, 0.7).toString(),
+            color: (props: StyleProps) => props.color,
+            backgroundColor: (props: StyleProps) => fade(props.backgroundColor, 0.7).toString(),
             marginRight: theme.spacing(1),
             '&:hover':
                 {
-                    backgroundColor: fade(theme.palette.common.black, 0.9).toString(),
+                    backgroundColor: (props: StyleProps) => fade(props.backgroundColor, 0.9).toString(),
                 }
         }
         return createStyles({
@@ -72,12 +82,13 @@ const useStyles = makeStyles((theme: Theme) => {
                 left: theme.spacing(2),
             },
             editButton: {
-                color: '#FFFFFF',
+                ...editB,
+                /*color: '#FFFFFF',
                 backgroundColor: fade(theme.palette.common.black, 0.7).toString(),
                 marginRight: theme.spacing(1),
                 '&:hover': {
                     backgroundColor: fade(theme.palette.common.black, 0.9).toString(),
-                },
+                },*/
             },
 
         })
@@ -86,7 +97,14 @@ const useStyles = makeStyles((theme: Theme) => {
 
 
 const PhotoControls: React.FC<PhotoControlsProps> = (props) => {
-    const classes = useStyles()
+
+    const styleProps: StyleProps = props.photoBackground === Colors.White ||
+        props.photoBackground === Colors.LightGrey ?
+        {backgroundColor: props.photoBackground, color: Colors.Black} :
+        {backgroundColor: props.photoBackground, color: Colors.White}
+    const classes = useStyles(styleProps)
+
+
 
     const EditButton: React.FC<EditButtonProps> = ({tooltip, onClick, children}) => {
         return (
@@ -100,6 +118,13 @@ const PhotoControls: React.FC<PhotoControlsProps> = (props) => {
         )
     }
 
+    const wrap = (f?: () => void):()=>void => {
+        if(f)
+            return f
+        else
+            return () => {alert("undefiend action")}
+    }
+
     return (
         <>
             <IconButton aria-label="previous" onClick={props.onBackward}
@@ -110,32 +135,38 @@ const PhotoControls: React.FC<PhotoControlsProps> = (props) => {
                         className={classes.middleRight}>
                 <ArrowForwardIosSharpIcon fontSize={props.isLargeDisplay ? "large" : "small"}/>
             </IconButton>
-            <IconButton aria-label="fullScreen" color="primary" onClick={props.onFullScreen}
-                        className={classes.topRight}>
-                <FullscreenIcon fontSize={props.isLargeDisplay ? "large" : "small"}/>
-            </IconButton>
+            {props.inFullscreen
+                ? <IconButton aria-label="exit fullscreen" color="primary" onClick={props.onFullScreen}
+                              className={classes.topRight}>
+                    <FullscreenExitIcon fontSize={props.isLargeDisplay ? "large" : "small"}/>
+                </IconButton>
+                : <IconButton aria-label="enter fullscreen" color="primary" onClick={props.onFullScreen}
+                              className={classes.topRight}>
+                    <FullscreenIcon fontSize={props.isLargeDisplay ? "large" : "small"}/>
+                </IconButton>
+            }
             {props.showEditControls &&
             <div className={classes.editButtons}>
                 {props.isAlbum
-                    ? <EditButton tooltip="Set Album Cover" onClick={props.onProfilePic}>
+                    ? <EditButton tooltip="Set Album Cover" onClick={wrap(props.onProfilePic)}>
                         <PhotoAlbumIcon fontSize="small"/>
                     </EditButton>
-                    : <EditButton tooltip="Set Profile Picture" onClick={props.onProfilePic}>
+                    : <EditButton tooltip="Set Profile Picture" onClick={wrap(props.onProfilePic)}>
                         <FaceIcon fontSize="small"/>
                     </EditButton>
                 }
                 {props.isPrivate
-                    ? <EditButton tooltip="Set Public Photo" onClick={props.onPrivate}>
+                    ? <EditButton tooltip="Set Public Photo" onClick={wrap(props.onPrivate)}>
                         <LockIcon fontSize="small"/>
                     </EditButton>
-                    : <EditButton tooltip="Set Private Photo" onClick={props.onPrivate}>
+                    : <EditButton tooltip="Set Private Photo" onClick={wrap(props.onPrivate)}>
                         <LockOpenIcon fontSize="small"/>
                     </EditButton>
                 }
-                <EditButton tooltip="Edit Photo Description" onClick={props.onEdit}>
+                <EditButton tooltip="Edit Photo Description" onClick={wrap(props.onEdit)}>
                     <EditIcon fontSize="small"/>
                 </EditButton>
-                <EditButton tooltip="Delete Photo" onClick={props.onDelete}>
+                <EditButton tooltip="Delete Photo" onClick={wrap(props.onDelete)}>
                     <DeleteForeverIcon fontSize="small"/>
                 </EditButton>
             </div>
