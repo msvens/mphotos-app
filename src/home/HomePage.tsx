@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext} from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import BioDialog from "./BioDialog";
 import InfinitePhotoGrid from "./InfinitePhotoGrid";
-import PhotosApi, {UXConfig} from "../common/api";
+import {MPContext} from "../App";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -14,29 +14,24 @@ const useStyles = makeStyles((theme: Theme) =>
             paddingLeft: 0,
             maxWidth: 1200,
             margin: 'auto',
-            paddingTop: theme.spacing(4)
+            paddingTop: theme.spacing(4),
+            paddingBottom: theme.spacing(2),
         },
     }),
 );
 
 export default function HomePage() {
-    const classes = useStyles();
-
-
-    const [config, setConfig] = useState<UXConfig>(PhotosApi.defaultUxConfig)
-
-    useEffect(() => {
-        PhotosApi.getUXConfig().then(res => {
-            setConfig(res)
-        })
-    }, [])
+    const classes = useStyles()
+    const context = useContext(MPContext)
 
     return (
         <div className={classes.root}>
-            {config.showBio &&
+            {context.uxConfig.showBio &&
             <BioDialog/>
             }
-            <InfinitePhotoGrid fetchItems={12} columns={config.photoGridCols} spacing={config.photoGridSpacing} order="drive"/>
+            <InfinitePhotoGrid fetchItems={12}
+                               columns={context.uxConfig.photoGridCols}
+                               spacing={context.uxConfig.photoGridSpacing} order="drive"/>
         </div>
     );
 

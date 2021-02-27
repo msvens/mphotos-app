@@ -1,10 +1,11 @@
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
-import {Divider, Typography} from "@material-ui/core";
+import {Box, Typography} from "@material-ui/core";
 import {Link as RouterLink} from "react-router-dom";
 import Link from "@material-ui/core/Link";
 import AppBar from "@material-ui/core/AppBar";
-import React from "react";
+import React, {useContext} from "react";
+import {MPContext} from "./App";
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -12,21 +13,14 @@ const useStyles = makeStyles((theme: Theme) =>
         appBar: {
             marginLeft: 0,
             marginRight: 0,
-            backgroundColor: theme.palette.common.white,
             top: 'auto',
             bottom: 0,
         },
-        toolBar: {
-            margin: 0,
-            padding: 0,
-            /*paddingLeft:0,
-            paddingRight:0,*/
-            marginRight: "auto",
-            marginLeft: "auto"
+        grow: {
+            flexGrow: 1,
         },
         linkText: {
             textTransform: 'uppercase',
-            fontWeight: 'bold',
             margin: 0,
             marginRight: theme.spacing(1),
             marginLeft: theme.spacing(1),
@@ -39,19 +33,33 @@ interface BottomBarProps {
     showSearch: boolean
 }
 
+
 export default function BottomBar2(props: BottomBarProps) {
     const classes = useStyles();
+    const context = useContext(MPContext)
+
+    function link(to: string, name: string) {
+        return (
+            <Link className={classes.linkText} color={"inherit"} style={{ textDecoration: 'none' }}
+                  component={RouterLink} to={to}>
+                <Typography variant="caption" gutterBottom={false}>
+                    <Box className={classes.linkText}>{name}</Box>
+                </Typography>
+            </Link>
+        )
+    }
 
     return (
         <AppBar className={classes.appBar} position="relative" color={'transparent'} elevation={0}>
-            <Divider/>
-            <Toolbar style={{paddingLeft:0, paddingRight:0, marginRight: "auto", marginLeft: "auto", marginTop:0}} variant={"dense"}>
-                <Typography variant="body1">
-                    <Link className={classes.linkText} component={RouterLink} to={`/about`}>About</Link>
-                    <Link className={classes.linkText} component={RouterLink} to={`/resume`}>Resume</Link>
-                    <Link className={classes.linkText} component={RouterLink} to={'/'}>mellowtech.org</Link>
-                    <Link className={classes.linkText} component={RouterLink} to={'/login'}>Admin</Link>
-                </Typography>
+            {/*<Divider/>*/}
+            <Toolbar style={{paddingLeft:0, paddingRight:0}}
+                     variant={context.uxConfig.denseBottomBar ? "dense" : "regular"}>
+                <div className={classes.grow}/>
+                {link("/about", "ABOuT")}
+                {link("/resume", "RESUME")}
+                {link("/", "MELLOWTECH.ORG")}
+                {link("/login", "ADMIN")}
+                <div className={classes.grow}/>
             </Toolbar>
         </AppBar>
     );

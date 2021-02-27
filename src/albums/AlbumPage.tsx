@@ -12,7 +12,8 @@ const useStyles = makeStyles((theme: Theme) =>
             overflow: 'hidden',
             paddingLeft: 0,
             margin: 'auto',
-            paddingTop: theme.spacing(4)
+            paddingTop: theme.spacing(4),
+            paddingBottom: theme.spacing(2),
         },
         info: {
             flexGrow: 1,

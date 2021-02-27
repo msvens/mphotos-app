@@ -8,7 +8,7 @@ import PhotosApi from "../common/api";
 import Profile from "./Profile";
 import Login from "./Login";
 import UXConfigDialog from "./UXConfigDialog";
-import {AuthContext} from "../MPhotosApp";
+import {MPContext} from "../App";
 import Drive from "./Drive";
 
 const PROFILE = 'Profile';
@@ -26,7 +26,8 @@ const useStyles = makeStyles((theme: Theme) =>
             display: 'flex',
             maxWidth: 1000,
             margin: 'auto',
-            paddingTop: theme.spacing(4)
+            paddingTop: theme.spacing(4),
+            paddingBottom: theme.spacing(2),
         },
         drawer: {
             minWidth: 140,
@@ -43,7 +44,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function AccountPage() {
     const classes = useStyles()
     const [mi, setItem] = useState<MenuItems> (PROFILE)
-    const context = useContext(AuthContext)
+    const context = useContext(MPContext)
 
     const handleLogout = async (e: React.MouseEvent) =>  {
         PhotosApi.logout().then(res => {

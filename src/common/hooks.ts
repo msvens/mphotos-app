@@ -1,6 +1,27 @@
-import PhotosApi, {Guest, User} from "./api";
+import PhotosApi, {Guest, User, UXConfig} from "./api";
 import {useEffect, useRef, useState} from "react";
 
+
+export const useUXConfig: () => [UXConfig, () => void] = () => {
+    const [uxConfig, setUXConfig] = useState<UXConfig>(PhotosApi.defaultUxConfig)
+    const [refresh, setRefresh] = useState<boolean> (false)
+
+    function checkUXConfig() {
+        setRefresh(prev => !prev)
+    }
+    useEffect( () => {
+        const fetchData = async () => {
+            try {
+                const res = await PhotosApi.getUXConfig()
+                setUXConfig(res)
+            } catch (error) {
+                alert("error fetching uxconfig: "+error.toString())
+            }
+        }
+        fetchData()
+    }, [refresh])
+    return [uxConfig, checkUXConfig]
+}
 
 export const useUser: () => [boolean,User,()=>void] = () => {
     const emptyUser: User = {name: "", bio: "", pic: ""}

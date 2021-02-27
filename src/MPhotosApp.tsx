@@ -8,11 +8,9 @@ import {BrowserRouter as Router, Route, RouteComponentProps, Switch} from "react
 import TopBar from "./TopBar";
 import ResumePage from "./resume/ResumePage";
 import AlbumPage from "./albums/AlbumPage";
-import {Guest, PhotoType, User} from "./common/api";
 import BottomBar2 from "./BottomBar2";
 import VerifyPage from "./guest/GuestPage";
 import ScrollToTop from "./ScrollIntoView";
-import {useGuest, useUser} from "./common/hooks";
 import DynamicPhotoPage from "./photos/DynamicPhotoPage";
 
 
@@ -23,34 +21,7 @@ interface MatchParams {
 interface MatchProps extends RouteComponentProps<MatchParams> {
 }
 
-interface IAuthContext {
-    isGuest: boolean
-    guest: Guest
-    isGuestLoading: boolean
-    checkGuest: () => void
-    isUser: boolean
-    user: User
-    checkUser: () => void
-}
 
-const dummyContext: IAuthContext = {
-    isGuest: false,
-    isGuestLoading: false,
-    guest: {
-        name: "",
-        email: ""
-    },
-    checkGuest: () => {alert("dummy")},
-    isUser: false,
-    user: {
-        name: "",
-        bio: "",
-        pic: ""
-    },
-    checkUser: () => {alert("dummy")}
-}
-
-export const AuthContext = React.createContext<IAuthContext>(dummyContext)
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -61,11 +32,7 @@ const useStyles = makeStyles((theme: Theme) =>
             minHeight: '100vh',
         },
         content: {
-            // paddingTop: theme.spacing(2),
-            paddingBottom: theme.spacing(2),
             flexGrow: 1,
-            backgroundColor: theme.palette.grey["50"],
-
         },
     }),
 );
@@ -75,21 +42,10 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function MPhotosApp() {
     const classes = useStyles()
 
-    const [isGuest, guest, isGuestLoading, checkGuest] = useGuest()
-    const [isUser, user, checkUser] = useUser()
 
-    const defaultContext: IAuthContext = {
-        isGuest: isGuest,
-        guest: guest,
-        isGuestLoading: isGuestLoading,
-        checkGuest: checkGuest,
-        isUser: isUser,
-        user: user,
-        checkUser: checkUser
-    }
+
 
     return (
-        <AuthContext.Provider value={defaultContext}>
         <Router>
             <ScrollToTop/>
             <div className={classes.root}>
@@ -117,6 +73,5 @@ export default function MPhotosApp() {
                 <BottomBar2 showSearch={false}/>
             </div>
         </Router>
-        </AuthContext.Provider>
     );
 }

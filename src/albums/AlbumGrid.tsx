@@ -12,7 +12,7 @@ import AddPhotoAlternateOutlinedIcon from '@material-ui/icons/AddPhotoAlternateO
 import {Box, Button, GridListTileBar, IconButton} from "@material-ui/core";
 import EditAlbumDialog from "./EditAlbumDialog";
 import AddAlbumDialog from "./AddAlbumDialog";
-import {AuthContext} from "../MPhotosApp";
+import {MPContext} from "../App";
 import MPDialog from "../common/MPDialog";
 
 interface AlbumGridProps {
@@ -78,7 +78,7 @@ const AlbumGrid: React.FC<AlbumGridProps> = ({columns, spacing}) => {
     const [showAdd, setShowAdd] = useState(false)
     const [showDelete, setShowDelete] = useState(false)
 
-    const context = useContext(AuthContext)
+    const context = useContext(MPContext)
 
     useEffect(() => {
         PhotosApi.getAlbums().then(res => setAlbums(res)).catch(e => alert(e.toString()))

@@ -11,17 +11,19 @@ import EditIcon from "@material-ui/icons/Edit";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import PhotoAlbumIcon from "@material-ui/icons/PhotoAlbum";
 import FaceIcon from "@material-ui/icons/Face";
-import {Colors} from "../common/api";
+import {ColorScheme, colorScheme} from "../common/api";
 
 type PhotoControlsProps = {
     photoBackground: string
     isLargeDisplay: boolean
     showEditControls: boolean
     inFullscreen: boolean
+    hasBorders: boolean
     onBackward: () => void
     onForward: () => void
     onFullScreen: () => void
     isPrivate?: boolean,
+    verticalEditButtons?: boolean,
     onPrivate?: () => void
     onDelete?: () => void
     onEdit?: () => void
@@ -36,7 +38,9 @@ type EditButtonProps = {
 
 type StyleProps = {
     backgroundColor: string,
-    color: string
+    color: string,
+    borders: boolean,
+    verticalEditButtons: boolean
 }
 
 const useStyles = makeStyles<Theme,StyleProps>((theme: Theme) => {
@@ -44,11 +48,11 @@ const useStyles = makeStyles<Theme,StyleProps>((theme: Theme) => {
 
         const editB = {
             color: (props: StyleProps) => props.color,
-            backgroundColor: (props: StyleProps) => fade(props.backgroundColor, 0.7).toString(),
+            backgroundColor: (props: StyleProps) => fade(props.backgroundColor, props.borders ? 0.0 : 0.5).toString(),
             marginRight: theme.spacing(1),
             '&:hover':
                 {
-                    backgroundColor: (props: StyleProps) => fade(props.backgroundColor, 0.9).toString(),
+                    backgroundColor: (props: ColorScheme) => fade(props.backgroundColor, 0.9).toString(),
                 }
         }
         return createStyles({
@@ -56,8 +60,8 @@ const useStyles = makeStyles<Theme,StyleProps>((theme: Theme) => {
             topRight: {
                 ...editB,
                 position: 'absolute',
-                top: theme.spacing(2),
-                right: theme.spacing(1),
+                top: theme.spacing(0),
+                right: theme.spacing(-1),
             },
             middleLeft: {
                 ...editB,
@@ -65,7 +69,7 @@ const useStyles = makeStyles<Theme,StyleProps>((theme: Theme) => {
                 //top: theme.spacing(2),
                 top: '50%',
                 transform: 'translateY(-50%)',
-                left: theme.spacing(2),
+                left: theme.spacing(0),
                 //left: 2
             },
             middleRight: {
@@ -74,21 +78,17 @@ const useStyles = makeStyles<Theme,StyleProps>((theme: Theme) => {
                 top: '50%',
                 transform: 'translateY(-50%)',
                 //right: theme.spacing(2),
-                right: theme.spacing(1),
+                right: theme.spacing(-1),
             },
             editButtons: {
+                display: 'flex',
+                flexDirection: (props: StyleProps) => props.verticalEditButtons ? 'column' : 'row',
                 position: 'absolute',
-                top: theme.spacing(2),
-                left: theme.spacing(2),
+                top: theme.spacing(0),
+                left: theme.spacing(0),
             },
             editButton: {
                 ...editB,
-                /*color: '#FFFFFF',
-                backgroundColor: fade(theme.palette.common.black, 0.7).toString(),
-                marginRight: theme.spacing(1),
-                '&:hover': {
-                    backgroundColor: fade(theme.palette.common.black, 0.9).toString(),
-                },*/
             },
 
         })
@@ -98,11 +98,10 @@ const useStyles = makeStyles<Theme,StyleProps>((theme: Theme) => {
 
 const PhotoControls: React.FC<PhotoControlsProps> = (props) => {
 
-    const styleProps: StyleProps = props.photoBackground === Colors.White ||
-        props.photoBackground === Colors.LightGrey ?
-        {backgroundColor: props.photoBackground, color: Colors.Black} :
-        {backgroundColor: props.photoBackground, color: Colors.White}
-    const classes = useStyles(styleProps)
+    const cs = colorScheme(props.photoBackground)
+    const p = {backgroundColor: cs.backgroundColor, color: cs.color, borders: props.hasBorders,
+        verticalEditButtons: props.verticalEditButtons ? props.verticalEditButtons : false}
+    const classes = useStyles(p)
 
 
 
@@ -132,7 +131,7 @@ const PhotoControls: React.FC<PhotoControlsProps> = (props) => {
                 <ArrowBackIosSharpIcon fontSize={props.isLargeDisplay ? "large" : "small"}/>
             </IconButton>
             <IconButton aria-label="next" color="primary" onClick={props.onForward}
-                        className={classes.middleRight}>
+                        className={classes.middleRight} edge={"end"}>
                 <ArrowForwardIosSharpIcon fontSize={props.isLargeDisplay ? "large" : "small"}/>
             </IconButton>
             {props.inFullscreen
@@ -149,7 +148,7 @@ const PhotoControls: React.FC<PhotoControlsProps> = (props) => {
             <div className={classes.editButtons}>
                 {props.isAlbum
                     ? <EditButton tooltip="Set Album Cover" onClick={wrap(props.onProfilePic)}>
-                        <PhotoAlbumIcon fontSize="small"/>
+                        <PhotoAlbumIcon fontSize={props.isLargeDisplay ? "large" : "small"}/>
                     </EditButton>
                     : <EditButton tooltip="Set Profile Picture" onClick={wrap(props.onProfilePic)}>
                         <FaceIcon fontSize="small"/>

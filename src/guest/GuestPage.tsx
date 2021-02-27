@@ -4,7 +4,7 @@ import PhotosApi from "../common/api";
 import {Button, Typography} from "@material-ui/core";
 import {Link as RouterLink} from "react-router-dom";
 import Link from "@material-ui/core/Link";
-import {AuthContext} from "../MPhotosApp";
+import {MPContext} from "../App";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import AddGuestDialog from "./AddGuestDialog";
 import MPDialog from "../common/MPDialog";
@@ -39,7 +39,7 @@ const GuestPage: React.FC<GuestPageProps> = ({query}) => {
     const [verified, setVerified] = useState<boolean>(false)
     const [showAddGuest, setShowAddGuest] = useState<boolean>(false)
     const [showLogoutGuest, setShowLogoutGuest] = useState<boolean>(false)
-    const context = useContext(AuthContext)
+    const context = useContext(MPContext)
 
     useEffect(() => {
         if (query) {

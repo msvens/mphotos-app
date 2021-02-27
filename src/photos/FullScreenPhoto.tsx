@@ -1,21 +1,17 @@
 import React from 'react';
-import {createStyles, Dialog, fade, makeStyles, Theme} from "@material-ui/core";
+import {createStyles, Dialog, makeStyles, Theme} from "@material-ui/core";
 import PhotosApi, {PhotoType, Photo} from "../common/api";
 import PhotoControls from "./PhotoControls";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
-            //backgroundColor: theme.palette.common.black,
-            //color: theme.palette.common.black,
         },
         imgItem: {
             display: 'flex',
             margin: 'auto',
             alignItems: 'center',
             justifyContent: 'center',
-            //backgroundColor: theme.palette.common.black,
-            //color: theme.palette.common.black,
             maxHeight: '100%',
             height: '100%',
         },
@@ -26,19 +22,6 @@ const useStyles = makeStyles((theme: Theme) =>
             //width: 'auto'
             width: 'auto',
             height: 'auto',
-        },
-        navButtons: {
-            position: 'absolute',
-            top: theme.spacing(2),
-            right: theme.spacing(2),
-        },
-        editButton: {
-            color: '#FFFFFF',
-            backgroundColor: fade(theme.palette.grey.A700, 0.3).toString(),
-            marginRight: theme.spacing(1),
-            '&:hover': {
-                backgroundColor: fade(theme.palette.grey.A700, 0.6).toString(),
-            },
         },
     }),
 );
@@ -109,7 +92,7 @@ const FullScreenPhoto: React.FC<FullScreenPhotoProps> = ({photo, openDialog, lar
                                    onFullScreen={onClose}
                                    showEditControls={false}
                                    isLargeDisplay={largeDisplay}
-                                   inFullscreen={true}/>
+                                   inFullscreen={true} hasBorders={false}/>
                 </div>
             </Dialog>
     );

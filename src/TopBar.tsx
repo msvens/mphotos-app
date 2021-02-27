@@ -2,7 +2,6 @@ import {createStyles, fade, makeStyles, Theme} from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import {
     Box,
-    Button,
     Divider,
     Drawer,
     Hidden,
@@ -14,7 +13,7 @@ import {
 } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import {Link as RouterLink} from "react-router-dom";
-//import Link from "@material-ui/core/Link";
+import Link from "@material-ui/core/Link";
 import MPIcon from "./common/MPIcon";
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from "@material-ui/icons/Search";
@@ -26,8 +25,7 @@ import PersonIcon from '@material-ui/icons/Person';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import AppBar from "@material-ui/core/AppBar";
 import React, {useContext, useState} from "react";
-import {AuthContext} from "./MPhotosApp";
-import AddGuestDialog from "./guest/AddGuestDialog";
+import {MPContext} from "./App";
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -35,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) =>
         appBar: {
             marginLeft: 0,
             marginRight: 0,
-            backgroundColor: theme.palette.common.white
+            //backgroundColor: theme.palette.common.white
         },
         drawerList: {
             width: 250,
@@ -105,8 +103,9 @@ interface TobBarProps {
 
 export default function TopBar(props: TobBarProps) {
     const classes = useStyles()
-    const context = useContext(AuthContext)
+    const context = useContext(MPContext)
 
+    /*
     const GuestBar: React.FC = () => {
 
         const [showAddGuest, setShowAddGuest] = useState<boolean>(false)
@@ -133,7 +132,7 @@ export default function TopBar(props: TobBarProps) {
                 </div>
             )
         }
-    }
+    }*/
 
     const BurgerMenu: React.FC = () => {
 
@@ -186,7 +185,7 @@ export default function TopBar(props: TobBarProps) {
 
         return (
             <>
-                <IconButton edge="start" aria-label="menu" onClick={toggleDrawer("right", true)}>
+                <IconButton edge="start" aria-label="menu" onClick={toggleDrawer("right", true)} size={"small"}>
                     <MenuIcon fontSize="large"/>
                 </IconButton>
 
@@ -198,19 +197,22 @@ export default function TopBar(props: TobBarProps) {
     }
 
     return (
-        <AppBar className={classes.appBar} position="sticky" color={'transparent'} elevation={0}>
-            <Toolbar style={{paddingLeft: 0, paddingRight: 0}}>
+        <AppBar className={classes.appBar} position="sticky" color="inherit" elevation={0}>
+            <Toolbar style={{paddingLeft: 0, paddingRight: 0}} variant={context.uxConfig.denseTopBar ? "dense" : "regular"}>
                 <Box className={classes.iconTitle}>
                     <IconButton aria-label="home" color="inherit" component={RouterLink} to="/">
-                        <MPIcon key="topLogo" mpcolor="white" fontSize="large"/>
+                        <MPIcon key="topLogo" mpcolor="white"
+                                fontSize={context.uxConfig.denseTopBar ? "default" : "large"}/>
                     </IconButton>
                 </Box>
+                <Link component={RouterLink} to={"/"} color={"inherit"} style={{ textDecoration: 'none' }}>
                         <Typography variant={"body2"} component={'span'}>
                             <Box letterSpacing={2}>
                             MELLOWTECH<br/>
                             PHOTOS
                             </Box>
                         </Typography>
+                </Link>
                 {props.showSearch &&
                     <Hidden xsDown>
                 <div className={classes.search}>
@@ -231,16 +233,19 @@ export default function TopBar(props: TobBarProps) {
                 <div className={classes.grow}/>
                 <Hidden xsDown>
                     <IconButton aria-label="home" color="inherit" component={RouterLink} to="/">
-                        <HomeOutlinedIcon fontSize="large"/>
+                        <HomeOutlinedIcon fontSize={context.uxConfig.denseTopBar ? "default" : "large"}/>
                     </IconButton>
                     <IconButton aria-label="photos" color="inherit" component={RouterLink} to="/photos">
-                        <MonochromePhotosIcon fontSize={"large"}/>
+                        <MonochromePhotosIcon fontSize={context.uxConfig.denseTopBar ? "default" : "large"}/>
                     </IconButton>
                     <IconButton aria-label="albums" color="inherit" component={RouterLink} to="/albums">
-                        <PhotoAlbumOutlinedIcon fontSize={"large"}/>
+                        <PhotoAlbumOutlinedIcon fontSize={context.uxConfig.denseTopBar ? "default" : "large"}/>
                     </IconButton>
                     <IconButton aria-label="guest" color="inherit" component={RouterLink} to="/guest">
-                        {context.isGuest ? <PersonIcon fontSize={"large"}/> : <PersonAddIcon fontSize={"large"}/>}
+                        {context.isGuest ?
+                            <PersonIcon fontSize={context.uxConfig.denseTopBar ? "default" : "large"}/> :
+                            <PersonAddIcon fontSize={context.uxConfig.denseTopBar ? "default" : "large"}/>
+                        }
                     </IconButton>
                 </Hidden>
                 <Hidden smUp>

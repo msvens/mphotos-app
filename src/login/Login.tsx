@@ -2,7 +2,7 @@ import React, {useContext} from "react";
 import {Button, Snackbar, TextField, Typography} from "@material-ui/core";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import PhotosApi from "../common/api";
-import {AuthContext} from "../MPhotosApp";
+import {MPContext} from "../App";
 import {Alert} from "@material-ui/lab";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -17,7 +17,7 @@ const Login: React.FC = () => {
     const classes = useStyles();
     const [password, setPassword] = React.useState("")
     const [alert, setAlert] = React.useState(false)
-    const context = useContext(AuthContext)
+    const context = useContext(MPContext)
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(event.target.value);

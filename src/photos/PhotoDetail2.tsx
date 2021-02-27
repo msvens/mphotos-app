@@ -13,18 +13,18 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import IconButton from "@material-ui/core/IconButton";
 import Link from "@material-ui/core/Link";
 import {Link as RouterLink} from "react-router-dom";
-import {AuthContext} from "../MPhotosApp";
+import {MPContext} from "../App";
 import AddGuestDialog from "../guest/AddGuestDialog";
-//import AddGuestDialog2 from "../common/AddGuestDialog2";
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles<Theme>((theme: Theme) =>
+
     createStyles({
         root: {
             display: 'flex',
             flexWrap: 'wrap',
             marginTop: theme.spacing(1),
             marginLeft: theme.spacing(2),
-            marginRight: theme.spacing(2)
+            marginRight: theme.spacing(2),
         },
         likedIcon: {
             color: '#b5043c'
@@ -43,7 +43,6 @@ const useStyles = makeStyles((theme: Theme) =>
             padding: '2px 4px',
             display: 'flex',
             alignItems: 'center',
-            backgroundColor: theme.palette.grey[50]
 
         }
     })
@@ -61,6 +60,9 @@ const months = ["January", "February", "March", "April", "May", "June", "July", 
 
 const PhotoDetail2: React.FC<PhotoDetail2Props> = (props: PhotoDetail2Props) => {
 
+    const context = useContext(MPContext)
+
+    //const classes = useStyles(colorScheme(context.uxConfig.photoDetailBackgroundColor))
     const classes = useStyles()
 
     const [guests, setGuests] = useState<Guest[]>([])
@@ -68,7 +70,7 @@ const PhotoDetail2: React.FC<PhotoDetail2Props> = (props: PhotoDetail2Props) => 
     const [showAddGuest, setShowAddGuest] = useState(false)
     const [newComment, setNewComment] = useState<string>('')
     const [likesPhoto, setLikesPhoto] = useState<boolean> (false)
-    const context = useContext(AuthContext)
+
 
     useEffect( () => {
         if(context.isGuest) {

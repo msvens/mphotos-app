@@ -171,6 +171,11 @@ export type UXConfig = {
     photoGridSpacing: number
     showBio: boolean
     photoBackgroundColor: string
+    photoBorders: "none" | "all" | "left-right"
+    colorTheme: "light" | "dark"
+
+    denseTopBar: boolean
+    denseBottomBar: boolean
 }
 
 export enum ImageAspect {
@@ -180,16 +185,39 @@ export enum ImageAspect {
 }
 
 export enum Colors {
-    White = "#ffffff",
-    LightGrey = "#e0e0e0",
-    Grey = "#757575",
-    DarkGrey = "#212121",
+    White = "#fff",
+    Light = "#fafafa",
+    Grey = "#bdbdbd",
+    Dark = "#303030",
     Black = "#000000"
+}
+
+const LightBackgroundText = 'rgba(0, 0, 0, 0.87)'
+
+export type ColorScheme = {
+    backgroundColor: string
+    color: string
+}
+
+export function colorScheme(backroundColor: string): ColorScheme {
+    switch (backroundColor) {
+        case Colors.White:
+        case Colors.Light:
+        case Colors.Grey:
+            return {backgroundColor: backroundColor, color: LightBackgroundText}
+        case Colors.Dark:
+        case Colors.Black:
+            return {backgroundColor: backroundColor, color: Colors.White}
+        default:
+            return {backgroundColor: Colors.Light, color: LightBackgroundText}
+    }
 }
 
 class PhotoApi {
 
-    defaultUxConfig: UXConfig = {photoGridCols: 3, photoGridSpacing: 0, photoItemsLoad: 12, showBio: true, photoBackgroundColor: Colors.Black}
+    defaultUxConfig: UXConfig = {photoGridCols: 3, photoGridSpacing: 0, photoItemsLoad: 12,
+        showBio: true, photoBackgroundColor: Colors.Light, colorTheme: "light",
+        denseBottomBar: false, denseTopBar: false, photoBorders: "all"}
 
     private idCounter = 0
 

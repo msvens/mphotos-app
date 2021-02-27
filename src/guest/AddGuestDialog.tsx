@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react'
 import MPDialog, {BaseDialog} from "../common/MPDialog";
 import PhotosApi, {Guest} from "../common/api";
-import {AuthContext} from "../MPhotosApp";
+import {MPContext} from "../App";
 import {TextField} from "@material-ui/core";
 
 type AddGuestDialogProps = BaseDialog & {
@@ -17,7 +17,7 @@ const AddGuestDialog: React.FC<AddGuestDialogProps> = ({open, onClose, update, e
     const [newEmail, setNewEmail] = useState<string>("")
     const [newName, setNewName] = useState<string>("")
     const [registered, setRegistered] = useState<Guest>()
-    const context = useContext(AuthContext)
+    const context = useContext(MPContext)
 
     useEffect(() => {
         if (email) setNewEmail(email)
