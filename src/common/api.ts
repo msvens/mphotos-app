@@ -161,8 +161,25 @@ export interface Job {
     error?: ApiError;
 }
 
-export interface SearchPhotoParams {
+export type SearchPhotoParams = {
     cameraModel?: string
+}
+
+export function createPhotoSearchParams(cameraModel: string): SearchPhotoParams {
+    return {cameraModel: cameraModel}
+}
+
+export function parseSearchParams(queryString: string): SearchPhotoParams {
+    const urlParams = new URLSearchParams(queryString)
+    const cm = urlParams.get("cameraModel")
+    return {cameraModel: cm === null ? undefined : cm}
+}
+
+export function toQueryString(params: SearchPhotoParams): string {
+    const urlParams = new URLSearchParams()
+    if(params.cameraModel)
+        urlParams.append("cameraModel", params.cameraModel)
+    return urlParams.toString()
 }
 
 export type UXConfig = {
@@ -176,6 +193,11 @@ export type UXConfig = {
 
     denseTopBar: boolean
     denseBottomBar: boolean
+}
+
+export type PhotoSearch = {
+    cameraModel?: string
+
 }
 
 export enum ImageAspect {
@@ -305,7 +327,7 @@ class PhotoApi {
     }
 
     checkDrive(): Promise<DriveFiles> {
-        return PhotoApi.req('api/drive/check')
+        return PhotoApi.req('/api/drive/check')
             .then(res => res as MPhotosResponse<DriveFiles>).then(res => PhotoApi.convert(res));
     }
 
@@ -483,8 +505,8 @@ class PhotoApi {
             .then(res => res as MPhotosResponse<Guest>).then(res => PhotoApi.convert(res))
     }
 
-    searchPhotos(query: string): Promise<PhotoList> {
-        return PhotoApi.req(`/api/photos/search${query}`)
+    searchPhotos(query: SearchPhotoParams): Promise<PhotoList> {
+        return PhotoApi.req(`/api/photos/search?${toQueryString(query)}`)
             .then(res => res as MPhotosResponse<PhotoList>).then(res => PhotoApi.convert(res))
     }
 

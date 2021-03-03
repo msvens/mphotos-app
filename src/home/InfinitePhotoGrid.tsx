@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) =>
             margin: 'auto',
         },
         grid: {
-            maxWidth: 1020,
+            //maxWidth: 1020,
             margin: 'auto',
         },
         loader: {
@@ -87,7 +87,7 @@ const InfinitePhotoGrid: React.FC<InfinitePhotoGridProps> = (props: InfinitePhot
         <GridList cols={props.columns} cellHeight={'auto'} spacing={props.spacing}>
             {photos.map(photo => (
                 <GridListTile className={classes.thumb} cols={1} key={photo.driveId}>
-                    <Link to={`/photo/${photo.driveId}`}>
+                    <Link to={`/photos/${photo.driveId}`}>
                         {photo.private
                             ? <LazyLoadImage alt={photo.fileName} className={classes.thumbPrivate}
                                              src={PhotosApi.getImageUrl(photo, PhotoType.Thumb, false, false)}/>

@@ -27,10 +27,11 @@ const Drive: React.FC = () => {
     const classes = useStyles()
     const [authenticated, setAuthenticated] = useState(false)
 
+
     useEffect(() => {
         PhotosApi.isGoogleAuth()
             .then(a => setAuthenticated(a))
-            .catch(e => alert(e.toString()))
+            .catch(e => alert("error in auth: "+e.toString()))
     }, [])
 
     useEffect(() => {
@@ -41,14 +42,16 @@ const Drive: React.FC = () => {
                 if (u.driveFolderName)
                     setFolder(u.driveFolderName);
             })
-            .catch(e => alert(e.toString()));
+            .catch(e => alert("error in user: "+e.toString()));
     }, [])
+
+
 
     const handleFolderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFolder(event.target.value);
     };
 
-    const handleSetFoler = async () => {
+    const handleSetFolder = async () => {
         PhotosApi.updateUserDrive(folder)
             .then(u => {
                 if (u.driveFolderName)
@@ -56,7 +59,7 @@ const Drive: React.FC = () => {
                 if (u.driveFolderId)
                     setId(id)
             })
-            .catch(err => alert(err.toString()))
+            .catch(err => alert("set folder: "+err.toString()))
     }
 
     const handleDelete = () => {
@@ -88,7 +91,7 @@ const Drive: React.FC = () => {
             <Typography paragraph color="textSecondary">
                 Drive Id: {id}
             </Typography>
-            <Button variant="outlined" onClick={handleSetFoler}>Set Drive Folder</Button>
+            <Button variant="outlined" onClick={handleSetFolder}>Set Drive Folder</Button>
 
             <Divider className={classes.divider}/>
             <Typography variant="body1" paragraph={true}>
@@ -105,7 +108,8 @@ const Drive: React.FC = () => {
 
             <Divider className={classes.divider}/>
 
-            <MPDialog open={openDelete}
+
+           <MPDialog open={openDelete}
                       onClose={() => setOpenDelete(false)}
                       onOk={handleDelete}
                       title={"Delete all Photos?"}

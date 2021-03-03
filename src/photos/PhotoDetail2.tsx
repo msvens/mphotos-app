@@ -7,7 +7,7 @@ import {
     Theme,
     Typography
 } from "@material-ui/core";
-import PhotosApi, {Guest, Photo, PhotoComment} from "../common/api";
+import PhotosApi, {createPhotoSearchParams, Guest, Photo, PhotoComment, toQueryString} from "../common/api";
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import IconButton from "@material-ui/core/IconButton";
@@ -158,6 +158,10 @@ const PhotoDetail2: React.FC<PhotoDetail2Props> = (props: PhotoDetail2Props) => 
         return props.photo.cameraModel
     }
 
+    const getQuery = () => {
+        return toQueryString(createPhotoSearchParams(props.photo.cameraModel))
+    }
+
     const getLens = () => {
         return props.photo.lensModel
     }
@@ -241,7 +245,7 @@ const PhotoDetail2: React.FC<PhotoDetail2Props> = (props: PhotoDetail2Props) => 
                     <Typography variant="body2">
                         {getDate()}
                         <br/>
-                        Camera: <Link component={RouterLink} to={`/search?cameraModel=${props.photo.cameraModel}`}>
+                        Camera: <Link component={RouterLink} to={`/photos/${props.photo.driveId}?${getQuery()}`}>
                             {getCamera()}
                         </Link><br/>
                         Focal length: {getFocal()}<br/>

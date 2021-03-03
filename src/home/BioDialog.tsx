@@ -1,7 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import PhotosApi, {User} from "../common/api";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
-import {Avatar, Grid, Typography, useMediaQuery, useTheme} from "@material-ui/core";
+import {Avatar, Button, Divider, Grid, Paper, Typography, useMediaQuery, useTheme} from "@material-ui/core";
+import {Link} from "react-router-dom";
+import {MPContext} from "../App";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -9,10 +11,7 @@ const useStyles = makeStyles((theme: Theme) =>
             flexGrow: 1,
             flexWrap: 'wrap',
             margin: 'auto',
-            width: 1020,
-            maxWidth: 1020,
             paddingBottom: theme.spacing(4),
-            paddingLeft: theme.spacing(4)
         },
         image: {
             width: 128,
@@ -26,6 +25,13 @@ const useStyles = makeStyles((theme: Theme) =>
             maxWidth: 68,
             maxHeight: 68,
         },
+        adminButton: {
+            textTransform: 'none',
+            radius: 3
+        },
+        grid: {
+            paddingBottom: theme.spacing(4),
+        }
     }),
 );
 
@@ -34,15 +40,7 @@ const BioDialog: React.FC = () => {
 
     const theme = useTheme()
     const isLargeDisplay = useMediaQuery(theme.breakpoints.up('sm'))
-
-
-    const [user, setUser] = useState<User> ();
-
-    useEffect( () => {
-        PhotosApi.getUser()
-            .then(u => setUser(u))
-            .catch(e => alert(e.toString()));
-    }, []);
+    const context = useContext(MPContext)
 
     const getImgClass = ():string => {
         if(isLargeDisplay) {
@@ -54,19 +52,25 @@ const BioDialog: React.FC = () => {
 
   return (
     <div className={classes.root}>
-        <Grid container spacing={3} justify="flex-start" alignItems="center">
+        <Grid className={classes.grid} container spacing={6} justify="center" alignItems="center">
             <Grid item>
-                {user && user.pic &&
-                <Avatar alt={user.name} src={PhotosApi.getProfilePicUrl(user)} className={getImgClass()}/>
-                }
+                <Avatar alt={context.user.name} src={PhotosApi.getProfilePicUrl(context.user)} className={getImgClass()}/>
             </Grid>
             <Grid item>
                 <Typography variant="subtitle1" gutterBottom>
-                    <strong>{user ? user.name : ''}</strong>
+                    <strong>{context.user.name}</strong>
                 </Typography>
-                <Typography variant="body2" gutterBottom>{user ? user.bio : ''}</Typography>
+                <Typography variant="body2" gutterBottom>{context.user.bio}</Typography>
             </Grid>
+            {context.isUser &&
+            <Grid item>
+                <Button className={classes.adminButton} variant="outlined" size="small" color="inherit" component={Link} to={"/login"}>
+                    Admin
+                </Button>
+            </Grid>
+            }
         </Grid>
+        <Divider/>
     </div>
   );
 };

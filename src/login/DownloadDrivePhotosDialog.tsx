@@ -64,9 +64,11 @@ const DownloadDrivePhotosDialog: React.FC<DownloadDrivePhotosDialogProps> = ({op
 
     useInterval(checkJob, isRunning ? delay : null)
 
+
     useEffect(() => {
-        if (job === undefined)
+        if (job === undefined) {
             PhotosApi.checkDrive().then(res => setNumPhotos(res.length)).catch(err => alert(err))
+        }
     }, [job])
 
 

@@ -2,16 +2,12 @@ import React, {useContext, useEffect, useState} from 'react';
 import {createStyles, Theme, makeStyles} from '@material-ui/core/styles';
 import PhotosApi from "../common/api";
 import {Button, Typography} from "@material-ui/core";
-import {Link as RouterLink} from "react-router-dom";
+import {Link as RouterLink, useLocation} from "react-router-dom";
 import Link from "@material-ui/core/Link";
 import {MPContext} from "../App";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import AddGuestDialog from "./AddGuestDialog";
 import MPDialog from "../common/MPDialog";
-
-interface GuestPageProps {
-    query?: string
-}
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -33,7 +29,9 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-const GuestPage: React.FC<GuestPageProps> = ({query}) => {
+const GuestPage: React.FC = () => {
+
+    const location = useLocation()
 
     const classes = useStyles()
     const [verified, setVerified] = useState<boolean>(false)
@@ -42,15 +40,15 @@ const GuestPage: React.FC<GuestPageProps> = ({query}) => {
     const context = useContext(MPContext)
 
     useEffect(() => {
-        if (query) {
-            PhotosApi.verifyGuest(query).then(res => {
+        if (location.search) {
+            PhotosApi.verifyGuest(location.search).then(res => {
                 setVerified(res)
                 if (res) {
                     context.checkGuest()
                 }
             }).catch(err => alert("Error verifying guest "))
         }
-    }, [query, context])
+    }, [location.search, context])
 
     const handleLogout = () => {
         const logout = async () => {
@@ -69,7 +67,7 @@ const GuestPage: React.FC<GuestPageProps> = ({query}) => {
     return (
         <div className={classes.root}>
             <div className={classes.paper}>
-                {query && verified && context.isGuest &&
+                {location.search && verified && context.isGuest &&
                 <>
                     <Typography variant="h6">Thank you for verifying!</Typography>
                     <Typography variant="body2" gutterBottom={true}>
@@ -87,7 +85,7 @@ const GuestPage: React.FC<GuestPageProps> = ({query}) => {
                     </Typography>
                 </>
                 }
-                {!query && context.isGuest &&
+                {!location.search && context.isGuest &&
                 <>
                     <Typography variant="h6">Welcome back {context.guest.name}!</Typography>
                     <Typography variant={"body1"} gutterBottom>
@@ -112,7 +110,7 @@ const GuestPage: React.FC<GuestPageProps> = ({query}) => {
 
                 </>
                 }
-                {!query && !context.isGuest &&
+                {!location.search && !context.isGuest &&
                 <>
                     <Typography variant={"h6"}>Register Guest</Typography>
                     <Typography variant={"body1"}>

@@ -19,7 +19,6 @@ const useStyles = makeStyles((theme: Theme) =>
             objectFit: 'contain',
             maxWidth: '100%',
             maxHeight: '100%',
-            //width: 'auto'
             width: 'auto',
             height: 'auto',
         },

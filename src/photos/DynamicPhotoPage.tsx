@@ -2,17 +2,22 @@ import React, {useContext, useEffect, useState} from 'react';
 import {createStyles, Grid, makeStyles, Theme, useMediaQuery, useTheme} from "@material-ui/core";
 import PhotoDetail2 from "./PhotoDetail2";
 import {MPContext} from "../App";
-import PhotosApi, {Album, ColorScheme, colorScheme, Photo, PhotoList, PhotoType} from "../common/api";
+import PhotosApi, {
+    Album,
+    ColorScheme,
+    colorScheme,
+    parseSearchParams,
+    Photo,
+    PhotoList,
+    PhotoType
+} from "../common/api";
 import PhotoControls from "./PhotoControls";
 import MPDialog from "../common/MPDialog";
 import EditPhoto from "./EditPhoto";
 import FullScreenPhoto from "./FullScreenPhoto";
-
-type DynamicPhotoPageProps = {
-    id?: string
-    query?: string
-    albumId?: number
-}
+import PhotoFilter from "./PhotoFilter";
+import {useHistory, useParams} from "react-router";
+import {useLocation} from "react-router-dom";
 
 type TouchState = {
     xStart: number,
@@ -96,16 +101,76 @@ const useStyles = makeStyles<Theme,ColorScheme>((theme: Theme) =>
     })
 )
 
-const DynamicPhotoPage: React.FC<DynamicPhotoPageProps> = ({id, query, albumId}) => {
+class PhotoDeck {
+    private photos: Photo[]
+    private idx: number
 
+
+    constructor(photos?: Photo[], idx?: number) {
+        this.photos = photos ? photos : []
+        this.idx = idx ? idx : 0
+    }
+
+    isEmpty(): boolean {
+        return this.photos.length === 0
+    }
+
+    hasPhotos(): boolean {
+        return this.photos.length > 0
+    }
+
+    get(): Photo {
+        if(this.isEmpty())
+            throw new Error("no photos")
+        return this.photos[this.idx]
+    }
+
+    driveId(): string {
+        return this.get().driveId
+    }
+
+    delete(): PhotoDeck {
+        const driveId = this.get().driveId
+        const newPhotos = this.photos.filter(p => p.driveId !== driveId)
+        const newIdx = this.idx >= newPhotos.length ? 0 : this.idx
+        return new PhotoDeck(newPhotos, newIdx)
+    }
+
+    update(p: Photo): PhotoDeck {
+        const newPhotos = this.photos.map((photo) => {
+            if (photo.driveId === p.driveId) {
+                return p
+            } else
+                return photo
+        })
+        return new PhotoDeck(newPhotos, this.idx)
+    }
+
+    next(): PhotoDeck {
+        const newIdx = this.idx + 1 >= this.photos.length ? 0 : this.idx + 1
+        return new PhotoDeck(this.photos, newIdx)
+    }
+
+    previous(): PhotoDeck {
+        const newIdx = this.idx - 1 < 0 ? this.photos.length - 1 : this.idx - 1
+        return new PhotoDeck(this.photos, newIdx)
+    }
+
+
+}
+
+
+const DynamicPhotoPage: React.FC = () => {
+
+    const {photoId,albumId}= useParams()
+    const location = useLocation()
+    const history = useHistory()
     const context = useContext(MPContext)
-
-    const classes = useStyles(colorScheme(context.uxConfig.photoBackgroundColor))
+    const cs = colorScheme(context.uxConfig.photoBackgroundColor)
+    const classes = useStyles(cs)
     const theme = useTheme()
-
-    const [photos, setPhotos] = useState<Photo[]>([])
+    const [photos, setPhotos] = useState<PhotoDeck> (new PhotoDeck())
     const [album, setAlbum] = useState<Album>()
-    const [idx, setIdx] = useState<number>(0)
     const [showDelete, setShowDelete] = useState(false)
     const [showUpdate, setShowUpdate] = useState(false)
     const [showFullscreen, setShowFullscreen] = useState(false)
@@ -118,20 +183,24 @@ const DynamicPhotoPage: React.FC<DynamicPhotoPageProps> = ({id, query, albumId})
 
         const updatePhotos = (pl: PhotoList) => {
             if (pl.photos) {
-                if (id) {
+                let newIdx = 0
+                if (photoId) {
                     for (let i = 0; i < pl.length; i++) {
-                        if (pl.photos[i].driveId === id) {
-                            setIdx(i)
+                        if (pl.photos[i].driveId === photoId) {
+                            newIdx = i
                         }
                     }
                 }
-                setPhotos(pl.photos)
+                setPhotos(new PhotoDeck(pl.photos, newIdx))
+            } else {
+                setPhotos(new PhotoDeck())
             }
+
         }
 
         const fetchData = async () => {
-            if (query) {
-                await PhotosApi.searchPhotos(query).then(res => {
+            if (location.search) {
+                await PhotosApi.searchPhotos(parseSearchParams(location.search)).then(res => {
                     updatePhotos(res)
                 });
             } else if (albumId) {
@@ -147,7 +216,7 @@ const DynamicPhotoPage: React.FC<DynamicPhotoPageProps> = ({id, query, albumId})
 
         };
         fetchData();
-    }, [id, query, albumId])
+    }, [photoId, location.search, albumId])
 
     const hasBorders = () => {
         return isLargeDisplay && (context.uxConfig.photoBorders !== "none")
@@ -172,58 +241,34 @@ const DynamicPhotoPage: React.FC<DynamicPhotoPageProps> = ({id, query, albumId})
     }
 
     const deletePhoto = () => {
-        const driveId = photos[idx].driveId
-        PhotosApi.deletePhoto(driveId, true)
+        PhotosApi.deletePhoto(photos.driveId(), true)
             .then(p => {
-                var newPhotos = photos.filter(obj => obj.driveId !== driveId)
-                setPhotos(newPhotos)
-                if (idx >= newPhotos.length) {
-                    setIdx(0)
-                }
+                setPhotos(photos.delete())
             })
             .catch(e => alert(e.toString()))
     }
 
     const handleBackward = () => {
-        let newIdx = idx - 1;
-        if (newIdx < 0)
-            newIdx = photos.length - 1;
-        setIdx(newIdx);
-        window.history.pushState({}, '', '/photo/' + photos[newIdx].driveId)
+        setPhotos(photos.previous())
+        window.history.pushState({}, '', '/photos/' + photos.driveId())
     }
 
     const handleCloseUpdate = (p?: Photo) => {
         if (p) {
-            const newList = photos.map((photo) => {
-                if (photo.driveId === p.driveId) {
-                    return p
-                } else
-                    return photo
-            })
-            setPhotos(newList)
+            setPhotos(photos.update(p))
         }
         setShowUpdate(false)
     }
 
     const handleForward = () => {
-        let newIdx = idx + 1
-        if (newIdx >= photos.length)
-            newIdx = 0
-        setIdx(newIdx)
-        window.history.pushState({}, '', '/photo/' + photos[newIdx].driveId)
+        setPhotos(photos.next())
+        window.history.pushState({}, '', '/photos/' + photos.driveId())
     }
 
     const handlePrivate = () => {
-        const driveId = photos[idx].driveId
-        PhotosApi.togglePrivate(driveId)
+        PhotosApi.togglePrivate(photos.driveId())
             .then(p => {
-                const newPhotos = photos.map((pp) => {
-                    if (pp.driveId === p.driveId)
-                        return p
-                    else
-                        return pp
-                })
-                setPhotos(newPhotos)
+                setPhotos(photos.update(p))
             })
             .catch(e => alert(e.toString()));
     }
@@ -259,9 +304,14 @@ const DynamicPhotoPage: React.FC<DynamicPhotoPageProps> = ({id, query, albumId})
 
     return (
         <div className={classes.root}>
-            {photos.length > 0 &&
+            {photos.hasPhotos() &&
             <>
                 <Grid container alignItems="center" justify="space-around">
+                    {location.search &&
+                    <Grid item xs={12}>
+                        <PhotoFilter colorScheme={cs} filter={location.search} onClear={() => history.push('/photos/'+photos.driveId())}/>
+                    </Grid>
+                    }
                     <Grid item xs={12} style={{backgroundColor: context.uxConfig.photoBackgroundColor}} className={getImageCanvasClass()}
                           onTouchEnd={onEndTouch}
                           onTouchStart={onStartTouch}
@@ -275,26 +325,26 @@ const DynamicPhotoPage: React.FC<DynamicPhotoPageProps> = ({id, query, albumId})
                                        onProfilePic={() => alert("edit")}
                                        showEditControls={context.isUser}
                                        isAlbum={album ? true : false}
-                                       isPrivate={photos[idx].private}
+                                       isPrivate={photos.get().private}
                                        isLargeDisplay={isLargeDisplay}
                                        inFullscreen={false}
                                        hasBorders={hasBorders()}
                                        verticalEditButtons={hasBorders()}
 
                         />
-                        <img className={getImageClass()} alt={photos[idx].title}
-                             src={PhotosApi.getImageUrl(photos[idx], PhotoType.Dynamic, isPortrait, isLargeDisplay)}/>
+                        <img className={getImageClass()} alt={photos.get().title}
+                             src={PhotosApi.getImageUrl(photos.get(), PhotoType.Dynamic, isPortrait, isLargeDisplay)}/>
 
                     </Grid>
                     <Grid item xs={12} className={hasBorders() ? classes.photoDetailBorders : classes.photoDetail}>
-                            <PhotoDetail2 photo={photos[idx]}/>
+                            <PhotoDetail2 photo={photos.get()}/>
                     </Grid>
                 </Grid>
-                <FullScreenPhoto photo={photos[idx]} openDialog={showFullscreen}
+                <FullScreenPhoto photo={photos.get()} openDialog={showFullscreen}
                                  onClose={() => setShowFullscreen(false)} onNext={handleForward}
                                  onPrev={handleBackward} photoBackground={context.uxConfig.photoBackgroundColor}
                                  largeDisplay={isLargeDisplay}/>
-                <EditPhoto open={showUpdate} photo={photos[idx]} onClose={handleCloseUpdate}/>
+                <EditPhoto open={showUpdate} photo={photos.get()} onClose={handleCloseUpdate}/>
                 <MPDialog open={showDelete}
                           onClose={() => setShowDelete(false)}
                           onOk={deletePhoto}

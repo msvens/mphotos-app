@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme: Theme) =>
             justifyContent: 'space-around',
             overflow: 'hidden',
             paddingLeft: 0,
-            maxWidth: 1200,
+            maxWidth: 1024,
             margin: 'auto',
             paddingTop: theme.spacing(4),
             paddingBottom: theme.spacing(2),
