@@ -37,10 +37,13 @@ export const useUser: () => [boolean,User,()=>void] = () => {
         const fetchData = async () => {
             try{
                 const res = await PhotosApi.isLoggedIn()
-                if (res) {
+                const res1 = await PhotosApi.getUser()
+                setUser(res1)
+                setIsUser(res)
+                /*if (res) {
                     const res1 = await PhotosApi.getUser()
                     setUser(res1)
-                }
+                }*/
                 setIsUser(res)
             } catch(error) {
                 alert("error fetching user: "+error.toString())

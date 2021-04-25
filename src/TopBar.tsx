@@ -25,7 +25,10 @@ import PersonIcon from '@material-ui/icons/Person';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import AppBar from "@material-ui/core/AppBar";
 import React, {useContext, useState} from "react";
+import PhotoCameraOutlinedIcon from '@material-ui/icons/PhotoCameraOutlined';
+import PhotoOutlinedIcon from '@material-ui/icons/PhotoOutlined';
 import {MPContext} from "./App";
+import {PhotoCameraOutlined} from "@material-ui/icons";
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -168,12 +171,16 @@ export default function TopBar(props: TobBarProps) {
                         <ListItemText primary='Home'/>
                     </ListItem>
                     <ListItem button key='Photos' component={RouterLink} to="/photos">
-                        <ListItemIcon><MonochromePhotosIcon/></ListItemIcon>
+                        <ListItemIcon><PhotoOutlinedIcon/></ListItemIcon>
                         <ListItemText primary='Photos'/>
                     </ListItem>
                     <ListItem button key='Albums' component={RouterLink} to="/albums">
                         <ListItemIcon><PhotoAlbumOutlinedIcon/></ListItemIcon>
                         <ListItemText primary='Albums'/>
+                    </ListItem>
+                    <ListItem button key='Cameras' component={RouterLink} to="/cameras">
+                        <ListItemIcon><PhotoCameraOutlinedIcon/></ListItemIcon>
+                        <ListItemText primary='Cameras'/>
                     </ListItem>
                     <ListItem button key='Guest' component={RouterLink} to="/guest">
                         <ListItemIcon>{context.isGuest ? <PersonIcon/> : <PersonAddIcon/>}</ListItemIcon>
@@ -236,10 +243,13 @@ export default function TopBar(props: TobBarProps) {
                         <HomeOutlinedIcon fontSize={context.uxConfig.denseTopBar ? "default" : "large"}/>
                     </IconButton>
                     <IconButton aria-label="photos" color="inherit" component={RouterLink} to="/photos">
-                        <MonochromePhotosIcon fontSize={context.uxConfig.denseTopBar ? "default" : "large"}/>
+                        <PhotoOutlinedIcon fontSize={context.uxConfig.denseTopBar ? "default" : "large"}/>
                     </IconButton>
                     <IconButton aria-label="albums" color="inherit" component={RouterLink} to="/albums">
                         <PhotoAlbumOutlinedIcon fontSize={context.uxConfig.denseTopBar ? "default" : "large"}/>
+                    </IconButton>
+                    <IconButton aria-label="cameras" color="inherit" component={RouterLink} to="/cameras">
+                        <PhotoCameraOutlinedIcon fontSize={context.uxConfig.denseTopBar ? "default" : "large"}/>
                     </IconButton>
                     <IconButton aria-label="guest" color="inherit" component={RouterLink} to="/guest">
                         {context.isGuest ?

@@ -71,24 +71,7 @@ export default function AccountPage() {
                             <ListItemText primary={entry[1]} primaryTypographyProps={{variant: "h6"}}/>
                         </ListItem>
                     ))}
-                    {/*{MenuItems.forEach((key, value) => (
-                        <ListItem button component={Link} to={`/login/${key}`}>
-                            <ListItemText primary={key} primaryTypographyProps={{variant: "h6"}}/>
-                        </ListItem>
-                    ))}*/}
-                    {/*{MenuItems.map((item, idx) => (
-                        <ListItem button component={Link} to={`/login/${item.toLowerCase()}`}>
-                            <ListItemText primary={item} primaryTypographyProps={{variant: "h6"}}/>
-                        </ListItem>
-                    ))}*/}
                 </List>
-                {/*<List>
-                    {Items.map((item, idx) => (
-                        <ListItem button key={item} onClick={_ => setItem(item)}>
-                            <ListItemText primary={item} primaryTypographyProps={{ variant: "h6"}}/>
-                        </ListItem>
-                    ))}
-                </List>*/}
             </Box>
             <main className={classes.content}>
                 {!context.isUser && <Login/>}

@@ -250,6 +250,7 @@ const DynamicPhotoPage: React.FC = () => {
 
     const handleBackward = () => {
         setPhotos(photos.previous())
+        //history.push('/photos/' + photos.driveId())
         window.history.pushState({}, '', '/photos/' + photos.driveId())
     }
 
@@ -262,6 +263,7 @@ const DynamicPhotoPage: React.FC = () => {
 
     const handleForward = () => {
         setPhotos(photos.next())
+        //history.push('/photos/' + photos.next().driveId())
         window.history.pushState({}, '', '/photos/' + photos.driveId())
     }
 

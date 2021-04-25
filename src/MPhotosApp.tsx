@@ -12,6 +12,7 @@ import BottomBar2 from "./BottomBar2";
 import GuestPage from "./guest/GuestPage";
 import ScrollToTop from "./ScrollIntoView";
 import DynamicPhotoPage from "./photos/DynamicPhotoPage";
+import CamerasPage from "./cameras/camerasPage";
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -41,6 +42,8 @@ export default function MPhotosApp() {
                     <Switch>
                         <Route path="/albums/:albumId"><DynamicPhotoPage/></Route>
                         <Route path="/albums" render={() => <AlbumPage/>}/>
+                        <Route path="/cameras/:cameraId"><CamerasPage/></Route>
+                        <Route path="/cameras"><CamerasPage/></Route>
                         <Route path="/resume" render={() => <ResumePage/>}/>
                         <Route path="/photos/:photoId"><DynamicPhotoPage/></Route>
                         <Route path="/photos" render={() => <DynamicPhotoPage/>}/>
